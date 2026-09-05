@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+{# Les réglages du compte ne recalculent aucun style : ils posent des
+   attributs que le design system interprète. #}
 <html lang="{{ app.request.locale|default('fr') }}"
-      data-fx-accent="{{ fx_accent|default('slate') }}"
-      data-fx-density="{{ fx_density|default('comfortable') }}"
-      data-fx-prose="{{ fx_prose|default('serif') }}">
+      data-fx-accent="{{ display().accent }}"
+      data-fx-density="{{ display().density }}"
+      data-fx-prose="{{ display().proseFont }}"
+      style="--fx-markdown-mark-opacity: {{ display().markOpacity }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

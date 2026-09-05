@@ -79,6 +79,105 @@
 
         {# ---------------------------------------------------------------- #}
         <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'settings.accent.heading'|trans }}</p>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.accent.label'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.accent.help'|trans }}</span>
+                </div>
+
+                <form method="post" action="{{ path('display_adjust') }}" class="fx-accents">
+                    <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                    {% for accent in accents %}
+                        <button type="submit" name="accent" value="{{ accent.value }}"
+                                class="fx-accents__dot {{ display().accent == accent.value ? 'fx-accents__dot--current' }}"
+                                style="background: {{ accent.hex }}"
+                                aria-label="{{ ('settings.accent.' ~ accent.value)|trans }}"
+                                {{ display().accent == accent.value ? 'aria-current="true"' : '' }}></button>
+                    {% endfor %}
+                </form>
+            </div>
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'settings.editor.heading'|trans }}</p>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.editor.serif'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.editor.serif_help'|trans }}</span>
+                </div>
+
+                <form method="post" action="{{ path('display_adjust') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                    <input type="hidden" name="proseFont" value="{{ display().proseFont == 'serif' ? 'sans' : 'serif' }}">
+                    <button type="submit" class="fx-switch {{ display().proseFont == 'serif' ? 'fx-switch--on' }}"
+                            aria-pressed="{{ display().proseFont == 'serif' ? 'true' : 'false' }}">
+                        <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.editor.preview'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.editor.preview_help'|trans }}</span>
+                </div>
+
+                <form method="post" action="{{ path('display_adjust') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                    <input type="hidden" name="previewPane" value="{{ display().previewPane ? '0' : '1' }}">
+                    <button type="submit" class="fx-switch {{ display().previewPane ? 'fx-switch--on' }}"
+                            aria-pressed="{{ display().previewPane ? 'true' : 'false' }}">
+                        <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.editor.marks'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.editor.marks_help'|trans }}</span>
+                </div>
+
+                <form method="post" action="{{ path('display_adjust') }}" class="fx-field__row">
+                    <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                    {% for opacity in opacities %}
+                        <button type="submit" name="markOpacity" value="{{ opacity }}"
+                                class="fx-pill {{ display().markOpacity == opacity ? 'fx-pill--selected' }}">
+                            {{ (opacity * 100)|round }} %
+                        </button>
+                    {% endfor %}
+                </form>
+            </div>
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'settings.library.heading'|trans }}</p>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.library.density'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.library.density_help'|trans }}</span>
+                </div>
+
+                <form method="post" action="{{ path('display_adjust') }}" class="fx-field__row">
+                    <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                    {% for density in densities %}
+                        <button type="submit" name="density" value="{{ density.value }}"
+                                class="fx-pill {{ display().density == density.value ? 'fx-pill--selected' }}">
+                            {{ ('settings.library.' ~ density.value)|trans }}
+                        </button>
+                    {% endfor %}
+                </form>
+            </div>
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
             <p class="fx-eyebrow">{{ 'settings.providers.heading'|trans }}</p>
 
             {% for provider in providers %}

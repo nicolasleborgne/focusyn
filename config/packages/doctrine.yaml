@@ -14,6 +14,7 @@ doctrine:
             email_address: App\Identity\Infrastructure\Persistence\Doctrine\Type\EmailAddressType
             hashed_password: App\Identity\Infrastructure\Persistence\Doctrine\Type\HashedPasswordType
             totp_secret: App\Identity\Infrastructure\Persistence\Doctrine\Type\TotpSecretType
+            display_preferences: App\Identity\Infrastructure\Persistence\Doctrine\Type\DisplayPreferencesType
             oauth_identity_id: App\Identity\Infrastructure\Persistence\Doctrine\Type\OAuthIdentityIdType
             tenant_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\TenantIdType
             note_id: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteIdType

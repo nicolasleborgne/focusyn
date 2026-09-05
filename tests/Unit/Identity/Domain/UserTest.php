@@ -80,6 +80,25 @@ final class UserTest extends TestCase
         self::assertSame([], $user->releaseEvents());
     }
 
+    public function testANewAccountStartsWithTheDesignDefaults(): void
+    {
+        self::assertTrue(
+            \App\Identity\Domain\Model\DisplayPreferences::default()->equals(self::register()->display()),
+        );
+    }
+
+    public function testDisplayPreferencesCanBeAdjusted(): void
+    {
+        $user = self::register();
+
+        $user->adjustDisplay(
+            \App\Identity\Domain\Model\DisplayPreferences::default()
+                ->withAccent(\App\Identity\Domain\Model\Accent::Olive),
+        );
+
+        self::assertSame(\App\Identity\Domain\Model\Accent::Olive, $user->display()->accent);
+    }
+
     private static function register(?UserId $id = null): User
     {
         return User::register(

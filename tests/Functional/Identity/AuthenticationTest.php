@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Le parcours réel : formulaires remplis, pare-feu traversé, session posée.
@@ -17,6 +18,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class AuthenticationTest extends WebTestCase
 {
     use Factories;
+    use ResetDatabase;
 
     private const string PASSWORD = 'une phrase de passe tenable';
 

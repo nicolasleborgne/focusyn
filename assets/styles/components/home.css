@@ -795,3 +795,39 @@
     border-color: var(--fx-border-default);
     color: var(--fx-text-primary);
 }
+
+/* --- Choix de l'accent --------------------------------------------------------- */
+
+.fx-accents {
+    display: flex;
+    gap: var(--fx-space-4);
+}
+
+.fx-accents__dot {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: var(--fx-radius-round);
+    box-shadow: var(--fx-shadow-hairline);
+    cursor: pointer;
+}
+
+/* La pastille courante est cerclée de blanc puis de sa propre teinte : un
+   contour neutre se perdrait sur les accents clairs comme sur les sombres. */
+.fx-accents__dot--current {
+    box-shadow: 0 0 0 2px var(--fx-surface-app), 0 0 0 3px currentcolor;
+}
+
+.fx-accents__dot--current[style*="#41586e"] { color: #41586e; }
+.fx-accents__dot--current[style*="#1f1f1f"] { color: #1f1f1f; }
+.fx-accents__dot--current[style*="#5a6b4a"] { color: #5a6b4a; }
+.fx-accents__dot--current[style*="#7d5a3c"] { color: #7d5a3c; }
+.fx-accents__dot--current[style*="#8c4a45"] { color: #8c4a45; }
+
+/* L'interrupteur des réglages est un bouton de formulaire, pas une case. */
+.fx-settings__row .fx-switch {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}

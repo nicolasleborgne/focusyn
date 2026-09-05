@@ -101,3 +101,7 @@ services:
     App\Notebook\Domain\Repository\ObsessionRepository:
         alias: App\Notebook\Infrastructure\Persistence\Doctrine\DoctrineObsessionRepository
         public: true
+
+    App\Shared\Application\Display\CurrentDisplay:
+        alias: App\Identity\Infrastructure\Security\AccountDisplay
+        public: true

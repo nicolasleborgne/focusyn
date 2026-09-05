@@ -7,6 +7,7 @@ namespace App\Tests\Functional\Shared;
 use App\Tests\Functional\LogsIn;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Les deux langues sont livrées dès le départ : chaque écran a une adresse dans
@@ -16,6 +17,7 @@ final class LocalizedRoutingTest extends WebTestCase
 {
     use Factories;
     use LogsIn;
+    use ResetDatabase;
 
     public function testTheFrenchPathRendersFrench(): void
     {

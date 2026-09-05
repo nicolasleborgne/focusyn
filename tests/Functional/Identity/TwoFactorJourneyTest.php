@@ -10,6 +10,7 @@ use OTPHP\TOTP;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Le parcours complet du second facteur, tel qu'un utilisateur le vit :
@@ -18,6 +19,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class TwoFactorJourneyTest extends WebTestCase
 {
     use Factories;
+    use ResetDatabase;
 
     private const string EMAIL = 'nicolas@focusyn.fr';
     private const string PASSWORD = 'une phrase de passe tenable';

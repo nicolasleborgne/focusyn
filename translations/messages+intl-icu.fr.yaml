@@ -75,6 +75,30 @@ settings:
     title: Réglages
     account: Compte
     back: Revenir aux réglages
+    accent:
+        heading: Apparence
+        label: Couleur d'accentuation
+        help: Teinte des éléments actifs, des boutons et des barres de progression.
+        ink: Encre
+        slate: Ardoise
+        olive: Olive
+        tobacco: Tabac
+        brick: Brique
+    editor:
+        heading: Éditeur
+        serif: Corps en serif
+        serif_help: Newsreader pour la prose des notes ; sinon Archivo.
+        preview: Panneau d'aperçu
+        preview_help: Affiche la note rendue à côté de la source, sur grand écran.
+        marks: Marques markdown
+        marks_help: Visibilité des dièses, tirets et astérisques dans l'éditeur.
+    library:
+        heading: Bibliothèque
+        density: Densité
+        density_help: Interlignes et marges de la prose.
+        comfortable: Confortable
+        compact: Compact
+
     two_factor:
         heading: Sécurité
         totp: Double authentification (TOTP)

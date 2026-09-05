@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Une obsession n'a pas besoin d'être créée : elle naît de la première note qui
@@ -18,6 +19,7 @@ final class ObsessionPageTest extends WebTestCase
 {
     use Factories;
     use LogsIn;
+    use ResetDatabase;
 
     public function testTaggingANoteMakesTheObsessionReachable(): void
     {

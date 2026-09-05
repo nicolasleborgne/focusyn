@@ -36,6 +36,8 @@ final class User extends AggregateRoot
     /** @var Collection<int, OAuthIdentity> */
     private Collection $oauthIdentities;
 
+    private DisplayPreferences $display;
+
     private function __construct(
         private readonly UserId $id,
         private EmailAddress $email,
@@ -43,6 +45,7 @@ final class User extends AggregateRoot
         private readonly DateTimeImmutable $registeredAt,
     ) {
         $this->oauthIdentities = new ArrayCollection();
+        $this->display = DisplayPreferences::default();
     }
 
     public static function register(
@@ -89,6 +92,18 @@ final class User extends AggregateRoot
         }
 
         $this->email = $email;
+    }
+
+    // ---- affichage ---------------------------------------------------------
+
+    public function display(): DisplayPreferences
+    {
+        return $this->display;
+    }
+
+    public function adjustDisplay(DisplayPreferences $display): void
+    {
+        $this->display = $display;
     }
 
     // ---- double authentification -----------------------------------------

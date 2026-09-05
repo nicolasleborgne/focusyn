@@ -74,6 +74,30 @@ settings:
     title: Settings
     account: Account
     back: Back to settings
+    accent:
+        heading: Appearance
+        label: Accent colour
+        help: Tint of active elements, buttons and progress bars.
+        ink: Ink
+        slate: Slate
+        olive: Olive
+        tobacco: Tobacco
+        brick: Brick
+    editor:
+        heading: Editor
+        serif: Serif body
+        serif_help: Newsreader for note prose; Archivo otherwise.
+        preview: Preview pane
+        preview_help: Shows the rendered note beside the source, on wide screens.
+        marks: Markdown marks
+        marks_help: Visibility of hashes, dashes and asterisks in the editor.
+    library:
+        heading: Library
+        density: Density
+        density_help: Line spacing and margins of the prose.
+        comfortable: Comfortable
+        compact: Compact
+
     two_factor:
         heading: Security
         totp: Two-factor authentication (TOTP)

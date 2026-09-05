@@ -29,6 +29,8 @@
         <field name="totpSecret" type="totp_secret" column="totp_secret" nullable="true"/>
         <field name="backupCodes" type="json" column="backup_codes"/>
 
+        <field name="display" type="display_preferences" column="display_preferences"/>
+
         <one-to-many field="oauthIdentities"
                      target-entity="App\Identity\Domain\Model\OAuthIdentity"
                      mapped-by="user"

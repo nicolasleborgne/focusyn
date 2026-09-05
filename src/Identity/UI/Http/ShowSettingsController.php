@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Identity\UI\Http;
 
 use App\Identity\Application\Query\AccountSettingsQuery;
+use App\Identity\Domain\Model\Accent;
+use App\Identity\Domain\Model\Density;
+use App\Identity\Domain\Model\MarkOpacity;
 use App\Identity\Domain\Model\OAuthProvider;
+use App\Identity\Domain\Model\ProseFont;
 use App\Identity\Domain\Model\UserId;
 use App\Shared\Application\Account\CurrentAccount;
 use App\Shared\Application\Shell\ShellSection;
@@ -34,6 +38,10 @@ final class ShowSettingsController extends AbstractController
             'section' => ShellSection::Settings,
             'account' => $this->settings->forUser(UserId::fromString($userId)),
             'providers' => OAuthProvider::cases(),
+            'accents' => Accent::cases(),
+            'densities' => Density::cases(),
+            'proseFonts' => ProseFont::cases(),
+            'opacities' => MarkOpacity::steps(),
             // Codes de secours fraîchement générés, transmis une seule fois par
             // la session : ils ne sont plus lisibles ensuite.
             'freshBackupCodes' => $this->consumeFreshCodes(),

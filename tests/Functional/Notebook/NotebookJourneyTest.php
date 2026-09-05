@@ -8,6 +8,7 @@ use App\Tests\Functional\LogsIn;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Le carnet tel qu'on s'en sert : écrire, renommer, sauvegarder, chercher,
@@ -17,6 +18,7 @@ final class NotebookJourneyTest extends WebTestCase
 {
     use Factories;
     use LogsIn;
+    use ResetDatabase;
 
     public function testAnEmptyLibraryInvitesToWrite(): void
     {

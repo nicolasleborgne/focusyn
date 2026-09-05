@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Les listes à cocher, y compris les actions du Live Component : cocher, ajouter
@@ -20,6 +21,7 @@ final class TaskJourneyTest extends WebTestCase
     use Factories;
     use InteractsWithLiveComponents;
     use LogsIn;
+    use ResetDatabase;
 
     public function testAnEmptyBoardSaysSo(): void
     {

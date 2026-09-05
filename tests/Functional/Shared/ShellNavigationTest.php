@@ -8,6 +8,7 @@ use App\Tests\Functional\LogsIn;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * La coquille est le cadre de tous les écrans : si elle casse, tout casse.
@@ -16,6 +17,7 @@ final class ShellNavigationTest extends WebTestCase
 {
     use Factories;
     use LogsIn;
+    use ResetDatabase;
 
     /** @return iterable<string, array{string, string}> */
     public static function frenchScreens(): iterable

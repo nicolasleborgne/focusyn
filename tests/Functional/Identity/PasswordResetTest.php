@@ -12,6 +12,7 @@ use App\Shared\Application\Command\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 /**
  * Réinitialisation par lien signé : aucun jeton n'est stocké, le lien porte sa
@@ -20,6 +21,7 @@ use Zenstruck\Foundry\Test\Factories;
 final class PasswordResetTest extends WebTestCase
 {
     use Factories;
+    use ResetDatabase;
 
     private const string EMAIL = 'nicolas@focusyn.fr';
     private const string PASSWORD = 'une phrase de passe tenable';

@@ -233,6 +233,13 @@ prose, compteurs mis en avant. Un extrait de note est en Archivo : deux serifs
 superposés se disputeraient l'attention. La monospace ne sert qu'aux
 métadonnées (dates, décomptes, étiquettes capitales).
 
+**Les réglages d'affichage ne recalculent aucun style.** Accent, prose serif,
+densité, opacité des marques et panneau d'aperçu sont portés par le compte
+(`DisplayPreferences`, dans Identity) et rendus en attributs `data-fx-*` sur
+`<html>` par le gabarit de base, via le port `CurrentDisplay`. Le design system
+en tire seul les conséquences. Hors session, les valeurs d'origine du design
+s'appliquent.
+
 **Les polices sont auto-hébergées** dans `assets/fonts/`, déclarées par
 `assets/styles/base/fonts.css`. Ne pas réintroduire le CDN Google : il reçoit
 l'adresse IP de chaque visiteur, ce qu'un produit affichant une section RGPD ne
@@ -285,10 +292,12 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   exemple) est construit en PHP et exposé par une fonction Twig.
 - En zsh, `path` est lié à `PATH` : ne jamais s'en servir comme variable dans un
   script shell, sous peine de vider le `PATH` en cours d'exécution.
-- **`ResetDatabase` de Foundry est incompatible avec les tests fonctionnels
-  ici** : il coupe les connexions ouvertes (« terminating connection due to
-  administrator command »). Les suites `functional` s'appuient sur la seule
-  transaction annulée par DAMA ; `ResetDatabase` reste dans `integration`.
+- `ResetDatabase` est utilisé dans **toutes** les suites touchant la base. Il
+  était incompatible tant que Foundry reconstruisait depuis le mapping (mode
+  SCHEMA), qui coupe les connexions ouvertes ; en mode MIGRATE il fonctionne, et
+  garantit que la base de test porte bien les dernières migrations. Sans lui,
+  lancer la seule suite `functional` après une migration échoue sur une colonne
+  inexistante.
 - `loginUser()` d'un client de test exige un compte **réellement enregistré** :
   à chaque requête le pare-feu recharge l'utilisateur par le fournisseur, et un
   compte fabriqué de toutes pièces est aussitôt déconnecté. Voir le trait
