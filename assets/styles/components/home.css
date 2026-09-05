@@ -97,7 +97,6 @@
 
 .fx-auth__title {
     margin-top: var(--fx-space-6);
-    font-size: var(--fx-prose-h2);
 }
 
 .fx-auth__lead {
@@ -308,9 +307,11 @@
     border-bottom: 1px solid var(--fx-border-default);
 }
 
+/* Le champ de recherche est composé comme un titre : c'est lui, l'écran. */
 .fx-search__input {
     font-family: var(--fx-font-prose);
-    font-size: var(--fx-prose-h3);
+    font-size: var(--fx-title-stat);
+    font-weight: var(--fx-weight-regular);
     color: var(--fx-text-title);
 }
 

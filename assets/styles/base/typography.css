@@ -46,19 +46,33 @@ a:hover {
     text-transform: uppercase;
 }
 
-/* Titre de page. */
+/*
+ * Titre d'écran : serif **maigre**, jamais gras.
+ *
+ * C'est le trait le plus caractéristique de la maquette : un Newsreader en 400
+ * à 32 px. Le même texte en 600 se lit comme une autre famille — c'est
+ * précisément ce qui donnait l'impression que la police n'était pas la bonne.
+ */
 .fx-heading {
     margin: 0;
     font-family: var(--fx-font-prose);
-    font-size: var(--fx-prose-h1);
-    font-weight: var(--fx-weight-semibold);
+    font-size: var(--fx-title-screen);
+    font-weight: var(--fx-weight-regular);
     letter-spacing: var(--fx-tracking-snug);
-    line-height: var(--fx-leading-tight);
+    line-height: var(--fx-leading-snug);
     color: var(--fx-text-title);
 }
 
-.fx-heading--section {
-    font-size: var(--fx-prose-h2);
+/* Accroche de l'accueil et titre d'obsession. */
+.fx-heading--hero {
+    font-size: var(--fx-title-hero);
+    line-height: 1.15;
+}
+
+/* Titres des écrans d'authentification et des boîtes de dialogue. */
+.fx-heading--dialog {
+    font-size: var(--fx-title-dialog);
+    line-height: var(--fx-leading-snug);
 }
 
 /* Réservé aux lecteurs d'écran. */

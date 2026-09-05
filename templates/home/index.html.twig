@@ -9,7 +9,7 @@
     <div class="fx-app__content">
 
         <p class="fx-eyebrow">{{ 'now'|format_datetime(pattern: 'EEEE d MMMM', locale: app.request.locale) }}</p>
-        <h1 class="fx-heading fx-home__title">{{ 'home.title'|trans }}</h1>
+        <h1 class="fx-heading fx-heading--hero fx-home__title">{{ 'home.title'|trans }}</h1>
 
         <section class="fx-home__stats" aria-label="{{ 'home.stats'|trans }}">
             {% set stats = [
@@ -30,11 +30,19 @@
             <p class="fx-eyebrow">{{ 'home.resume'|trans }}</p>
             <div class="fx-home__notes">
                 {% for note in home.recentNotes %}
-                    <a class="fx-note-row" href="{{ path('library') }}">
-                        <span class="fx-note-row__title">{{ note.title }}</span>
-                        <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
-                        <span class="fx-note-row__footer">
-                            <span class="fx-note-row__meta">{{ note.obsessions|join(' · ') }}</span>
+                    <a class="fx-note-row fx-note-row--compact" href="{{ path('library') }}">
+                        <span class="fx-note-row__main">
+                            <span class="fx-note-row__title">{{ note.title }}</span>
+                            <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
+                            {% if note.obsessions is not empty %}
+                                <span class="fx-note-row__tags">
+                                    {% for obsession in note.obsessions %}
+                                        <span class="fx-chip">{{ obsession }}</span>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+                        </span>
+                        <span class="fx-note-row__aside">
                             <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
                             <span class="fx-note-row__meta">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
                         </span>

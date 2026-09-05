@@ -29,14 +29,20 @@
         <div class="fx-library__notes">
             {% for note in notes %}
                 <a class="fx-note-row" href="{{ path('note_show', { id: note.id }) }}">
-                    <span class="fx-note-row__title">{{ note.title }}</span>
-                    {% if note.excerpt is not empty %}
-                        <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
-                    {% endif %}
-                    <span class="fx-note-row__footer">
-                        {% if note.obsessions is not empty %}
-                            <span class="fx-note-row__meta">{{ note.obsessions|join(' · ') }}</span>
+                    <span class="fx-note-row__main">
+                        <span class="fx-note-row__title">{{ note.title }}</span>
+                        {% if note.excerpt is not empty %}
+                            <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
                         {% endif %}
+                        {% if note.obsessions is not empty %}
+                            <span class="fx-note-row__tags">
+                                {% for obsession in note.obsessions %}
+                                    <span class="fx-chip">{{ obsession }}</span>
+                                {% endfor %}
+                            </span>
+                        {% endif %}
+                    </span>
+                    <span class="fx-note-row__aside">
                         <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
                         <span class="fx-note-row__meta">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
                     </span>

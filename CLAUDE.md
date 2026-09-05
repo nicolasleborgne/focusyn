@@ -196,6 +196,34 @@ sémantique (`--fx-surface-app`, `--fx-text-muted`, `--fx-accent`). Les réglage
 utilisateur sont des attributs `data-fx-*` sur `<html>` qui redéfinissent des
 variables ; aucun style n'est calculé côté serveur.
 
+**La graisse par défaut est 400, partout.** La maquette n'emploie 600 qu'à trois
+endroits, tous le mot « Focusyn » (`--fx-weight-brand`), et 600/650 pour les
+titres **à l'intérieur** d'une note (`--fx-weight-heading`, `--fx-weight-strong`).
+Un titre d'écran en 600 se lit comme une autre famille typographique : c'est
+l'erreur la plus visible qu'on puisse commettre ici.
+
+Deux échelles de titres, à ne pas confondre :
+
+| Rôle | Jeton | Graisse |
+| --- | --- | --- |
+| Accroche d'accueil, titre d'obsession | `--fx-title-hero` (40 px) | 400 |
+| Titre d'écran | `--fx-title-screen` (32 px) | 400 |
+| Titre de dialogue et d'authentification | `--fx-title-dialog` (24 px) | 400 |
+| Titre de ligne de note | `--fx-title-row` (20 px) | 400 |
+| Titres `#`/`##`/`###` dans une note | `--fx-prose-h1/h2/h3` | 600/600/650 |
+
+**Le serif est réservé à ce qui a été écrit** — titres d'écran, titres de note,
+prose, compteurs mis en avant. Un extrait de note est en Archivo : deux serifs
+superposés se disputeraient l'attention. La monospace ne sert qu'aux
+métadonnées (dates, décomptes, étiquettes capitales).
+
+**Les polices sont auto-hébergées** dans `assets/fonts/`, déclarées par
+`assets/styles/base/fonts.css`. Ne pas réintroduire le CDN Google : il reçoit
+l'adresse IP de chaque visiteur, ce qu'un produit affichant une section RGPD ne
+peut pas se permettre. Les trois familles sont variables — une déclaration par
+plage de graisses, jamais par graisse isolée, sinon le navigateur simule les
+autres et cela se voit.
+
 `/_design-system` (dev uniquement) rend tous les blocs avec leurs variantes :
 s'en servir comme vérification visuelle après toute modification de jeton.
 
@@ -255,6 +283,10 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   commiter.
 - Les messages de contraintes de validation vivent dans le domaine
   **`validators`**, pas `messages` : `translations/validators+intl-icu.*.yaml`.
+- En développement, un `asset-map:compile` laisse des fichiers dans
+  `public/assets/`, que le serveur sert **à la place** des versions à jour.
+  Après avoir touché au CSS : `rm -rf public/assets`. Symfony le signale, mais
+  le message passe facilement inaperçu.
 - Un test fonctionnel ne peut créer **qu'un seul client** (un noyau par test).
   Pour changer de compte, se déconnecter puis se reconnecter sur le même client.
 - `LogsIn::logIn()` passe par le cas d'usage `RegisterUser`, ce qui crée

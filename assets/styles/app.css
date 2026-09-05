@@ -2,6 +2,7 @@
  * Design system Focusyn.
  *
  * Ordre des couches — jamais inversé, chaque couche ne consomme que la précédente :
+ *   0. base/fonts         déclarations @font-face, avant tout usage ;
  *   1. tokens/primitives  valeurs brutes (teintes, échelles, durées) ;
  *   2. tokens/semantic    rôles (surface, texte, bordure, accent) ;
  *   3. base               remise à zéro et typographie ;
@@ -17,6 +18,8 @@
  * Un composant ne référence jamais une primitive : uniquement des jetons
  * sémantiques. C'est ce qui rendra un thème sombre possible sans réécriture.
  */
+
+@import url("./base/fonts.css");
 
 @import url("./tokens/primitives.css");
 @import url("./tokens/semantic.css");

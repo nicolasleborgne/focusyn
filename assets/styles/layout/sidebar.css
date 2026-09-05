@@ -23,7 +23,7 @@
 
 .fx-sidebar__name {
     font-size: 1.188rem;
-    font-weight: var(--fx-weight-semibold);
+    font-weight: var(--fx-weight-brand);
     letter-spacing: var(--fx-tracking-tight);
     color: var(--fx-text-primary);
 }

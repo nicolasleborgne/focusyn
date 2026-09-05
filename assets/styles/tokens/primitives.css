@@ -39,6 +39,7 @@
     --fx-ink-500: #4a4a47;
     --fx-ink-600: #3a3a38;
     --fx-ink-700: #2b2b29;
+    --fx-ink-750: #1a1a1a;
     --fx-ink-800: #1f1f1f;
     --fx-ink-900: #131313;
 
@@ -66,17 +67,31 @@
     --fx-size-xl: 0.875rem;    /* 14px   — libellés de tâches */
 
     /* --- Échelle typographique de la prose ------------------------------ */
+    /* Deux séries distinctes, souvent confondues :
+       - `prose-h1/h2/h3` : titres **dans** une note, rendus par le markdown ;
+       - `title/hero/dialog` : titres **d'écran**, composés en serif maigre. */
     --fx-prose-body: 1.063rem; /* 17px */
     --fx-prose-h3: 1.125rem;   /* 18px */
     --fx-prose-h2: 1.438rem;   /* 23px */
     --fx-prose-h1: 1.938rem;   /* 31px */
     --fx-prose-display: 2.125rem; /* 34px — titre de note éditable */
 
+    --fx-title-dialog: 1.5rem; /* 24px — titres d'écran d'authentification */
+    --fx-title-screen: 2rem;   /* 32px — titres de page */
+    --fx-title-hero: 2.5rem;   /* 40px — accroche de l'accueil */
+    --fx-title-stat: 1.875rem; /* 30px — valeur d'un compteur */
+    --fx-title-row: 1.25rem;   /* 20px — titre d'une ligne de note */
+
     /* --- Graisses -------------------------------------------------------- */
+    /* La maquette est presque entièrement en 400. La graisse 600 n'y apparaît
+       qu'à trois endroits, tous le mot « Focusyn » ; 650 est réservé aux titres
+       de niveau 3 **dans** une note. Alourdir la chrome dénature la typographie
+       au point de faire croire à une autre police. */
     --fx-weight-regular: 400;
     --fx-weight-medium: 500;
-    --fx-weight-semibold: 600;
-    --fx-weight-strong: 650;
+    --fx-weight-brand: 600;    /* le mot « Focusyn », et rien d'autre */
+    --fx-weight-heading: 600;  /* titres de niveau 1 et 2 **dans** une note */
+    --fx-weight-strong: 650;   /* niveau 3 et gras markdown */
 
     /* --- Interlignes ----------------------------------------------------- */
     --fx-leading-tight: 1.2;

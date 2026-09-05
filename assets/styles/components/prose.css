@@ -45,7 +45,7 @@
 .fx-prose__line--h1 {
     margin: calc(26px * var(--fx-prose-density)) 0 calc(12px * var(--fx-prose-density));
     font-size: var(--fx-prose-h1);
-    font-weight: var(--fx-weight-semibold);
+    font-weight: var(--fx-weight-heading);
     letter-spacing: var(--fx-tracking-snug);
     line-height: var(--fx-leading-tight);
     color: var(--fx-text-title);
@@ -54,7 +54,7 @@
 .fx-prose__line--h2 {
     margin: calc(24px * var(--fx-prose-density)) 0 calc(10px * var(--fx-prose-density));
     font-size: var(--fx-prose-h2);
-    font-weight: var(--fx-weight-semibold);
+    font-weight: var(--fx-weight-heading);
     letter-spacing: -0.015em;
     line-height: 1.25;
     color: #141414;
@@ -65,7 +65,7 @@
     font-size: var(--fx-prose-h3);
     font-weight: var(--fx-weight-strong);
     line-height: var(--fx-leading-snug);
-    color: var(--fx-ink-800);
+    color: var(--fx-ink-750);
 }
 
 .fx-prose__line--quote {
