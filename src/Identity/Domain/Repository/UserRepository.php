@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Identity\Domain\Repository;
 
 use App\Identity\Domain\Model\EmailAddress;
+use App\Identity\Domain\Model\OAuthProvider;
 use App\Identity\Domain\Model\User;
 use App\Identity\Domain\Model\UserId;
 
@@ -17,4 +18,9 @@ interface UserRepository
     public function ofEmail(EmailAddress $email): ?User;
 
     public function emailIsTaken(EmailAddress $email): bool;
+
+    /**
+     * Compte rattaché à une identité externe, s'il existe.
+     */
+    public function ofOAuthIdentity(OAuthProvider $provider, string $externalId): ?User;
 }

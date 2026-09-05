@@ -151,6 +151,8 @@ Le mode *worker* de FrankenPHP est préparé mais désactivé : il se branche da
 | Versions | Symfony LTS + PHP stable |
 | Facturation | Stripe |
 | Connexion | courriel + mot de passe avec TOTP, et SSO Google/GitHub |
+| Codes de secours | hachés en base, affichés une seule fois |
+| Rattachement externe | refusé sur une adresse non vérifiée par le fournisseur |
 | Rappels | Web Push, courriel, export `.ics` et flux iCal |
 | PWA | installable, cache de l'app shell |
 | Langues | français **et** anglais dès le départ |

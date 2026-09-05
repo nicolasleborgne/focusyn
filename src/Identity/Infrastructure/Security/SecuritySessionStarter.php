@@ -25,6 +25,9 @@ final readonly class SecuritySessionStarter implements SessionStarter
             return;
         }
 
-        $this->security->login(SecurityUser::fromDomain($user));
+        // L'authentificateur doit être nommé : le pare-feu en compte trois
+        // (mot de passe, second facteur, fournisseur externe) et ne peut plus
+        // deviner lequel employer pour une connexion programmée.
+        $this->security->login(SecurityUser::fromDomain($user), 'form_login');
     }
 }

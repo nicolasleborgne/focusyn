@@ -15,6 +15,10 @@
             <h1 class="fx-heading fx-auth__title">{{ 'auth.sign_in'|trans }}</h1>
             <p class="fx-card__help fx-auth__lead">{{ 'auth.sign_in_lead'|trans }}</p>
 
+            {% for message in app.flashes('oauth_error') %}
+                <p class="fx-auth__error" role="alert">{{ message }}</p>
+            {% endfor %}
+
             {% if error %}
                 <p class="fx-auth__error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
             {% endif %}
@@ -38,6 +42,17 @@
                     {{ 'auth.sign_in'|trans }}
                 </button>
             </form>
+
+            {% if providers is not empty %}
+                <p class="fx-auth__separator">{{ 'auth.or'|trans }}</p>
+                <div class="fx-auth__providers">
+                    {% for provider in providers %}
+                        <a class="fx-button fx-button--block" href="{{ path('oauth_start', { provider: provider.value }) }}">
+                            {{ 'settings.providers.sign_in_with'|trans({ provider: provider.label }) }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             <p class="fx-auth__switch">
                 {{ 'auth.no_account'|trans }}

@@ -5,25 +5,32 @@ declare(strict_types=1);
 namespace App\Identity\Infrastructure\Security;
 
 use App\Identity\Domain\Model\User;
+use Scheb\TwoFactorBundle\Model\BackupCodeInterface;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
+use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Adaptateur entre l'agrégat User et le composant Security.
  *
- * C'est lui, et non l'agrégat, qui implémente `UserInterface` : le domaine
- * n'a pas à connaître les rôles Symfony ni la notion d'identifiant de session.
- * Il ne transporte que ce dont le pare-feu a besoin.
+ * C'est lui, et non l'agrégat, qui implémente `UserInterface` et les interfaces
+ * du bundle de double authentification : le domaine n'a pas à connaître les
+ * rôles Symfony, ni la notion de session, ni un format de configuration TOTP.
  */
-final readonly class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
+final class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, BackupCodeInterface
 {
     /**
      * @param non-empty-string $email
+     * @param list<string>     $backupCodeHashes
      */
     public function __construct(
-        private string $id,
-        private string $email,
-        private string $passwordHash,
+        private readonly string $id,
+        private readonly string $email,
+        private readonly string $passwordHash,
+        private readonly ?string $totpSecret = null,
+        private array $backupCodeHashes = [],
     ) {
     }
 
@@ -36,6 +43,8 @@ final readonly class SecurityUser implements UserInterface, PasswordAuthenticate
             $user->id()->toString(),
             $email,
             $user->password()->toString(),
+            $user->totpSecret()?->toString(),
+            $user->backupCodes(),
         );
     }
 
@@ -67,5 +76,48 @@ final readonly class SecurityUser implements UserInterface, PasswordAuthenticate
 
     public function eraseCredentials(): void
     {
+    }
+
+    // ---- double authentification ------------------------------------------
+
+    public function isTotpAuthenticationEnabled(): bool
+    {
+        return null !== $this->totpSecret;
+    }
+
+    public function getTotpAuthenticationUsername(): string
+    {
+        return $this->email;
+    }
+
+    public function getTotpAuthenticationConfiguration(): ?TotpConfigurationInterface
+    {
+        if (null === $this->totpSecret) {
+            return null;
+        }
+
+        // Paramètres standards : SHA-1, 6 chiffres, fenêtre de 30 secondes.
+        // Tout écart casserait la compatibilité avec les applications courantes.
+        return new TotpConfiguration($this->totpSecret, TotpConfiguration::ALGORITHM_SHA1, 30, 6);
+    }
+
+    /**
+     * Les codes de secours étant stockés hachés, la comparaison ne peut pas se
+     * faire ici : elle est confiée au gestionnaire dédié, qui dispose du
+     * vérificateur d'empreintes. Voir HashedBackupCodeManager.
+     */
+    public function isBackupCode(string $code): bool
+    {
+        return false;
+    }
+
+    public function invalidateBackupCode(string $code): void
+    {
+    }
+
+    /** @return list<string> */
+    public function backupCodeHashes(): array
+    {
+        return $this->backupCodeHashes;
     }
 }

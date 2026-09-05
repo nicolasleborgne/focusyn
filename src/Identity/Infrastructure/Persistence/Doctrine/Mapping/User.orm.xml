@@ -21,6 +21,25 @@
         <field name="password" type="hashed_password" column="password_hash"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at"/>
 
+        <!--
+            Le secret TOTP est stocké en clair : l'algorithme exige que le
+            serveur puisse recalculer le code. Les codes de secours, eux, sont
+            des empreintes — ils sont montrés une fois puis oubliés.
+        -->
+        <field name="totpSecret" type="totp_secret" column="totp_secret" nullable="true"/>
+        <field name="backupCodes" type="json" column="backup_codes"/>
+
+        <one-to-many field="oauthIdentities"
+                     target-entity="App\Identity\Domain\Model\OAuthIdentity"
+                     mapped-by="user"
+                     orphan-removal="true"
+                     fetch="EAGER">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
         <unique-constraints>
             <unique-constraint name="uniq_users_email" columns="email"/>
         </unique-constraints>

@@ -40,6 +40,11 @@ automatiquement à l'entrée dans le dossier.
 
 Mailpit expose les courriels de développement sur <http://127.0.0.1:8025>.
 
+Pour essayer la connexion par Google ou GitHub, renseigner `OAUTH_GOOGLE_ID`,
+`OAUTH_GOOGLE_SECRET`, `OAUTH_GITHUB_ID` et `OAUTH_GITHUB_SECRET` dans un
+`.env.local`. Laissées vides, ces variables masquent simplement les boutons
+correspondants : aucun visiteur ne tombe sur une erreur de configuration.
+
 En développement, `/_design-system` affiche la référence vivante du design
 system : chaque bloc BEM avec ses variantes.
 
@@ -54,6 +59,7 @@ system : chaque bloc BEM avec ses variantes.
 | Éditeur de notes | CodeMirror 6 piloté par Stimulus |
 | Tests | PHPUnit 13, `dama/doctrine-test-bundle`, `zenstruck/foundry` |
 | Qualité | PHPStan (niveau 8), PHP-CS-Fixer, Deptrac |
+| Authentification | Symfony Security, scheb/2fa (TOTP), KnpU OAuth2 (Google, GitHub) |
 | Environnement | devenv (Nix) |
 | Production | FrankenPHP, Docker, `compose.prod.yaml` |
 

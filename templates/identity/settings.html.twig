@@ -4,5 +4,104 @@
 {% block crumb %}{{ 'shell.nav.settings'|trans }}{% endblock %}
 
 {% block page %}
-    {{ include('shell/_upcoming.html.twig', { title: 'shell.nav.settings'|trans, context: 'Identity' }) }}
+    <div class="fx-app__content">
+        <h1 class="fx-heading">{{ 'settings.title'|trans }}</h1>
+
+        {% for message in app.flashes('success') %}
+            <p class="fx-settings__notice" role="status">{{ message|trans }}</p>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
+        {% endfor %}
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'settings.account'|trans }}</p>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'auth.email'|trans }}</span>
+                    <span class="fx-card__help">{{ account.email }}</span>
+                </div>
+            </div>
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'settings.two_factor.heading'|trans }}</p>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.two_factor.totp'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.two_factor.help'|trans }}</span>
+                </div>
+
+                {% if account.twoFactorEnabled %}
+                    <form method="post" action="{{ path('two_factor_disable') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('two-factor-disable') }}">
+                        <button type="submit" class="fx-button fx-button--small">{{ 'settings.two_factor.disable'|trans }}</button>
+                    </form>
+                {% else %}
+                    <a class="fx-button fx-button--primary fx-button--small" href="{{ path('two_factor_enrolment') }}">
+                        {{ 'settings.two_factor.enable'|trans }}
+                    </a>
+                {% endif %}
+            </div>
+
+            {% if account.twoFactorEnabled %}
+                <div class="fx-settings__row">
+                    <div class="fx-settings__label">
+                        <span class="fx-card__title">{{ 'settings.backup_codes.heading'|trans }}</span>
+                        <span class="fx-card__help {{ account.backupCodesRunningLow ? 'fx-settings__warning' }}">
+                            {{ 'settings.backup_codes.remaining'|trans({ count: account.remainingBackupCodes }) }}
+                        </span>
+                    </div>
+
+                    <form method="post" action="{{ path('backup_codes_regenerate') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('backup-codes-regenerate') }}">
+                        <button type="submit" class="fx-button fx-button--small">{{ 'settings.backup_codes.regenerate'|trans }}</button>
+                    </form>
+                </div>
+            {% endif %}
+
+            {% if freshBackupCodes is not empty %}
+                <div class="fx-card fx-settings__codes">
+                    <p class="fx-card__title">{{ 'settings.backup_codes.fresh'|trans }}</p>
+                    <p class="fx-card__help">{{ 'settings.backup_codes.fresh_help'|trans }}</p>
+                    <ul class="fx-settings__code-list">
+                        {% for code in freshBackupCodes %}
+                            <li class="fx-settings__code">{{ code }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'settings.providers.heading'|trans }}</p>
+
+            {% for provider in providers %}
+                <div class="fx-settings__row">
+                    <div class="fx-settings__label">
+                        <span class="fx-card__title">{{ provider.label }}</span>
+                        <span class="fx-card__help">
+                            {{ (account.hasLinked(provider.value) ? 'settings.providers.linked' : 'settings.providers.not_linked')|trans }}
+                        </span>
+                    </div>
+
+                    {% if account.hasLinked(provider.value) %}
+                        <form method="post" action="{{ path('oauth_unlink', { provider: provider.value }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('oauth-unlink') }}">
+                            <button type="submit" class="fx-button fx-button--small">{{ 'settings.providers.unlink'|trans }}</button>
+                        </form>
+                    {% else %}
+                        <a class="fx-button fx-button--small" href="{{ path('oauth_start', { provider: provider.value }) }}">
+                            {{ 'settings.providers.link'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </section>
+    </div>
 {% endblock %}

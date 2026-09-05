@@ -1,0 +1,45 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ 'settings.two_factor.enable'|trans }} — Focusyn{% endblock %}
+{% block crumb %}{{ 'shell.nav.settings'|trans }} / {{ 'settings.two_factor.totp'|trans }}{% endblock %}
+
+{% block page %}
+    <div class="fx-app__content">
+        <h1 class="fx-heading">{{ 'settings.two_factor.enable'|trans }}</h1>
+
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
+        {% endfor %}
+
+        <ol class="fx-enrolment">
+            <li class="fx-enrolment__step">
+                <p class="fx-card__title">{{ 'settings.two_factor.step_scan'|trans }}</p>
+                <img class="fx-enrolment__qr" src="{{ qrCode }}" alt="{{ 'settings.two_factor.qr_alt'|trans }}" width="220" height="220">
+            </li>
+
+            <li class="fx-enrolment__step">
+                <p class="fx-card__title">{{ 'settings.two_factor.step_manual'|trans }}</p>
+                <p class="fx-card__help">{{ 'settings.two_factor.manual_help'|trans }}</p>
+                <p class="fx-enrolment__secret">{{ secret }}</p>
+            </li>
+
+            <li class="fx-enrolment__step">
+                <p class="fx-card__title">{{ 'settings.two_factor.step_confirm'|trans }}</p>
+                <form method="post" action="{{ path('two_factor_enrolment_confirm') }}" class="fx-enrolment__form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('two-factor-enrolment') }}">
+                    <div class="fx-field">
+                        <label class="fx-field__label" for="totp-code">{{ 'two_factor.code'|trans }}</label>
+                        <input id="totp-code" class="fx-field__control fx-field__control--code" type="text"
+                               name="code" inputmode="numeric" autocomplete="one-time-code"
+                               pattern="[0-9]{6}" maxlength="6" autofocus required>
+                    </div>
+                    <button type="submit" class="fx-button fx-button--primary">{{ 'settings.two_factor.confirm'|trans }}</button>
+                </form>
+            </li>
+        </ol>
+
+        <p class="fx-settings__back">
+            <a href="{{ path('settings') }}">{{ 'settings.back'|trans }}</a>
+        </p>
+    </div>
+{% endblock %}

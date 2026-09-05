@@ -109,9 +109,27 @@ l'exception métier, pas une exception de transport.
 `event.bus` (un fait acquis, zéro à N gestionnaires). Les dépôts publient les
 événements d'un agrégat **après** le flush.
 
-**Sécurité.** L'agrégat `User` n'implémente pas `UserInterface` : l'adaptateur
-`SecurityUser` le fait à sa place. Les habilitations fines dépendront de
-l'organisation courante et passeront par des voteurs, pas par un rôle global.
+**Sécurité.** L'agrégat `User` n'implémente ni `UserInterface` ni les interfaces
+du bundle de double authentification : l'adaptateur `SecurityUser` le fait à sa
+place. Les habilitations fines dépendront de l'organisation courante et
+passeront par des voteurs, pas par un rôle global.
+
+Trois authentificateurs cohabitent sur le pare-feu `main` : mot de passe,
+second facteur, fournisseur externe. Toute connexion programmée doit donc
+**nommer** l'authentificateur (`$security->login($user, 'form_login')`), sinon
+Symfony refuse de choisir.
+
+**Secrets.** Le secret TOTP est stocké en clair — l'algorithme impose que le
+serveur puisse recalculer le code. Les codes de secours, eux, sont **hachés** :
+montrés une fois, jamais relisibles. La comparaison passe par
+`HashedBackupCodeManager`, qui remplace le gestionnaire du bundle (lequel
+suppose des codes en clair).
+
+**Connexion externe.** `SignInWithOAuth` ne rattache un compte existant que si
+le fournisseur atteste avoir vérifié l'adresse. Sans ce contrôle, un
+fournisseur permissif permettrait de prendre la main sur un compte en déclarant
+son adresse. Chaque fournisseur a son lecteur de profil : Google donne la
+vérification dans le jeton, GitHub exige un appel à `/user/emails`.
 
 **Interface.** Rendu serveur en Twig. Partage du travail entre les deux outils
 front, à respecter strictement :
@@ -207,6 +225,19 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
 - DBAL 4 : `Type::getName()` n'existe plus (les types sont nommés dans
   `doctrine.yaml`) et les erreurs de conversion passent par
   `Doctrine\DBAL\Types\Exception\InvalidType::new()`.
+- `scheb_two_factor.security_tokens` doit lister **`UsernamePasswordToken` et
+  `PostAuthenticationToken`**. En omettre un laisse passer la connexion sans
+  jamais demander le second facteur — sans aucune erreur.
+- Avec le second facteur, la connexion enchaîne deux redirections (cible par
+  défaut, puis écran du code). Dans un test, suivre toute la chaîne
+  (`$client->followRedirects()`), pas un seul saut.
+- Un jeton CSRF ne se génère pas hors requête (pas de session) : dans un test
+  fonctionnel, soumettre le formulaire via le `Crawler`, qui porte déjà le jeton.
+- En YAML, une valeur non guillemetée ne peut pas contenir `: `. Les catalogues
+  de traduction en sont truffés — `bin/console lint:yaml translations` avant de
+  commiter.
+- Les messages de contraintes de validation vivent dans le domaine
+  **`validators`**, pas `messages` : `translations/validators+intl-icu.*.yaml`.
 
 ## La maquette (`project/`)
 

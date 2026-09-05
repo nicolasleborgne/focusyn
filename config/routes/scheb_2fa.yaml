@@ -1,0 +1,12 @@
+# Routes du second facteur.
+#
+# Le contrôleur vient du bundle : il rend le formulaire et laisse le pare-feu
+# vérifier le code. Les chemins sont francisés pour rester cohérents avec le
+# reste de l'application.
+two_factor_login:
+    path: /double-authentification
+    defaults:
+        _controller: "scheb_two_factor.form_controller::form"
+
+two_factor_login_check:
+    path: /double-authentification/verification

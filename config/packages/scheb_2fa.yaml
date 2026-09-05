@@ -1,0 +1,19 @@
+scheb_two_factor:
+    # Les deux types de jeton produits par le pare-feu après vérification du
+    # mot de passe. En omettre un laisse passer la connexion sans second facteur.
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+    totp:
+        enabled: true
+        server_name: Focusyn
+        issuer: Focusyn
+        parameters:
+            algorithm: sha1
+            digits: 6
+            period: 30
+        template: identity/two_factor.html.twig
+
+    backup_codes:
+        enabled: true

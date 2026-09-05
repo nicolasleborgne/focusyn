@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'two_factor.title'|trans }} — Focusyn{% endblock %}
+
+{% block body %}
+    <div class="fx-overlay">
+        <div class="fx-overlay__panel">
+            <span class="fx-mark" aria-hidden="true">
+                <span class="fx-mark__pill">
+                    <span class="fx-mark__cap"></span>
+                    <span class="fx-mark__body"></span>
+                </span>
+            </span>
+
+            <h1 class="fx-heading fx-auth__title">{{ 'two_factor.title'|trans }}</h1>
+            <p class="fx-card__help fx-auth__lead">{{ 'two_factor.lead'|trans }}</p>
+
+            {% if authenticationError %}
+                <p class="fx-auth__error" role="alert">
+                    {{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}
+                </p>
+            {% endif %}
+
+            <form class="fx-auth__form" action="{{ checkPathUrl|default(path(checkPathRoute)) }}" method="post">
+                <div class="fx-field">
+                    <label class="fx-field__label" for="_auth_code">{{ 'two_factor.code'|trans }}</label>
+                    <input id="_auth_code" class="fx-field__control fx-field__control--code"
+                           type="text" name="{{ authCodeParameterName }}"
+                           inputmode="numeric" autocomplete="one-time-code"
+                           pattern="[0-9A-Za-z\-]*" autofocus required>
+                    <span class="fx-field__help">{{ 'two_factor.help'|trans }}</span>
+                </div>
+
+                {% if isCsrfProtectionEnabled %}
+                    <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                {% endif %}
+
+                <button type="submit" class="fx-button fx-button--primary fx-button--block">
+                    {{ 'two_factor.verify'|trans }}
+                </button>
+            </form>
+
+            <form action="{{ logoutPath }}" method="post" class="fx-auth__switch">
+                <button type="submit" class="fx-sidebar__logout">{{ 'two_factor.cancel'|trans }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

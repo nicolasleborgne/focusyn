@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace App\Identity\Domain\Model;
 
 use App\Identity\Domain\Event\UserWasRegistered;
+use App\Identity\Domain\Exception\OAuthProviderAlreadyLinked;
+use App\Identity\Domain\Exception\OAuthProviderNotLinked;
+use App\Identity\Domain\Exception\TwoFactorAlreadyEnabled;
+use App\Identity\Domain\Exception\TwoFactorNotEnabled;
 use App\Shared\Domain\AggregateRoot;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Un compte Focusyn.
@@ -16,12 +22,27 @@ use DateTimeImmutable;
  */
 final class User extends AggregateRoot
 {
+    private ?TotpSecret $totpSecret = null;
+
+    /**
+     * Empreintes des codes de secours, jamais les codes eux-mêmes : ils sont
+     * montrés une fois à l'enrôlement puis oubliés du serveur, exactement comme
+     * un mot de passe.
+     *
+     * @var list<string>
+     */
+    private array $backupCodes = [];
+
+    /** @var Collection<int, OAuthIdentity> */
+    private Collection $oauthIdentities;
+
     private function __construct(
         private readonly UserId $id,
         private EmailAddress $email,
         private HashedPassword $password,
         private readonly DateTimeImmutable $registeredAt,
     ) {
+        $this->oauthIdentities = new ArrayCollection();
     }
 
     public static function register(
@@ -68,5 +89,112 @@ final class User extends AggregateRoot
         }
 
         $this->email = $email;
+    }
+
+    // ---- double authentification -----------------------------------------
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return null !== $this->totpSecret;
+    }
+
+    public function totpSecret(): ?TotpSecret
+    {
+        return $this->totpSecret;
+    }
+
+    /** @return list<string> */
+    public function backupCodes(): array
+    {
+        return $this->backupCodes;
+    }
+
+    /**
+     * @param list<string> $backupCodeHashes
+     */
+    public function enableTwoFactor(TotpSecret $secret, array $backupCodeHashes): void
+    {
+        if ($this->hasTwoFactorEnabled()) {
+            // Remplacer un secret en silence ferait perdre l'accès à qui a déjà
+            // enrôlé une application : il faut désactiver d'abord, sciemment.
+            throw TwoFactorAlreadyEnabled::create();
+        }
+
+        $this->totpSecret = $secret;
+        $this->backupCodes = array_values($backupCodeHashes);
+    }
+
+    public function disableTwoFactor(): void
+    {
+        if (!$this->hasTwoFactorEnabled()) {
+            throw TwoFactorNotEnabled::create();
+        }
+
+        $this->totpSecret = null;
+        $this->backupCodes = [];
+    }
+
+    public function revokeBackupCode(string $hash): void
+    {
+        $this->backupCodes = array_values(array_filter(
+            $this->backupCodes,
+            static fn (string $candidate): bool => $candidate !== $hash,
+        ));
+    }
+
+    /**
+     * @param list<string> $backupCodeHashes
+     */
+    public function replaceBackupCodes(array $backupCodeHashes): void
+    {
+        if (!$this->hasTwoFactorEnabled()) {
+            throw TwoFactorNotEnabled::create();
+        }
+
+        $this->backupCodes = array_values($backupCodeHashes);
+    }
+
+    // ---- fournisseurs externes -------------------------------------------
+
+    /** @return list<OAuthIdentity> */
+    public function oauthIdentities(): array
+    {
+        return array_values($this->oauthIdentities->toArray());
+    }
+
+    public function hasOAuthIdentity(OAuthProvider $provider): bool
+    {
+        return null !== $this->identityFor($provider);
+    }
+
+    public function linkOAuthIdentity(
+        OAuthIdentityId $id,
+        OAuthProvider $provider,
+        string $externalId,
+        DateTimeImmutable $linkedAt,
+    ): void {
+        if ($this->hasOAuthIdentity($provider)) {
+            throw OAuthProviderAlreadyLinked::create();
+        }
+
+        $this->oauthIdentities->add(new OAuthIdentity($this, $id, $provider, $externalId, $linkedAt));
+    }
+
+    public function unlinkOAuthIdentity(OAuthProvider $provider): void
+    {
+        $identity = $this->identityFor($provider) ?? throw OAuthProviderNotLinked::create();
+
+        $this->oauthIdentities->removeElement($identity);
+    }
+
+    private function identityFor(OAuthProvider $provider): ?OAuthIdentity
+    {
+        foreach ($this->oauthIdentities as $identity) {
+            if ($identity->provider() === $provider) {
+                return $identity;
+            }
+        }
+
+        return null;
     }
 }

@@ -49,3 +49,19 @@ services:
 
     App\Identity\Application\Port\SessionStarter:
         alias: App\Identity\Infrastructure\Security\SecuritySessionStarter
+
+    App\Identity\Application\Port\BackupCodeHasher:
+        alias: App\Identity\Infrastructure\Security\SymfonyBackupCodeHasher
+
+    App\Identity\Application\Port\BackupCodeGenerator:
+        alias: App\Identity\Infrastructure\Security\ReadableBackupCodeGenerator
+
+    App\Identity\Application\Port\TotpProvisioner:
+        alias: App\Identity\Infrastructure\Security\SchebTotpProvisioner
+
+    # Remplace le gestionnaire par défaut, qui suppose des codes en clair.
+    scheb_two_factor.security.backup_code_manager:
+        alias: App\Identity\Infrastructure\Security\HashedBackupCodeManager
+
+    App\Identity\Application\Port\AvailableOAuthProviders:
+        alias: App\Identity\Infrastructure\Security\OAuth\ConfiguredOAuthProviders

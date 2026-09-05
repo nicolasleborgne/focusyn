@@ -53,16 +53,55 @@ auth:
     create_account: Créer le compte
     email: Courriel
     password: Mot de passe
+    or: ou
     no_account: Pas encore de compte ?
     have_account: Vous avez déjà un compte ?
 
 registration:
     email:
-        required: Indiquez votre adresse électronique.
-        invalid: Cette adresse ne semble pas valide.
         taken: Un compte existe déjà pour cette adresse.
     password:
-        required: Choisissez un mot de passe.
-        too_short: 'Douze caractères au minimum.'
-        compromised: Ce mot de passe figure dans des fuites connues ; choisissez-en un autre.
         help: Douze caractères au minimum. Une phrase dont vous vous souvenez vaut mieux qu'un sigle compliqué.
+two_factor:
+    title: Double authentification
+    lead: Saisissez le code à six chiffres affiché par votre application, ou l'un de vos codes de secours.
+    code: Code
+    help: Le code change toutes les trente secondes.
+    verify: Vérifier
+    cancel: Annuler et revenir à la connexion
+
+settings:
+    title: Réglages
+    account: Compte
+    back: Revenir aux réglages
+    two_factor:
+        heading: Sécurité
+        totp: Double authentification (TOTP)
+        help: Un code à six chiffres, changeant toutes les trente secondes, en plus du mot de passe.
+        enable: Activer
+        disable: Désactiver
+        confirm: Confirmer
+        enabled: Double authentification active. Conservez vos codes de secours.
+        disabled: Double authentification désactivée.
+        wrong_code: Ce code ne correspond pas. Vérifiez l'heure de votre appareil, puis réessayez.
+        expired: L'enrôlement a expiré. Recommencez depuis le début.
+        step_scan: Scannez ce code avec votre application d'authentification
+        step_manual: Ou saisissez la clé à la main
+        manual_help: Utile si l'appareil ne peut pas scanner l'écran.
+        step_confirm: Saisissez le code affiché pour confirmer
+        qr_alt: QR code d'enrôlement de la double authentification
+    backup_codes:
+        heading: Codes de secours
+        remaining: '{count, plural, =0 {Aucun code restant} one {# code restant} other {# codes restants}}'
+        regenerate: Régénérer
+        regenerated: Nouveaux codes générés — les anciens sont invalides.
+        fresh: Vos codes de secours
+        fresh_help: 'Notez-les maintenant : ils ne seront plus affichés. Chacun ne sert qu''une fois.'
+    providers:
+        heading: Comptes externes
+        linked: Rattaché
+        not_linked: Non rattaché
+        link: Rattacher
+        unlink: Détacher
+        unlinked: Fournisseur détaché.
+        sign_in_with: 'Continuer avec {provider}'

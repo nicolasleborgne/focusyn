@@ -1,0 +1,8 @@
+registration:
+    email:
+        required: Enter your email address.
+        invalid: This address does not look valid.
+    password:
+        required: Choose a password.
+        too_short: Twelve characters minimum.
+        compromised: This password appears in known breaches; please choose another.

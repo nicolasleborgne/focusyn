@@ -1,0 +1,10 @@
+# Messages de contraintes : Symfony les cherche dans le domaine « validators »,
+# pas dans « messages ».
+registration:
+    email:
+        required: Indiquez votre adresse électronique.
+        invalid: Cette adresse ne semble pas valide.
+    password:
+        required: Choisissez un mot de passe.
+        too_short: Douze caractères au minimum.
+        compromised: Ce mot de passe figure dans des fuites connues ; choisissez-en un autre.

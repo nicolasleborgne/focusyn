@@ -13,6 +13,8 @@ doctrine:
             user_id: App\Identity\Infrastructure\Persistence\Doctrine\Type\UserIdType
             email_address: App\Identity\Infrastructure\Persistence\Doctrine\Type\EmailAddressType
             hashed_password: App\Identity\Infrastructure\Persistence\Doctrine\Type\HashedPasswordType
+            totp_secret: App\Identity\Infrastructure\Persistence\Doctrine\Type\TotpSecretType
+            oauth_identity_id: App\Identity\Infrastructure\Persistence\Doctrine\Type\OAuthIdentityIdType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
             membership_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MembershipIdType
             member_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MemberIdType

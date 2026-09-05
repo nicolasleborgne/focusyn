@@ -52,16 +52,55 @@ auth:
     create_account: Create account
     email: Email
     password: Password
+    or: or
     no_account: No account yet?
     have_account: Already have an account?
 
 registration:
     email:
-        required: Enter your email address.
-        invalid: This address does not look valid.
         taken: An account already exists for this address.
     password:
-        required: Choose a password.
-        too_short: 'Twelve characters minimum.'
-        compromised: This password appears in known breaches; please choose another.
         help: Twelve characters minimum. A sentence you remember beats a complicated acronym.
+two_factor:
+    title: Two-factor authentication
+    lead: Enter the six-digit code from your app, or one of your backup codes.
+    code: Code
+    help: The code changes every thirty seconds.
+    verify: Verify
+    cancel: Cancel and return to sign-in
+
+settings:
+    title: Settings
+    account: Account
+    back: Back to settings
+    two_factor:
+        heading: Security
+        totp: Two-factor authentication (TOTP)
+        help: A six-digit code, changing every thirty seconds, on top of your password.
+        enable: Enable
+        disable: Disable
+        confirm: Confirm
+        enabled: Two-factor authentication is on. Keep your backup codes safe.
+        disabled: Two-factor authentication turned off.
+        wrong_code: That code does not match. Check your device clock, then try again.
+        expired: Enrolment expired. Please start again.
+        step_scan: Scan this code with your authenticator app
+        step_manual: Or enter the key by hand
+        manual_help: Useful when the device cannot scan the screen.
+        step_confirm: Enter the displayed code to confirm
+        qr_alt: Two-factor enrolment QR code
+    backup_codes:
+        heading: Backup codes
+        remaining: '{count, plural, =0 {No codes left} one {# code left} other {# codes left}}'
+        regenerate: Regenerate
+        regenerated: New codes generated — the previous ones are void.
+        fresh: Your backup codes
+        fresh_help: 'Write them down now: they will not be shown again. Each one works once.'
+    providers:
+        heading: External accounts
+        linked: Linked
+        not_linked: Not linked
+        link: Link
+        unlink: Unlink
+        unlinked: Provider unlinked.
+        sign_in_with: 'Continue with {provider}'
