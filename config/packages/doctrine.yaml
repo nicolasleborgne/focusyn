@@ -21,6 +21,10 @@ doctrine:
             note_title: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteTitleType
             note_body: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteBodyType
             obsession_name: App\Notebook\Infrastructure\Persistence\Doctrine\Type\ObsessionNameType
+            task_list_id: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskListIdType
+            task_item_id: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskItemIdType
+            task_list_name: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskListNameType
+            task_text: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskTextType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
             membership_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MembershipIdType
             member_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MemberIdType

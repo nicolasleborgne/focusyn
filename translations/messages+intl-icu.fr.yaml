@@ -37,10 +37,6 @@ home:
     all_clear: Rien en attente.
     words: '{count, plural, one {# mot} other {# mots}}'
 
-upcoming:
-    body: Cet écran est routé, sa mise en œuvre arrive avec son contexte borné.
-    context: 'Contexte {context}'
-
 offline:
     title: Hors ligne
     body: Focusyn n'a pas pu joindre le serveur. Les écrans déjà consultés restent accessibles ; la reprise se fera automatiquement au retour du réseau.
@@ -126,3 +122,21 @@ notebook:
         saving: Enregistrement…
         dirty: Modifications non enregistrées
         failed: Enregistrement impossible — la connexion semble coupée
+
+task:
+    untitled_list: Nouvelle liste
+    new_list: Nouvelle liste
+    empty: Aucune liste pour l'instant.
+    all_done: Tout est fait.
+    list_empty: Cette liste est vide. Ajoutez une première tâche ci-dessous.
+    list_gone: Cette liste n'existe plus.
+    list_deleted: Liste supprimée.
+    delete_list: Supprimer la liste
+    name_label: Nom de la liste
+    name_required: Une liste doit avoir un nom.
+    add_placeholder: Ajouter une tâche…
+    check: Cocher la tâche
+    uncheck: Décocher la tâche
+    remove: Retirer la tâche
+    open_count: '{count, plural, =0 {Rien d''ouvert} one {# tâche ouverte} other {# tâches ouvertes}}'
+    completed: '{count, plural, one {# tâche faite} other {# tâches faites}}'

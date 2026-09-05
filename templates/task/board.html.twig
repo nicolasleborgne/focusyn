@@ -4,5 +4,44 @@
 {% block crumb %}{{ 'shell.nav.tasks'|trans }}{% endblock %}
 
 {% block page %}
-    {{ include('shell/_upcoming.html.twig', { title: 'shell.nav.tasks'|trans, context: 'Task' }) }}
+    <div class="fx-app__content">
+        <div class="fx-board__header">
+            <h1 class="fx-heading">{{ 'shell.nav.tasks'|trans }}</h1>
+            <form method="post" action="{{ path('task_list_open') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('task-list-open') }}">
+                <button type="submit" class="fx-button fx-button--small">{{ 'task.new_list'|trans }}</button>
+            </form>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <p class="fx-settings__notice" role="status">{{ message|trans }}</p>
+        {% endfor %}
+
+        {% if lists is empty %}
+            <div class="fx-library__empty">
+                <p class="fx-card__help">{{ 'task.empty'|trans }}</p>
+            </div>
+        {% else %}
+            <div class="fx-board">
+                {% for list in lists %}
+                    <a class="fx-card fx-board__card" href="{{ path('task_list_show', { id: list.id }) }}">
+                        <div class="fx-card__header">
+                            <span class="fx-card__title">{{ list.name }}</span>
+                            <span class="fx-note-row__meta">{{ list.completedItems|length }}/{{ (list.openItems|length) + (list.completedItems|length) }}</span>
+                        </div>
+
+                        <div class="fx-meter"><span class="fx-meter__value" style="width: {{ list.progress }}%"></span></div>
+
+                        <ul class="fx-board__peek">
+                            {% for item in list.openItems|slice(0, 3) %}
+                                <li class="fx-board__peek-item">{{ item.text }}</li>
+                            {% else %}
+                                <li class="fx-board__peek-item fx-board__peek-item--done">{{ 'task.all_done'|trans }}</li>
+                            {% endfor %}
+                        </ul>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

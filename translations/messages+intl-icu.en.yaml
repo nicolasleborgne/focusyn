@@ -36,10 +36,6 @@ home:
     all_clear: Nothing pending.
     words: '{count, plural, one {# word} other {# words}}'
 
-upcoming:
-    body: This screen is routed; its implementation ships with its bounded context.
-    context: '{context} context'
-
 offline:
     title: Offline
     body: Focusyn could not reach the server. Screens you have already visited remain available; syncing resumes automatically once the network is back.
@@ -125,3 +121,21 @@ notebook:
         saving: Saving…
         dirty: Unsaved changes
         failed: Could not save — the connection seems to be down
+
+task:
+    untitled_list: New list
+    new_list: New list
+    empty: No lists yet.
+    all_done: All done.
+    list_empty: This list is empty. Add a first task below.
+    list_gone: This list no longer exists.
+    list_deleted: List deleted.
+    delete_list: Delete list
+    name_label: List name
+    name_required: A list must have a name.
+    add_placeholder: Add a task…
+    check: Check task
+    uncheck: Uncheck task
+    remove: Remove task
+    open_count: '{count, plural, =0 {Nothing open} one {# open task} other {# open tasks}}'
+    completed: '{count, plural, one {# task done} other {# tasks done}}'

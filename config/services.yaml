@@ -79,3 +79,10 @@ services:
 
     App\Shared\Application\Shell\NotebookSummaryProvider:
         alias: App\Notebook\Infrastructure\Shell\NotebookShellSummary
+
+    App\Task\Domain\Repository\TaskListRepository:
+        alias: App\Task\Infrastructure\Persistence\Doctrine\DoctrineTaskListRepository
+        public: true
+
+    App\Shared\Application\Shell\TaskSummaryProvider:
+        alias: App\Task\Infrastructure\Shell\TaskShellSummary

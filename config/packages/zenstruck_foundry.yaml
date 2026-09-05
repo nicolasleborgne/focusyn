@@ -1,16 +1,17 @@
 when@dev: &dev
-    # See full configuration: https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#full-default-bundle-configuration
     zenstruck_foundry:
         persistence:
-            # Flush only once per call of `PersistentObjectFactory::create()`
+            # Un seul flush par appel à `create()`.
             flush_once: true
 
-    # If you use the `make:factory --test` command, you may need to uncomment the following.
-    # See https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#generate
-    #services:
-    #    App\Tests\Factory\:
-    #        resource: '%kernel.project_dir%/tests/Factory/'
-    #        autowire: true
-    #        autoconfigure: true
+        orm:
+            # La base de test est reconstruite **par les migrations**, et non
+            # depuis le mapping. Deux raisons :
+            #   - le mode SCHEMA supprime `doctrine_migration_versions`, ce qui
+            #     casse toute migration lancée ensuite sur cette base ;
+            #   - rejouer les migrations à chaque exécution les met réellement à
+            #     l'épreuve, au lieu de ne vérifier que le mapping.
+            reset:
+                mode: !php/enum Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::MIGRATE
 
 when@test: *dev

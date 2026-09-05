@@ -378,3 +378,102 @@
     padding-top: var(--fx-space-8);
     border-top: 1px solid var(--fx-border-faint);
 }
+
+/* --- Tableau des listes ------------------------------------------------------ */
+
+.fx-board__header {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-8);
+}
+
+.fx-board__header .fx-heading {
+    flex: 1;
+}
+
+.fx-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--fx-space-6);
+    margin-top: var(--fx-space-10);
+}
+
+.fx-board__card {
+    display: block;
+    text-decoration: none;
+}
+
+.fx-board__card:hover {
+    border-color: var(--fx-border-default);
+}
+
+.fx-board__peek {
+    margin: var(--fx-space-6) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fx-board__peek-item {
+    overflow: hidden;
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fx-board__peek-item--done {
+    color: var(--fx-text-disabled);
+}
+
+/* --- Liste à cocher ---------------------------------------------------------- */
+
+.fx-checklist__meter {
+    margin-top: var(--fx-space-4);
+}
+
+.fx-checklist__items {
+    margin: var(--fx-space-8) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fx-checklist__remove {
+    flex: 0 0 auto;
+    padding: 0 var(--fx-space-2);
+    font-size: var(--fx-size-xl);
+    line-height: 1;
+    color: var(--fx-neutral-850);
+    opacity: 0;
+    transition: opacity var(--fx-duration-fast) var(--fx-easing);
+}
+
+.fx-task-line:hover .fx-checklist__remove,
+.fx-checklist__remove:focus-visible {
+    opacity: 1;
+}
+
+.fx-checklist__remove:hover {
+    color: var(--fx-danger);
+}
+
+.fx-task-line__text--done {
+    color: var(--fx-text-disabled);
+    text-decoration: line-through;
+    text-decoration-color: var(--fx-neutral-700);
+}
+
+.fx-checklist__add {
+    display: flex;
+    margin-top: var(--fx-space-6);
+    padding: var(--fx-space-4) 0;
+    border-top: 1px solid var(--fx-border-faint);
+}
+
+.fx-checklist__done-title {
+    margin-top: var(--fx-space-14);
+}
+
+.fx-checklist__empty {
+    margin-top: var(--fx-space-8);
+}

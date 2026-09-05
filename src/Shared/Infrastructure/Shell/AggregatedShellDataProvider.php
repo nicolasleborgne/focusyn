@@ -8,21 +8,18 @@ use App\Shared\Application\Account\CurrentAccount;
 use App\Shared\Application\Shell\NotebookSummaryProvider;
 use App\Shared\Application\Shell\ShellDataProvider;
 use App\Shared\Application\Shell\ShellView;
-use App\Shared\Application\Shell\TaskListSummary;
+use App\Shared\Application\Shell\TaskSummaryProvider;
 
 /**
  * Assemble ce que la coquille affiche, en interrogeant chaque contexte par son
- * port.
- *
- * Les listes de tâches restent celles de la maquette : le contexte Task n'existe
- * pas encore. Elles disparaîtront d'ici dès qu'il exposera son propre port —
- * aucun gabarit n'aura à changer.
+ * port. Plus aucune donnée n'est factice.
  */
 final readonly class AggregatedShellDataProvider implements ShellDataProvider
 {
     public function __construct(
         private CurrentAccount $account,
         private NotebookSummaryProvider $notebook,
+        private TaskSummaryProvider $tasks,
     ) {
     }
 
@@ -32,17 +29,7 @@ final readonly class AggregatedShellDataProvider implements ShellDataProvider
             accountEmail: $this->account->emailOrNull() ?? '',
             noteCount: $this->notebook->noteCount(),
             obsessions: $this->notebook->obsessions(),
-            taskLists: self::provisionalTaskLists(),
+            taskLists: $this->tasks->lists(),
         );
-    }
-
-    /** @return list<TaskListSummary> */
-    private static function provisionalTaskLists(): array
-    {
-        return [
-            new TaskListSummary('Cette semaine', 'cette-semaine', 2),
-            new TaskListSummary('Protocole sommeil', 'protocole-sommeil', 3),
-            new TaskListSummary('Essais café', 'essais-cafe', 2),
-        ];
     }
 }

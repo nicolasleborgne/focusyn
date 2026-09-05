@@ -143,7 +143,9 @@ vérification dans le jeton, GitHub exige un appel à `/user/emails`.
 front, à respecter strictement :
 
 - **Live Component** dès qu'une interaction touche l'état du serveur (recherche,
-  cochage d'une tâche, bascule d'un réglage, enregistrement d'un rappel) ;
+  cochage d'une tâche, bascule d'un réglage, enregistrement d'un rappel).
+  Ils se testent avec `InteractsWithLiveComponents` : `createLiveComponent()`
+  puis `->call('action', [...])`, sans navigateur ;
 - **Stimulus** pour l'état purement présentationnel, local à l'onglet (ouverture
   d'un menu, mode focus). Faire un aller-retour réseau pour ouvrir un menu
   serait un gaspillage visible à l'œil.
@@ -260,6 +262,15 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   cloisonnement rendrait alors tous les écrans vides.
 - `EntityManager::find()` court-circuite les filtres quand il touche le cache
   d'identité : dans un dépôt cloisonné, passer par une requête DQL.
+- Ne pas vider le gestionnaire d'entités juste avant un `persist()` : détacher
+  une entité déjà enregistrée la fait ré-insérer, avec violation de clé primaire.
+- La **limitation des tentatives de connexion** compte dans un cache qui survit
+  d'une exécution de tests à l'autre. Elle est relevée à 1000 en environnement
+  de test ; sans cela, les tests de connexion se mettent à échouer après
+  quelques passages, sans que rien n'ait changé.
+- Foundry reconstruit la base de test **par les migrations**
+  (`ResetDatabaseMode::MIGRATE`). Le mode par défaut, SCHEMA, supprime
+  `doctrine_migration_versions` et casse toute migration lancée ensuite.
 
 ## La maquette (`project/`)
 

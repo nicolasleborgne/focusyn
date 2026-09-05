@@ -53,7 +53,7 @@
                         <li class="fx-task-line">
                             <span class="fx-check" aria-hidden="true"><span class="fx-check__tick">✓</span></span>
                             <span class="fx-task-line__text">{{ task.text }}</span>
-                            <a class="fx-task-line__list" href="{{ path('tasks') }}#{{ task.listSlug }}">{{ task.listName }}</a>
+                            <a class="fx-task-line__list" href="{{ path('task_list_show', { id: task.listSlug }) }}">{{ task.listName }}</a>
                         </li>
                     {% endfor %}
                 </ul>

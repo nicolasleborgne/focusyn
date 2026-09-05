@@ -42,7 +42,7 @@
         <p class="fx-eyebrow fx-sidebar__section">{{ 'shell.section.lists'|trans }}</p>
         <div class="fx-sidebar__group">
             {% for list in shell().taskLists %}
-                <a class="fx-nav-item fx-nav-item--sub" href="{{ path('tasks') }}#{{ list.slug }}">
+                <a class="fx-nav-item fx-nav-item--sub" href="{{ path('task_list_show', { id: list.slug }) }}">
                     <span class="fx-nav-item__square {{ list.hasOpenTasks ? 'fx-nav-item__square--open' }}" aria-hidden="true"></span>
                     <span class="fx-nav-item__label">{{ list.name }}</span>
                     <span class="fx-nav-item__count">{{ list.openCount ?: '·' }}</span>
@@ -68,10 +68,13 @@
                     <span class="fx-menu__hint">{{ 'shell.create.note_hint'|trans }}</span>
                 </button>
             </form>
-            <button type="button" class="fx-menu__item">
-                {{ 'shell.create.list'|trans }}
-                <span class="fx-menu__hint">{{ 'shell.create.list_hint'|trans }}</span>
-            </button>
+            <form method="post" action="{{ path('task_list_open') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('task-list-open') }}">
+                <button type="submit" class="fx-menu__item">
+                    {{ 'shell.create.list'|trans }}
+                    <span class="fx-menu__hint">{{ 'shell.create.list_hint'|trans }}</span>
+                </button>
+            </form>
         </div>
         <button type="button"
                 class="fx-button fx-button--create"

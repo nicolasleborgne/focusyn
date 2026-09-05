@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Task\Domain\Model\TaskItem" table="task_items">
+        <id name="id" type="task_item_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="text" type="task_text" column="text"/>
+        <field name="position" type="integer" column="position"/>
+        <field name="done" type="boolean" column="is_done"/>
+        <field name="addedAt" type="datetime_immutable" column="added_at"/>
+        <field name="completedAt" type="datetime_immutable" column="completed_at" nullable="true"/>
+
+        <many-to-one field="list"
+                     target-entity="App\Task\Domain\Model\TaskList"
+                     inversed-by="items">
+            <join-column name="task_list_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <indexes>
+            <index name="idx_task_items_list_position" columns="task_list_id,position"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

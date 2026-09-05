@@ -85,16 +85,21 @@ final class ShellNavigationTest extends WebTestCase
         self::assertStringContainsString('Deux sommeils', $crawler->filter('.fx-note-row')->text());
     }
 
-    public function testScreensNotYetBuiltAnnounceThemselvesWithoutFailing(): void
+    public function testEveryNavigationEntryLeadsToItsOwnScreen(): void
     {
         $client = self::createClient();
         $this->logIn($client);
-        $crawler = $client->request('GET', '/taches');
 
-        self::assertResponseIsSuccessful();
-        self::assertStringContainsString(
-            'contexte borné',
-            $crawler->filter('.fx-upcoming__text')->text(),
-        );
+        // Plus aucun écran d'attente : les cinq destinations sont construites.
+        foreach (['/' => 'Reprendre le fil', '/bibliotheque' => 'Bibliothèque', '/recherche' => 'Recherche', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
+            $crawler = $client->request('GET', $uri);
+
+            self::assertResponseIsSuccessful(\sprintf('%s doit répondre.', $uri));
+            self::assertStringContainsString(
+                $heading,
+                $crawler->filter('h1')->text(),
+                \sprintf('%s doit afficher son propre titre.', $uri),
+            );
+        }
     }
 }

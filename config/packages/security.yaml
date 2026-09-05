@@ -55,6 +55,16 @@ security:
 
 when@test:
     security:
+        firewalls:
+            main:
+                # La limitation des tentatives compte dans un cache qui survit
+                # d'une exécution à l'autre : au bout de quelques passages, les
+                # tests de connexion se mettaient à échouer sans raison
+                # apparente. Le comportement lui-même reste actif en dev et en
+                # production ; le vérifier demanderait une horloge maîtrisée.
+                login_throttling:
+                    max_attempts: 1000
+
         password_hashers:
             # Le hachage réel coûte des centaines de millisecondes par test.
             App\Identity\Infrastructure\Security\SecurityUser:
