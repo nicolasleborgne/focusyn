@@ -1,0 +1,69 @@
+# Règles de dépendance entre les couches de la clean architecture.
+# Exécuter : vendor/bin/deptrac analyse --config-file=deptrac.yaml
+#
+#   Domain          ← ne dépend de rien (PHP pur, testable sans conteneur)
+#   Application      ← Domain
+#   Infrastructure   ← Domain + Application   (implémente leurs interfaces)
+#   UI               ← Domain + Application   (jamais l'infrastructure directement)
+deptrac:
+    paths:
+        - ./src
+    layers:
+        -   name: Domain
+            collectors:
+                -   type: directory
+                    value: src/[^/]+/Domain/.*
+        -   name: Application
+            collectors:
+                -   type: directory
+                    value: src/[^/]+/Application/.*
+        -   name: Infrastructure
+            collectors:
+                -   type: directory
+                    value: src/[^/]+/Infrastructure/.*
+        -   name: UI
+            collectors:
+                -   type: directory
+                    value: src/[^/]+/UI/.*
+        # Tout ce qui appartient au framework. Le domaine n'a pas le droit d'y
+        # toucher : c'est ce qui garantit qu'un agrégat se teste sans conteneur
+        # et survivra à une montée de version majeure de Symfony.
+        #
+        # Deux exceptions assumées, toutes deux sans dépendance transitive et
+        # sans état : symfony/uid (génération d'UUID v7) et symfony/clock
+        # (implémentation de PSR-20).
+        -   name: FrameworkInternals
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: classNameRegex
+                            value: '#^(Symfony|Doctrine|Twig|Zenstruck)\\#'
+                    must_not:
+                        -   type: classNameRegex
+                            value: '#^Symfony\\Component\\(Uid|Clock)\\#'
+        -   name: Kernel
+            collectors:
+                -   type: classNameRegex
+                    value: '#^App\\Kernel$#'
+
+    ruleset:
+        # Le domaine ne dépend de rien : ni des autres couches, ni du framework.
+        Domain: ~
+        Application:
+            - Domain
+            - FrameworkInternals
+        Infrastructure:
+            - Domain
+            - Application
+            - FrameworkInternals
+        UI:
+            - Domain
+            - Application
+            - FrameworkInternals
+        FrameworkInternals: ~
+        Kernel:
+            - Domain
+            - Application
+            - Infrastructure
+            - UI
+            - FrameworkInternals

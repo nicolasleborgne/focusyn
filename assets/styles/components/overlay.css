@@ -1,0 +1,108 @@
+/**
+ * Surfaces flottantes : menu déroulant, boîte de dialogue, superposition
+ * d'authentification.
+ */
+
+.fx-menu {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: calc(100% + var(--fx-space-4));
+    z-index: var(--fx-z-menu);
+    overflow: hidden;
+    border: 1px solid var(--fx-neutral-700);
+    background: var(--fx-surface-raised);
+    box-shadow: var(--fx-shadow-menu);
+}
+
+.fx-menu__item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--fx-space-4);
+    width: 100%;
+    padding: var(--fx-space-6) var(--fx-space-6);
+    border-bottom: 1px solid var(--fx-surface-muted);
+    text-align: left;
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-primary);
+    cursor: pointer;
+}
+
+.fx-menu__item:last-child {
+    border-bottom: none;
+}
+
+.fx-menu__item:hover {
+    background: var(--fx-surface-sunken);
+}
+
+.fx-menu__hint {
+    margin-left: auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-3xs);
+    letter-spacing: var(--fx-tracking-wide);
+    text-transform: uppercase;
+    color: var(--fx-text-disabled);
+}
+
+/* --- Boîte de dialogue -------------------------------------------------------- */
+
+.fx-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: var(--fx-z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--fx-space-12);
+    background: rgb(0 0 0 / 18%);
+}
+
+.fx-dialog__panel {
+    width: 100%;
+    max-width: var(--fx-measure-narrow);
+    padding: var(--fx-space-12);
+    border: 1px solid var(--fx-neutral-700);
+    background: var(--fx-surface-raised);
+    box-shadow: var(--fx-shadow-menu);
+}
+
+.fx-dialog__title {
+    margin: 0 0 var(--fx-space-2);
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-prose-h3);
+    font-weight: var(--fx-weight-regular);
+    color: var(--fx-text-title);
+}
+
+.fx-dialog__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-6);
+    margin-top: var(--fx-space-8);
+}
+
+.fx-dialog__actions {
+    display: flex;
+    gap: var(--fx-space-4);
+    margin-top: var(--fx-space-8);
+}
+
+/* --- Superposition plein écran (connexion, double authentification) --------- */
+
+.fx-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--fx-z-overlay);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: auto;
+    padding: 8vh var(--fx-space-14) var(--fx-space-14);
+    background: var(--fx-surface-overlay);
+}
+
+.fx-overlay__panel {
+    width: 100%;
+    max-width: 330px;
+}

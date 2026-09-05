@@ -1,0 +1,82 @@
+/**
+ * Jetons sémantiques — la seule couche que les composants ont le droit de lire.
+ *
+ * Chaque nom décrit un rôle, jamais une teinte : `--fx-border-strong` et non
+ * `--fx-neutral-600`. Un thème (sombre, contrasté, imprimé) se résume alors à
+ * redéfinir ce fichier.
+ *
+ * `--fx-accent` est délibérément la seule variable réécrite à l'exécution :
+ * les cinq accents des réglages sont appliqués via l'attribut `data-fx-accent`
+ * sur l'élément racine, sans toucher au reste du système.
+ */
+
+:root {
+    /* --- Surfaces --------------------------------------------------------- */
+    --fx-surface-page: var(--fx-neutral-400);
+    --fx-surface-app: var(--fx-neutral-0);
+    --fx-surface-raised: var(--fx-neutral-0);
+    --fx-surface-sidebar: var(--fx-neutral-150);
+    --fx-surface-sunken: var(--fx-neutral-100);
+    --fx-surface-muted: var(--fx-neutral-200);
+    --fx-surface-code: var(--fx-neutral-100);
+    --fx-surface-hover: #eaeae7;
+    --fx-surface-overlay: var(--fx-neutral-50);
+    --fx-surface-selection: #d9d9d6;
+
+    /* --- Bordures ---------------------------------------------------------- */
+    --fx-border-faint: var(--fx-neutral-300);
+    --fx-border-subtle: var(--fx-neutral-500);
+    --fx-border-default: var(--fx-neutral-600);
+    --fx-border-strong: var(--fx-neutral-700);
+    --fx-border-contrast: var(--fx-neutral-800);
+
+    /* --- Texte -------------------------------------------------------------- */
+    --fx-text-title: var(--fx-ink-900);
+    --fx-text-primary: var(--fx-ink-800);
+    --fx-text-body: var(--fx-ink-700);
+    --fx-text-secondary: var(--fx-ink-600);
+    --fx-text-tertiary: var(--fx-ink-500);
+    --fx-text-quote: var(--fx-ink-400);
+    --fx-text-meta: var(--fx-ink-300);
+    --fx-text-muted: var(--fx-ink-100);
+    --fx-text-faint: var(--fx-neutral-950);
+    --fx-text-disabled: var(--fx-neutral-900);
+    --fx-text-on-accent: var(--fx-neutral-50);
+
+    /* --- Accent ------------------------------------------------------------- */
+    --fx-accent: var(--fx-accent-ink);
+    --fx-accent-contrast: var(--fx-text-on-accent);
+    --fx-accent-soft: color-mix(in srgb, var(--fx-accent) 35%, transparent);
+    --fx-accent-faint: color-mix(in srgb, var(--fx-accent) 12%, transparent);
+
+    /* --- Statuts ------------------------------------------------------------ */
+    --fx-danger: var(--fx-accent-brick);
+    --fx-danger-contrast: var(--fx-text-on-accent);
+
+    /* --- Focus clavier ------------------------------------------------------ */
+    --fx-focus-ring: 0 0 0 2px var(--fx-surface-app), 0 0 0 4px var(--fx-accent);
+
+    /* --- Typographie appliquée ---------------------------------------------- */
+    --fx-font-ui: var(--fx-family-sans);
+    --fx-font-meta: var(--fx-family-mono);
+    /* Bascule « Corps en serif » des réglages : redéfinie sur .fx-prose. */
+    --fx-font-prose: var(--fx-family-serif);
+
+    /* --- Réglages de l'éditeur ---------------------------------------------- */
+    /* Opacité des marques markdown (0 → 1), pilotée depuis les réglages. */
+    --fx-markdown-mark-opacity: 0.45;
+    /* Densité de la prose : 1 = confortable, 0.72 = compact. */
+    --fx-prose-density: 1;
+}
+
+/* Accents sélectionnables dans les réglages. */
+:root[data-fx-accent="slate"] { --fx-accent: var(--fx-accent-slate); }
+:root[data-fx-accent="olive"] { --fx-accent: var(--fx-accent-olive); }
+:root[data-fx-accent="tobacco"] { --fx-accent: var(--fx-accent-tobacco); }
+:root[data-fx-accent="brick"] { --fx-accent: var(--fx-accent-brick); }
+
+/* Densité de prose compacte. */
+:root[data-fx-density="compact"] { --fx-prose-density: 0.72; }
+
+/* Corps de note en sans-serif. */
+:root[data-fx-prose="sans"] { --fx-font-prose: var(--fx-family-sans); }

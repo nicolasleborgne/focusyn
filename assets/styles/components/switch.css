@@ -1,0 +1,120 @@
+/**
+ * Interrupteur et case à cocher.
+ *
+ * L'élément natif reste dans le flux (accessibilité, clavier, formulaires) mais
+ * devient invisible : la piste et le bouton sont peints par le bloc.
+ */
+
+.fx-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fx-space-5);
+    cursor: pointer;
+}
+
+.fx-switch__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.fx-switch__track {
+    display: flex;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 22px;
+    padding: 3px;
+    border-radius: var(--fx-radius-2xl);
+    background: var(--fx-border-default);
+    transition: background var(--fx-duration-fast) var(--fx-easing);
+}
+
+.fx-switch__knob {
+    width: 16px;
+    height: 16px;
+    margin-left: 0;
+    border-radius: var(--fx-radius-round);
+    background: var(--fx-neutral-0);
+    transition: margin-left var(--fx-duration-fast) var(--fx-easing);
+}
+
+.fx-switch__input:checked + .fx-switch__track {
+    background: var(--fx-accent);
+}
+
+.fx-switch__input:checked + .fx-switch__track .fx-switch__knob {
+    margin-left: 16px;
+}
+
+.fx-switch__input:focus-visible + .fx-switch__track {
+    box-shadow: var(--fx-focus-ring);
+}
+
+/* Variante compacte utilisée par la bascule « Deep focus » de l'en-tête. */
+.fx-switch--small .fx-switch__track {
+    flex-basis: 26px;
+    width: 26px;
+    height: 14px;
+    padding: 2px;
+    border-radius: 9px;
+}
+
+.fx-switch--small .fx-switch__knob {
+    width: 10px;
+    height: 10px;
+}
+
+.fx-switch--small .fx-switch__input:checked + .fx-switch__track .fx-switch__knob {
+    margin-left: 12px;
+}
+
+.fx-switch__label {
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-primary);
+}
+
+.fx-switch__help {
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-muted);
+}
+
+/* --- Case à cocher d'une tâche ------------------------------------------- */
+
+.fx-check {
+    display: inline-flex;
+    flex: 0 0 15px;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    margin-top: 3px;
+    border: 1px solid var(--fx-neutral-750);
+    border-radius: var(--fx-radius-sm);
+    background: transparent;
+    cursor: pointer;
+}
+
+.fx-check__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.fx-check__tick {
+    font-size: 9px;
+    line-height: 1;
+    color: var(--fx-text-on-accent);
+    opacity: 0;
+}
+
+.fx-check--done {
+    border-color: var(--fx-accent);
+    background: var(--fx-accent);
+}
+
+.fx-check--done .fx-check__tick {
+    opacity: 1;
+}

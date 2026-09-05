@@ -1,0 +1,83 @@
+# Pile de production — VPS avec docker compose.
+#
+#   docker compose -f compose.prod.yaml up -d --build
+#
+# Les secrets ne sont jamais dans ce fichier : ils viennent d'un `.env.prod.local`
+# non versionné, chargé par `--env-file`.
+
+services:
+  app:
+    build:
+      context: .
+      target: prod
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: 0
+      APP_SECRET: ${APP_SECRET:?APP_SECRET est requis}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-focusyn}:${POSTGRES_PASSWORD:?mot de passe requis}@database:5432/${POSTGRES_DB:-focusyn}?serverVersion=17&charset=utf8
+      MESSENGER_TRANSPORT_DSN: doctrine://default?auto_setup=0
+      MAILER_DSN: ${MAILER_DSN:?DSN de messagerie requis}
+      LOCK_DSN: postgresql+advisory://${POSTGRES_USER:-focusyn}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB:-focusyn}
+      DEFAULT_URI: ${DEFAULT_URI:-https://focusyn.fr}
+      SERVER_NAME: ${SERVER_NAME:-focusyn.fr}
+      # Applique les migrations au démarrage du conteneur web (et de lui seul).
+      RUN_MIGRATIONS: 1
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      database:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      target: prod
+    restart: unless-stopped
+    command:
+      - php
+      - bin/console
+      - messenger:consume
+      - async
+      - scheduler_default
+      - --time-limit=3600
+      - --memory-limit=192M
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: 0
+      APP_SECRET: ${APP_SECRET:?APP_SECRET est requis}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-focusyn}:${POSTGRES_PASSWORD:?mot de passe requis}@database:5432/${POSTGRES_DB:-focusyn}?serverVersion=17&charset=utf8
+      MESSENGER_TRANSPORT_DSN: doctrine://default?auto_setup=0
+      MAILER_DSN: ${MAILER_DSN:?DSN de messagerie requis}
+      DEFAULT_URI: ${DEFAULT_URI:-https://focusyn.fr}
+    depends_on:
+      database:
+        condition: service_healthy
+      app:
+        condition: service_started
+
+  database:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-focusyn}
+      POSTGRES_USER: ${POSTGRES_USER:-focusyn}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?mot de passe requis}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-focusyn}", "-U", "${POSTGRES_USER:-focusyn}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+
+volumes:
+  caddy_data:
+  caddy_config:
+  database_data:

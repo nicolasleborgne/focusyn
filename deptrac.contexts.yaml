@@ -1,0 +1,51 @@
+# Étanchéité entre contextes bornés.
+# Exécuter : vendor/bin/deptrac analyse --config-file=deptrac.contexts.yaml
+#
+# Un contexte ne connaît que lui-même et le noyau partagé. Toute communication
+# entre contextes passe par un événement de domaine ou par un port déclaré dans
+# la couche Application — jamais par un appel direct à une classe voisine.
+deptrac:
+    paths:
+        - ./src
+    layers:
+        -   name: Shared
+            collectors: [{ type: directory, value: src/Shared/.* }]
+        -   name: Identity
+            collectors: [{ type: directory, value: src/Identity/.* }]
+        -   name: Organization
+            collectors: [{ type: directory, value: src/Organization/.* }]
+        -   name: Notebook
+            collectors: [{ type: directory, value: src/Notebook/.* }]
+        -   name: Task
+            collectors: [{ type: directory, value: src/Task/.* }]
+        -   name: Reminder
+            collectors: [{ type: directory, value: src/Reminder/.* }]
+        -   name: Assistant
+            collectors: [{ type: directory, value: src/Assistant/.* }]
+        -   name: Billing
+            collectors: [{ type: directory, value: src/Billing/.* }]
+        -   name: Privacy
+            collectors: [{ type: directory, value: src/Privacy/.* }]
+        -   name: Kernel
+            collectors: [{ type: classNameRegex, value: '#^App\\Kernel$#' }]
+
+    ruleset:
+        Shared: ~
+        Identity: [Shared]
+        Organization: [Shared]
+        Notebook: [Shared]
+        Task: [Shared]
+        Reminder: [Shared]
+        Assistant: [Shared]
+        Billing: [Shared]
+        Privacy: [Shared]
+        Kernel:
+            - Shared
+            - Identity
+            - Organization
+            - Notebook
+            - Task
+            - Reminder
+            - Assistant
+            - Billing
+            - Privacy

@@ -1,0 +1,253 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Design system — Focusyn{% endblock %}
+
+{% macro swatch(name, token) %}
+    <div style="display:flex;align-items:center;gap:var(--fx-space-4)">
+        <span style="width:28px;height:28px;flex:0 0 28px;border:1px solid var(--fx-border-faint);background:var({{ token }})"></span>
+        <span>
+            <span style="display:block;font-size:var(--fx-size-md);color:var(--fx-text-primary)">{{ name }}</span>
+            <span class="fx-meta fx-meta--xs">{{ token }}</span>
+        </span>
+    </div>
+{% endmacro %}
+
+{% block body %}
+{% import _self as ds %}
+<div class="fx-app">
+    <div class="fx-app__frame">
+        <main class="fx-app__main">
+            <header class="fx-header">
+                <span class="fx-header__crumb">Design system / référence</span>
+                <div class="fx-header__actions">
+                    <button type="button" class="fx-button fx-button--meta" data-fx-toggle-density>Densité</button>
+                </div>
+            </header>
+
+            <div class="fx-app__scroll">
+                <div class="fx-app__content fx-app__content--wide">
+
+                    <h1 class="fx-heading">Design system Focusyn</h1>
+                    <p class="fx-card__help" style="margin-top:var(--fx-space-4);max-width:60ch">
+                        Chaque bloc ci-dessous est nommé en BEM et n'utilise que des jetons sémantiques.
+                        Changer d'accent ou de densité ne modifie aucune règle de composant : seules les
+                        variables portées par <code class="fx-prose__code">&lt;html&gt;</code> changent.
+                    </p>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Accents</p>
+                        <div style="display:flex;gap:var(--fx-space-4);margin-top:var(--fx-space-6)">
+                            {% for key, label in accents %}
+                                <button type="button" class="fx-chip" data-fx-accent-choice="{{ key }}">
+                                    <span style="width:12px;height:12px;border-radius:var(--fx-radius-round);background:var(--fx-accent-{{ key }})"></span>
+                                    {{ label }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Surfaces et bordures</p>
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--fx-space-6);margin-top:var(--fx-space-6)">
+                            {{ ds.swatch('Page', '--fx-surface-page') }}
+                            {{ ds.swatch('Application', '--fx-surface-app') }}
+                            {{ ds.swatch('Barre latérale', '--fx-surface-sidebar') }}
+                            {{ ds.swatch('Creux', '--fx-surface-sunken') }}
+                            {{ ds.swatch('Bordure ténue', '--fx-border-faint') }}
+                            {{ ds.swatch('Bordure', '--fx-border-default') }}
+                            {{ ds.swatch('Bordure marquée', '--fx-border-strong') }}
+                            {{ ds.swatch('Accent', '--fx-accent') }}
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Typographie</p>
+                        <div style="display:flex;flex-direction:column;gap:var(--fx-space-6);margin-top:var(--fx-space-6)">
+                            <span class="fx-heading">Titre de page — Newsreader 31 px</span>
+                            <span style="font-size:var(--fx-size-nav)">Interface — Archivo 13,5 px</span>
+                            <span class="fx-meta">Métadonnée — JetBrains Mono 11 px</span>
+                            <span class="fx-eyebrow">Étiquette de section</span>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Boutons</p>
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--fx-space-4);margin-top:var(--fx-space-6)">
+                            <button type="button" class="fx-button fx-button--primary">Enregistrer</button>
+                            <button type="button" class="fx-button fx-button--ghost">Annuler</button>
+                            <button type="button" class="fx-button fx-button--small">Régénérer</button>
+                            <button type="button" class="fx-button fx-button--danger">Tout effacer</button>
+                            <button type="button" class="fx-button fx-button--danger is-armed">Confirmer</button>
+                            <button type="button" class="fx-button" disabled>Actuel</button>
+                            <button type="button" class="fx-button fx-button--meta">
+                                <span class="fx-switch fx-switch--small">
+                                    <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                                </span>
+                                Deep focus
+                            </button>
+                        </div>
+                        <div style="max-width:226px;margin-top:var(--fx-space-6)">
+                            <button type="button" class="fx-button fx-button--create">
+                                <span class="fx-button__icon">+</span>
+                                Créer
+                                <span class="fx-button__caret">▾</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Étiquettes</p>
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--fx-space-4);margin-top:var(--fx-space-6)">
+                            <button type="button" class="fx-chip fx-chip--selected">Toutes</button>
+                            <button type="button" class="fx-chip">Sommeil <span class="fx-chip__count">2</span></button>
+                            <button type="button" class="fx-chip">Café <span class="fx-chip__count">1</span></button>
+                            <button type="button" class="fx-pill fx-pill--selected">Confortable</button>
+                            <button type="button" class="fx-pill">Compact</button>
+                            <button type="button" class="fx-reminder-chip">Rappel</button>
+                            <button type="button" class="fx-reminder-chip fx-reminder-chip--set">6 sept. 09:00</button>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Contrôles</p>
+                        <div style="display:flex;flex-direction:column;gap:var(--fx-space-6);margin-top:var(--fx-space-6);max-width:520px">
+                            <label class="fx-switch">
+                                <input type="checkbox" class="fx-switch__input" checked>
+                                <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                                <span>
+                                    <span class="fx-switch__label">Corps en serif</span>
+                                    <span class="fx-switch__help">Newsreader pour la prose des notes.</span>
+                                </span>
+                            </label>
+                            <label class="fx-switch">
+                                <input type="checkbox" class="fx-switch__input">
+                                <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                                <span class="fx-switch__label">Statistiques d'usage</span>
+                            </label>
+
+                            <div style="display:flex;align-items:flex-start;gap:var(--fx-space-5)">
+                                <span class="fx-check fx-check--done"><span class="fx-check__tick">✓</span></span>
+                                <span style="font-size:var(--fx-size-xl);color:var(--fx-text-disabled);text-decoration:line-through">Peser la dose au 0,1 g</span>
+                            </div>
+                            <div style="display:flex;align-items:flex-start;gap:var(--fx-space-5)">
+                                <span class="fx-check"><span class="fx-check__tick">✓</span></span>
+                                <span style="font-size:var(--fx-size-xl);color:var(--fx-text-body)">Écrire la synthèse Sommeil</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Champs</p>
+                        <div style="display:flex;flex-direction:column;gap:var(--fx-space-8);margin-top:var(--fx-space-6);max-width:460px">
+                            <div class="fx-field">
+                                <label class="fx-field__label" for="ds-mail">Courriel</label>
+                                <input id="ds-mail" type="email" class="fx-field__control" value="moi@focusyn.fr">
+                            </div>
+                            <div class="fx-field">
+                                <label class="fx-field__label" for="ds-key">Clé API Anthropic</label>
+                                <input id="ds-key" type="text" class="fx-field__control fx-field__control--mono" placeholder="sk-ant-…">
+                                <span class="fx-field__help">Chiffrée au repos, jamais renvoyée au navigateur.</span>
+                            </div>
+                            <div class="fx-field">
+                                <label class="fx-field__label" for="ds-code">Code à six chiffres</label>
+                                <input id="ds-code" type="text" class="fx-field__control fx-field__control--code" value="482 913">
+                                <span class="fx-field__error">Le code fait 6 chiffres.</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Listes et cartes</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--fx-space-8);margin-top:var(--fx-space-6)">
+                            <div>
+                                <button type="button" class="fx-note-row">
+                                    <p class="fx-note-row__title">Le sommeil biphasique n'est pas une invention moderne</p>
+                                    <p class="fx-note-row__excerpt">Avant l'éclairage artificiel, la nuit se coupait en deux.</p>
+                                    <span class="fx-note-row__footer">
+                                        <span class="fx-note-row__meta">Sommeil · Histoire</span>
+                                        <span class="fx-note-row__meta">il y a 2 h</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="fx-note-row">
+                                    <p class="fx-note-row__title">Extraction : pourquoi 1:16 n'est pas une loi</p>
+                                    <p class="fx-note-row__excerpt">Le ratio ne décide de rien tout seul.</p>
+                                    <span class="fx-note-row__footer">
+                                        <span class="fx-note-row__meta">Café</span>
+                                        <span class="fx-note-row__meta">hier</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="fx-card">
+                                <div class="fx-card__header">
+                                    <h2 class="fx-card__title">Protocole sommeil</h2>
+                                    <span class="fx-note-row__meta" style="margin-left:auto">3/4</span>
+                                </div>
+                                <div class="fx-meter"><span class="fx-meter__value" style="width:75%"></span></div>
+                                <p class="fx-card__help" style="margin-top:var(--fx-space-6)">Deux semaines sans écran après 21 h.</p>
+                                <p class="fx-card__status">Rappel enregistré pour le 6 sept. 09:00.</p>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:var(--fx-space-16);margin-top:var(--fx-space-12)">
+                            <div class="fx-stat"><div class="fx-stat__value">8</div><div class="fx-stat__label">notes</div></div>
+                            <div class="fx-stat"><div class="fx-stat__value">6</div><div class="fx-stat__label">obsessions suivies</div></div>
+                            <div class="fx-stat"><div class="fx-stat__value">2 140</div><div class="fx-stat__label">mots ce mois</div></div>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20)">
+                        <p class="fx-eyebrow">Prose — marques markdown visibles</p>
+                        <div class="fx-prose" style="margin-top:var(--fx-space-6);max-width:58ch">
+                            <p class="fx-prose__line fx-prose__line--h1"><span class="fx-prose__mark"># </span>Deux sommeils</p>
+                            <p class="fx-prose__line fx-prose__line--paragraph">Avant l'éclairage artificiel, la nuit se coupait en deux. Un <span class="fx-prose__emphasis"><span class="fx-prose__mark">*</span>premier sommeil<span class="fx-prose__mark">*</span></span>, une veille d'une heure ou deux, puis un <span class="fx-prose__strong"><span class="fx-prose__mark">**</span>second sommeil<span class="fx-prose__mark">**</span></span>.</p>
+                            <p class="fx-prose__line fx-prose__line--quote"><span class="fx-prose__mark">&gt; </span>La veille du milieu de la nuit n'était pas une insomnie.</p>
+                            <p class="fx-prose__line fx-prose__line--h2"><span class="fx-prose__mark">## </span>Ce que ça change</p>
+                            <p class="fx-prose__line fx-prose__line--list"><span class="fx-prose__mark">- </span>Se réveiller à 3 h n'est pas un symptôme</p>
+                            <p class="fx-prose__line fx-prose__line--list"><span class="fx-prose__mark">- </span>La lumière est la variable, pas la volonté</p>
+                            <p class="fx-prose__line fx-prose__line--rule"></p>
+                            <p class="fx-prose__line fx-prose__line--paragraph">À croiser avec la note sur le <span class="fx-prose__code"><span class="fx-prose__mark">`</span>carnet de 3 mois<span class="fx-prose__mark">`</span></span>.</p>
+                        </div>
+                    </section>
+
+                    {# ---------------------------------------------------------- #}
+                    <section style="margin-top:var(--fx-space-20);margin-bottom:var(--fx-space-24)">
+                        <p class="fx-eyebrow">Surfaces flottantes</p>
+                        <div style="display:flex;gap:var(--fx-space-12);margin-top:var(--fx-space-6);align-items:flex-start">
+                            <div style="position:relative;width:226px;height:120px">
+                                <div class="fx-menu" style="bottom:auto;top:0">
+                                    <button type="button" class="fx-menu__item">Note <span class="fx-menu__hint">markdown</span></button>
+                                    <button type="button" class="fx-menu__item">Liste de tâches <span class="fx-menu__hint">à cocher</span></button>
+                                </div>
+                            </div>
+                            <div class="fx-dialog__panel" style="max-width:380px">
+                                <h2 class="fx-dialog__title">Rappel</h2>
+                                <p class="fx-card__help">Écrire la synthèse Sommeil</p>
+                                <div class="fx-dialog__body">
+                                    <div class="fx-field__row">
+                                        <button type="button" class="fx-pill">Ce soir 20 h</button>
+                                        <button type="button" class="fx-pill fx-pill--selected">Demain 9 h</button>
+                                        <button type="button" class="fx-pill">Dans 3 jours</button>
+                                    </div>
+                                </div>
+                                <div class="fx-dialog__actions">
+                                    <button type="button" class="fx-button fx-button--primary fx-button--block">Notifier</button>
+                                    <button type="button" class="fx-button fx-button--block">Ajouter au calendrier</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

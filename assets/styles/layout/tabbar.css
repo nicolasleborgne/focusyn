@@ -1,0 +1,44 @@
+/**
+ * Barre d'onglets basse, affichée uniquement dans le gabarit mobile.
+ */
+
+.fx-tabbar {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: stretch;
+    border-top: 1px solid var(--fx-border-faint);
+    background: var(--fx-surface-app);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.fx-tabbar__item {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fx-space-1);
+    padding: var(--fx-space-4) var(--fx-space-1);
+    cursor: pointer;
+}
+
+.fx-tabbar__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a9a9a5;
+}
+
+.fx-tabbar__label {
+    font-size: var(--fx-size-2xs);
+    letter-spacing: 0.01em;
+    color: var(--fx-text-muted);
+}
+
+.fx-tabbar__item--current .fx-tabbar__icon {
+    color: var(--fx-accent);
+}
+
+.fx-tabbar__item--current .fx-tabbar__label {
+    color: var(--fx-text-primary);
+}

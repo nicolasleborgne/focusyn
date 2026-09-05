@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Focusyn">
+    <g transform="rotate(-38 12 12)">
+        <clipPath id="pill">
+            <rect x="6.5" y="0" width="11" height="24" rx="5.5"/>
+        </clipPath>
+        <g clip-path="url(#pill)">
+            <rect x="6.5" y="0" width="11" height="12" fill="#1f1f1f"/>
+            <rect x="6.5" y="12" width="11" height="12" fill="#dcdcd8"/>
+        </g>
+    </g>
+</svg>

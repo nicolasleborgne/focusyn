@@ -1,0 +1,51 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+{$SERVER_NAME:localhost} {
+	log {
+		format filter {
+			request>uri query {
+				replace authorization REDACTED
+			}
+		}
+	}
+
+	root {$SERVER_ROOT:public/}
+	encode zstd br gzip
+
+	# Le service worker doit pouvoir contrôler toute l'origine et ne jamais
+	# être servi depuis le cache HTTP : sans cela, une mise à jour de la PWA
+	# peut rester invisible pendant des heures.
+	@service_worker path /sw.js
+	header @service_worker {
+		Cache-Control "no-cache"
+		Service-Worker-Allowed "/"
+	}
+
+	# Les fichiers versionnés par AssetMapper portent un condensat dans leur
+	# nom : ils sont immuables et peuvent être mis en cache un an.
+	@immutable path_regexp ^/assets/.+-[A-Za-z0-9_-]{7,}\.(css|js|svg|png|woff2?)$
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+
+	php_server {
+		#worker /app/public/index.php
+	}
+}
+
+import Caddyfile.d/*.caddyfile

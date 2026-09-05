@@ -1,0 +1,137 @@
+/**
+ * Prose des notes — rendu markdown ligne à ligne.
+ *
+ * Particularité de Focusyn : le markdown n'est pas converti en HTML « propre ».
+ * Chaque ligne source garde ses marques (`##`, `>`, `**`) affichées en
+ * monospace pâle, à une opacité réglable. L'éditeur et le panneau d'aperçu
+ * partagent donc exactement ces règles ; seule `--fx-markdown-mark-opacity`
+ * les distingue (l'aperçu la force à 0).
+ *
+ * Les marges verticales sont multipliées par `--fx-prose-density`
+ * (1 = confortable, 0,72 = compact), réglable depuis les réglages.
+ */
+
+.fx-prose {
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-prose-body);
+    line-height: var(--fx-leading-prose);
+    color: var(--fx-text-body);
+}
+
+.fx-prose__line {
+    position: relative;
+    margin: 0;
+    cursor: text;
+    transition: opacity var(--fx-duration-slow) var(--fx-easing);
+}
+
+/* En mode focus profond, les lignes non éditées s'estompent. */
+.fx-prose__line--dimmed {
+    opacity: 0.28;
+}
+
+.fx-prose__mark {
+    font-family: var(--fx-font-meta);
+    font-weight: var(--fx-weight-regular);
+    font-style: normal;
+    color: var(--fx-ink-100);
+    opacity: var(--fx-markdown-mark-opacity);
+}
+
+.fx-prose__line--paragraph {
+    margin-bottom: calc(16px * var(--fx-prose-density));
+}
+
+.fx-prose__line--h1 {
+    margin: calc(26px * var(--fx-prose-density)) 0 calc(12px * var(--fx-prose-density));
+    font-size: var(--fx-prose-h1);
+    font-weight: var(--fx-weight-semibold);
+    letter-spacing: var(--fx-tracking-snug);
+    line-height: var(--fx-leading-tight);
+    color: var(--fx-text-title);
+}
+
+.fx-prose__line--h2 {
+    margin: calc(24px * var(--fx-prose-density)) 0 calc(10px * var(--fx-prose-density));
+    font-size: var(--fx-prose-h2);
+    font-weight: var(--fx-weight-semibold);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: #141414;
+}
+
+.fx-prose__line--h3 {
+    margin: calc(20px * var(--fx-prose-density)) 0 calc(8px * var(--fx-prose-density));
+    font-size: var(--fx-prose-h3);
+    font-weight: var(--fx-weight-strong);
+    line-height: var(--fx-leading-snug);
+    color: var(--fx-ink-800);
+}
+
+.fx-prose__line--quote {
+    margin-bottom: calc(16px * var(--fx-prose-density));
+    padding-left: var(--fx-space-8);
+    border-left: 2px solid var(--fx-neutral-700);
+    font-style: italic;
+    line-height: var(--fx-leading-relaxed);
+    color: var(--fx-text-quote);
+}
+
+.fx-prose__line--list {
+    margin-bottom: calc(7px * var(--fx-prose-density));
+    padding-left: var(--fx-space-10);
+    text-indent: calc(-1 * var(--fx-space-10));
+    line-height: var(--fx-leading-relaxed);
+}
+
+.fx-prose__line--code {
+    margin: 0;
+    padding: 2px var(--fx-space-6);
+    background: var(--fx-surface-code);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-base);
+    line-height: 1.65;
+    color: var(--fx-text-secondary);
+}
+
+.fx-prose__line--rule {
+    height: 0;
+    margin: calc(26px * var(--fx-prose-density)) 0;
+    border-top: 1px solid var(--fx-neutral-450);
+}
+
+.fx-prose__line--blank {
+    height: calc(12px * var(--fx-prose-density));
+}
+
+/* --- Segments en ligne ---------------------------------------------------- */
+
+.fx-prose__strong {
+    font-weight: var(--fx-weight-strong);
+    color: var(--fx-text-title);
+}
+
+.fx-prose__emphasis {
+    font-style: italic;
+}
+
+.fx-prose__code {
+    padding: 1.5px var(--fx-space-3);
+    border-radius: var(--fx-radius-sm);
+    background: var(--fx-surface-muted);
+    font-family: var(--fx-font-meta);
+    font-size: 0.85em;
+    color: var(--fx-text-body);
+}
+
+.fx-prose__link {
+    text-decoration: underline;
+    text-decoration-color: #c0c0bc;
+    text-underline-offset: 3px;
+    color: inherit;
+}
+
+/* Aperçu : mêmes règles, marques masquées. */
+.fx-prose--clean {
+    --fx-markdown-mark-opacity: 0;
+}

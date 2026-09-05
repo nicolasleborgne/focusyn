@@ -1,0 +1,31 @@
+/**
+ * Barre supérieure : fil d'Ariane, bascule d'appareil, bascule focus.
+ */
+
+.fx-header {
+    display: flex;
+    flex: 0 0 var(--fx-header-height);
+    align-items: center;
+    gap: var(--fx-space-6);
+    height: var(--fx-header-height);
+    padding: 0 var(--fx-space-10);
+    border-bottom: 1px solid var(--fx-border-faint);
+    background: var(--fx-surface-app);
+}
+
+.fx-header__crumb {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    letter-spacing: 0.04em;
+    color: var(--fx-text-disabled);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fx-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+    margin-left: auto;
+}

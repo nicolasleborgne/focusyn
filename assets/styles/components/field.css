@@ -1,0 +1,74 @@
+/**
+ * Champs de formulaire.
+ *
+ * `--bare` supprime le contour : utilisé par la barre de recherche, l'ajout de
+ * tâche et le titre de note, où le champ doit disparaître dans la page.
+ */
+
+.fx-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-3);
+}
+
+.fx-field__label {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    letter-spacing: var(--fx-tracking-caps);
+    text-transform: uppercase;
+    color: var(--fx-text-faint);
+}
+
+.fx-field__control {
+    width: 100%;
+    min-width: 0;
+    padding: var(--fx-space-5) var(--fx-space-5);
+    border: 1px solid var(--fx-border-subtle);
+    border-radius: 0;
+    outline: none;
+    background: var(--fx-surface-app);
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-body);
+}
+
+.fx-field__control:focus {
+    border-color: var(--fx-accent);
+}
+
+.fx-field__control::placeholder {
+    color: var(--fx-text-disabled);
+}
+
+.fx-field__control--mono {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+}
+
+.fx-field__control--code {
+    font-family: var(--fx-font-meta);
+    letter-spacing: 0.16em;
+}
+
+.fx-field__control--bare {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.fx-field__help {
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-muted);
+}
+
+.fx-field__error {
+    font-size: var(--fx-size-md);
+    color: var(--fx-danger);
+}
+
+.fx-field__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--fx-space-4);
+}

@@ -1,0 +1,114 @@
+/**
+ * Cartes et lignes de liste.
+ *
+ * `fx-card`      conteneur générique des blocs de réglages ;
+ * `fx-note-row`  entrée de la bibliothèque et des résultats de recherche ;
+ * `fx-stat`      compteur de l'accueil ;
+ * `fx-list-card` aperçu d'une liste de tâches.
+ */
+
+.fx-card {
+    padding: var(--fx-space-8);
+    border: 1px solid var(--fx-border-faint);
+    background: var(--fx-surface-app);
+}
+
+.fx-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+    margin-bottom: var(--fx-space-6);
+}
+
+.fx-card__title {
+    margin: 0;
+    font-size: var(--fx-size-base);
+    font-weight: var(--fx-weight-semibold);
+    color: var(--fx-text-primary);
+}
+
+.fx-card__help {
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-muted);
+}
+
+.fx-card__status {
+    margin-top: var(--fx-space-4);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-meta);
+}
+
+/* --- Ligne de note --------------------------------------------------------- */
+
+.fx-note-row {
+    display: block;
+    width: 100%;
+    padding: var(--fx-space-7) 0;
+    border-bottom: 1px solid var(--fx-border-faint);
+    text-align: left;
+    cursor: pointer;
+}
+
+.fx-note-row:hover .fx-note-row__title {
+    color: var(--fx-text-title);
+}
+
+.fx-note-row__title {
+    margin: 0 0 var(--fx-space-2);
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-prose-h3);
+    font-weight: var(--fx-weight-regular);
+    line-height: var(--fx-leading-snug);
+    color: var(--fx-text-primary);
+}
+
+.fx-note-row__excerpt {
+    margin: 0;
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-size-xl);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-meta);
+}
+
+.fx-note-row__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+    margin-top: var(--fx-space-3);
+}
+
+.fx-note-row__meta {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+}
+
+/* --- Compteur de l'accueil -------------------------------------------------- */
+
+.fx-stat__value {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-prose-h2);
+    font-weight: var(--fx-weight-regular);
+    color: var(--fx-text-title);
+}
+
+.fx-stat__label {
+    margin-top: var(--fx-space-1);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-muted);
+}
+
+/* --- Jauge de progression ---------------------------------------------------- */
+
+.fx-meter {
+    height: 2px;
+    background: var(--fx-border-faint);
+}
+
+.fx-meter__value {
+    display: block;
+    height: 2px;
+    background: var(--fx-accent);
+    opacity: 0.45;
+}

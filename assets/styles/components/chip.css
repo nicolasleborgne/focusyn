@@ -1,0 +1,88 @@
+/**
+ * Étiquettes cliquables.
+ *
+ * `fx-chip`          pastille arrondie des obsessions et des filtres ;
+ * `fx-pill`          bascule monospace des réglages (densité, opacité, modèle) ;
+ * `fx-reminder-chip` pastille de rappel accolée à une note ou une tâche.
+ */
+
+.fx-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fx-space-3);
+    padding: var(--fx-space-3) var(--fx-space-6);
+    border: 1px solid var(--fx-border-subtle);
+    border-radius: var(--fx-radius-pill);
+    background: transparent;
+    font-size: var(--fx-size-md);
+    color: var(--fx-ink-400);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--fx-duration-fast) var(--fx-easing),
+        border-color var(--fx-duration-fast) var(--fx-easing),
+        color var(--fx-duration-fast) var(--fx-easing);
+}
+
+.fx-chip:hover {
+    border-color: var(--fx-border-contrast);
+}
+
+.fx-chip--selected {
+    border-color: var(--fx-accent);
+    background: var(--fx-accent);
+    color: var(--fx-accent-contrast);
+}
+
+.fx-chip__count {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+}
+
+.fx-chip--selected .fx-chip__count {
+    color: currentcolor;
+    opacity: 0.7;
+}
+
+.fx-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--fx-space-3) var(--fx-space-4);
+    border: 1px solid var(--fx-border-subtle);
+    border-radius: var(--fx-radius-md);
+    background: transparent;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    color: var(--fx-ink-600);
+    cursor: pointer;
+}
+
+.fx-pill--selected {
+    border-color: var(--fx-ink-800);
+    background: var(--fx-ink-800);
+    color: var(--fx-text-on-accent);
+}
+
+.fx-reminder-chip {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    min-height: 24px;
+    padding: var(--fx-space-3) var(--fx-space-5);
+    border: 1px solid var(--fx-border-strong);
+    border-radius: var(--fx-radius-md);
+    background: var(--fx-surface-sunken);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    letter-spacing: 0.04em;
+    color: var(--fx-text-meta);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Un rappel est enregistré : la pastille se teinte de l'accent. */
+.fx-reminder-chip--set {
+    border-color: var(--fx-accent);
+    background: transparent;
+    color: var(--fx-accent);
+}

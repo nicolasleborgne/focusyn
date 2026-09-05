@@ -1,0 +1,133 @@
+/**
+ * Bouton — bloc `fx-button`.
+ *
+ * Variantes : `--primary` (fond accent), `--ghost` (contour discret, défaut),
+ * `--danger` (effacement RGPD), `--meta` (monospace capitales, bascule focus),
+ * `--block` (pleine largeur des formulaires d'authentification).
+ */
+
+.fx-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fx-space-4);
+    padding: var(--fx-space-5) var(--fx-space-6);
+    border: 1px solid var(--fx-border-default);
+    border-radius: var(--fx-radius-lg);
+    background: transparent;
+    font-family: var(--fx-font-ui);
+    font-size: var(--fx-size-base);
+    line-height: 1;
+    color: var(--fx-text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background var(--fx-duration-fast) var(--fx-easing),
+        border-color var(--fx-duration-fast) var(--fx-easing),
+        color var(--fx-duration-fast) var(--fx-easing);
+}
+
+.fx-button:hover {
+    border-color: var(--fx-border-strong);
+    color: var(--fx-text-primary);
+}
+
+.fx-button[disabled],
+.fx-button[aria-disabled="true"] {
+    color: var(--fx-text-disabled);
+    border-color: var(--fx-border-faint);
+    cursor: default;
+}
+
+.fx-button--primary {
+    border-color: var(--fx-accent);
+    background: var(--fx-accent);
+    color: var(--fx-accent-contrast);
+}
+
+.fx-button--primary:hover {
+    border-color: var(--fx-accent);
+    color: var(--fx-accent-contrast);
+    filter: brightness(1.15);
+}
+
+.fx-button--ghost {
+    border-color: var(--fx-border-default);
+    background: transparent;
+}
+
+.fx-button--danger {
+    border-color: var(--fx-border-default);
+    color: var(--fx-danger);
+}
+
+.fx-button--danger:hover {
+    border-color: var(--fx-danger);
+    color: var(--fx-danger);
+}
+
+/* Second clic : l'effacement est armé, le bouton devient plein. */
+.fx-button--danger.is-armed {
+    border-color: var(--fx-danger);
+    background: var(--fx-danger);
+    color: var(--fx-danger-contrast);
+}
+
+.fx-button--meta {
+    gap: var(--fx-space-4);
+    padding: var(--fx-space-3) var(--fx-space-5);
+    border-radius: var(--fx-radius-xl);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    letter-spacing: var(--fx-tracking-wide);
+    text-transform: uppercase;
+    color: var(--fx-ink-200);
+}
+
+/* En mode focus profond, la bascule s'efface : plus de contour, texte pâle. */
+.fx-button--meta.is-active {
+    border-color: transparent;
+    color: var(--fx-text-disabled);
+}
+
+.fx-button--create {
+    justify-content: flex-start;
+    width: 100%;
+    padding: var(--fx-space-4) var(--fx-space-6);
+    border-color: var(--fx-border-strong);
+    border-radius: var(--fx-radius-xl);
+    background: var(--fx-neutral-50);
+    color: var(--fx-ink-700);
+}
+
+.fx-button--create.is-open {
+    border-color: var(--fx-accent);
+    background: var(--fx-accent);
+    color: var(--fx-accent-contrast);
+}
+
+.fx-button--block {
+    width: 100%;
+    padding: var(--fx-space-6) var(--fx-space-6);
+    font-size: var(--fx-size-nav);
+}
+
+.fx-button--small {
+    padding: var(--fx-space-3) var(--fx-space-6);
+    font-size: var(--fx-size-md);
+}
+
+.fx-button__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xl);
+    line-height: 1;
+}
+
+.fx-button__caret {
+    margin-left: auto;
+    font-size: 9px;
+    color: currentcolor;
+    opacity: 0.65;
+}

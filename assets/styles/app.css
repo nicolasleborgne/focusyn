@@ -1,0 +1,39 @@
+/**
+ * Design system Focusyn.
+ *
+ * Ordre des couches — jamais inversé, chaque couche ne consomme que la précédente :
+ *   1. tokens/primitives  valeurs brutes (teintes, échelles, durées) ;
+ *   2. tokens/semantic    rôles (surface, texte, bordure, accent) ;
+ *   3. base               remise à zéro et typographie ;
+ *   4. layout             coquille, barre latérale, en-tête, onglets ;
+ *   5. components         blocs BEM réutilisables.
+ *
+ * Convention de nommage : BEM strict, préfixe `fx-`.
+ *   bloc        .fx-button
+ *   élément     .fx-button__icon
+ *   modificateur .fx-button--primary
+ *   état        .is-open, .is-active  (posé par Stimulus, jamais par le serveur)
+ *
+ * Un composant ne référence jamais une primitive : uniquement des jetons
+ * sémantiques. C'est ce qui rendra un thème sombre possible sans réécriture.
+ */
+
+@import url("./tokens/primitives.css");
+@import url("./tokens/semantic.css");
+
+@import url("./base/reset.css");
+@import url("./base/typography.css");
+
+@import url("./layout/app-shell.css");
+@import url("./layout/sidebar.css");
+@import url("./layout/header.css");
+@import url("./layout/tabbar.css");
+
+@import url("./components/avatar.css");
+@import url("./components/button.css");
+@import url("./components/card.css");
+@import url("./components/chip.css");
+@import url("./components/field.css");
+@import url("./components/overlay.css");
+@import url("./components/prose.css");
+@import url("./components/switch.css");

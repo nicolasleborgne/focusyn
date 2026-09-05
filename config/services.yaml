@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Toutes les classes de src/ sont candidates au conteneur, SAUF le domaine :
+    # les agrégats, objets valeur et interfaces de dépôt sont du PHP pur, construits
+    # par le code métier et jamais injectés. Cette exclusion est la première ligne de
+    # défense de la clean architecture — elle est doublée par deptrac.
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'
+            - '../src/*/Domain/'

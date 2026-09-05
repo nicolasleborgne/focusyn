@@ -1,0 +1,55 @@
+/**
+ * Pastille de compte et marque Focusyn.
+ */
+
+.fx-avatar {
+    display: flex;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--fx-radius-round);
+    background: var(--fx-accent);
+    font-size: var(--fx-size-sm);
+    font-weight: var(--fx-weight-semibold);
+    color: var(--fx-accent-contrast);
+}
+
+.fx-avatar--large {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+}
+
+/* Marque : une gélule inclinée dont la moitié haute prend l'accent. */
+.fx-mark {
+    display: flex;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.fx-mark__pill {
+    display: flex;
+    flex: 0 0 11px;
+    flex-direction: column;
+    width: 11px;
+    height: 24px;
+    overflow: hidden;
+    border-radius: var(--fx-radius-full);
+    transform: rotate(-38deg);
+}
+
+.fx-mark__cap {
+    flex: 1;
+    background: var(--fx-accent);
+}
+
+.fx-mark__body {
+    flex: 1;
+    background: var(--fx-neutral-700);
+}

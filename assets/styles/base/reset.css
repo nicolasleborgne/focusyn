@@ -1,0 +1,79 @@
+/**
+ * Remise à zéro — reprend les règles globales de la maquette et rien de plus.
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--fx-surface-page);
+}
+
+body {
+    font-family: var(--fx-font-ui);
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-primary);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizelegibility;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+::selection {
+    background: var(--fx-surface-selection);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #dcdcda;
+    border: 3px solid transparent;
+    border-radius: var(--fx-radius-xl);
+    background-clip: content-box;
+}
+
+/* Anneau de focus unifié : visible au clavier, discret à la souris. */
+:focus-visible {
+    outline: none;
+    box-shadow: var(--fx-focus-ring);
+    border-radius: var(--fx-radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@keyframes fx-caret {
+    0%,
+    45% { opacity: 1; }
+    55%,
+    100% { opacity: 0; }
+}

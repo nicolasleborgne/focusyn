@@ -1,0 +1,93 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        server_version: '17'
+        charset: utf8
+        profiling_collect_backtrace: '%kernel.debug%'
+
+    orm:
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        identity_generation_preferences:
+            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+
+        # Pas de découverte automatique : chaque contexte déclare explicitement son
+        # mapping. Le type est TOUJOURS `xml` — les agrégats du domaine ne portent
+        # aucun attribut Doctrine, la correspondance objet/table vit dans
+        # l'infrastructure du contexte concerné.
+        auto_mapping: false
+        mappings:
+            Identity:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Identity/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Identity\Domain\Model'
+                alias: Identity
+            Organization:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Organization/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Organization\Domain\Model'
+                alias: Organization
+            Notebook:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Notebook/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Notebook\Domain\Model'
+                alias: Notebook
+            Task:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Task/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Task\Domain\Model'
+                alias: Task
+            Reminder:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Reminder/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Reminder\Domain\Model'
+                alias: Reminder
+            Assistant:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Assistant/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Assistant\Domain\Model'
+                alias: Assistant
+            Billing:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Billing/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Billing\Domain\Model'
+                alias: Billing
+            Privacy:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Privacy/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Privacy\Domain\Model'
+                alias: Privacy
+
+when@test:
+    doctrine:
+        dbal:
+            # "TEST_TOKEN" est renseigné par ParaTest lors des exécutions parallèles.
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system
