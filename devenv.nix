@@ -72,7 +72,13 @@
   # ---------------------------------------------------------------------------
   scripts = {
     console.exec = "php bin/console \"$@\"";
+    # Serveur de développement via le CLI Symfony : routage des variables
+    # d'environnement, journal unifié PHP + serveur, et détection automatique
+    # des services démarrés par devenv.
     serve.exec = "symfony server:start --no-tls --port=8000";
+    serve-d.exec = "symfony server:start --no-tls --port=8000 --daemon";
+    unserve.exec = "symfony server:stop";
+    logs.exec = "symfony server:log";
     tests.exec = "vendor/bin/phpunit \"$@\"";
     stan.exec = "vendor/bin/phpstan analyse --memory-limit=1G \"$@\"";
     cs.exec = "vendor/bin/php-cs-fixer fix \"$@\"";

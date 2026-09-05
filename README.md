@@ -27,7 +27,9 @@ automatiquement à l'entrée dans le dossier.
 
 | Commande | Effet |
 | --- | --- |
-| `serve` | Serveur de développement sur le port 8000 |
+| `serve` | Serveur de développement sur le port 8000 (CLI Symfony) |
+| `serve-d` / `unserve` | Le même en arrière-plan, et son arrêt |
+| `logs` | Journal du serveur et de PHP |
 | `console <cmd>` | Raccourci vers `bin/console` |
 | `tests` | Suite complète PHPUnit |
 | `tests --testsuite=unit` | Une seule suite : `unit`, `integration` ou `functional` |
