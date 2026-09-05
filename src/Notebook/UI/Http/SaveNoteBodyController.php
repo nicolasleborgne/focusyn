@@ -6,6 +6,8 @@ namespace App\Notebook\UI\Http;
 
 use App\Notebook\Application\Command\RewriteNote\RewriteNote;
 use App\Notebook\Application\Exception\NoteNotFound;
+use App\Notebook\Application\Query\MarkdownOutline;
+use App\Notebook\Domain\Model\NoteBody;
 use App\Shared\Application\Command\CommandBus;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +30,7 @@ final class SaveNoteBodyController extends AbstractController
     public function __construct(
         private readonly CommandBus $commands,
         private readonly CsrfTokenManagerInterface $csrf,
+        private readonly MarkdownOutline $outline,
     ) {
     }
 
@@ -62,6 +65,12 @@ final class SaveNoteBodyController extends AbstractController
 
         return new JsonResponse([
             'savedAt' => $updatedAt instanceof DateTimeImmutable ? $updatedAt->format(\DATE_ATOM) : null,
+            // L'aperçu est rendu ici plutôt que reconstruit côté client : un
+            // second analyseur markdown finirait par diverger du premier.
+            'preview' => $this->renderView('notebook/_prose.html.twig', [
+                'lines' => $this->outline->lines(NoteBody::fromString($body), withMarks: false),
+                'marks' => false,
+            ]),
         ]);
     }
 }

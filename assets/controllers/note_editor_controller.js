@@ -54,7 +54,7 @@ const focusynTheme = () =>
     });
 
 export default class extends Controller {
-    static targets = ['host', 'status'];
+    static targets = ['host', 'status', 'preview'];
     static values = {
         body: String,
         saveUrl: String,
@@ -135,8 +135,16 @@ export default class extends Controller {
                 throw new Error(`HTTP ${response.status}`);
             }
 
+            const payload = await response.json();
+
             this.saved = body;
             this.announce(this.savedLabelValue);
+
+            // Le serveur renvoie l'aperçu déjà rendu : c'est le même analyseur
+            // que partout ailleurs, il ne peut pas diverger de l'éditeur.
+            if (this.hasPreviewTarget && typeof payload.preview === 'string') {
+                this.previewTarget.innerHTML = payload.preview;
+            }
         } catch (error) {
             console.error('[focusyn] sauvegarde impossible', error);
             // On garde la version locale : l'utilisateur peut réessayer en

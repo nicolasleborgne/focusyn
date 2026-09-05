@@ -4,6 +4,8 @@
 {% set crumb = 'shell.nav.library'|trans ~ ' / ' ~ note.title %}
 
 {% block page %}
+    <div class="fx-app__split">
+        <div class="fx-app__pane">
     <div class="fx-app__content fx-app__content--editor fx-note">
 
         {% for message in app.flashes('error') %}
@@ -66,5 +68,18 @@
             <input type="hidden" name="_token" value="{{ csrf_token('note-delete') }}">
             <button type="submit" class="fx-button fx-button--danger fx-button--small">{{ 'notebook.delete'|trans }}</button>
         </form>
+    </div>
+        </div>
+
+        {# L'aperçu se rafraîchit après chaque sauvegarde, à partir du rendu
+           produit par le serveur : un second analyseur en JavaScript créerait
+           une seconde vérité. #}
+        {% if display().previewPane %}
+            <aside class="fx-app__pane fx-app__pane--preview" aria-label="{{ 'notebook.preview'|trans }}">
+                <div class="fx-preview" data-note-editor-target="preview">
+                    {{ include('notebook/_prose.html.twig', { lines: preview, marks: false }) }}
+                </div>
+            </aside>
+        {% endif %}
     </div>
 {% endblock %}

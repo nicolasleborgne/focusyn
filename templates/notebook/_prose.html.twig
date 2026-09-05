@@ -1,0 +1,37 @@
+{#
+   Rendu d'une note, ligne à ligne.
+
+   Le markdown n'est pas converti : chaque ligne garde sa nature et, selon le
+   réglage, ses marques. Le même gabarit sert à l'aperçu (marques masquées) et
+   servira au rendu figé d'une note.
+#}
+<div class="fx-prose {{ marks|default(true) ? '' : 'fx-prose--clean' }}">
+    {%- for line in lines -%}
+        {%- set kind = {
+            'h1': 'fx-prose__line--h1',
+            'h2': 'fx-prose__line--h2',
+            'h3': 'fx-prose__line--h3',
+            'quote': 'fx-prose__line--quote',
+            'list': 'fx-prose__line--list',
+            'code': 'fx-prose__line--code',
+            'rule': 'fx-prose__line--rule',
+            'blank': 'fx-prose__line--blank',
+        }[line.kind]|default('fx-prose__line--paragraph') -%}
+
+        <p class="fx-prose__line {{ kind }}">
+            {%- if line.mark is not empty %}<span class="fx-prose__mark">{{ line.mark }}</span>{% endif -%}
+            {%- for segment in line.segments -%}
+                {%- if segment.style == 'link' and segment.href -%}
+                    <span class="fx-prose__mark">{{ segment.before }}</span><a class="fx-prose__link" href="{{ segment.href }}" rel="noopener noreferrer" target="_blank">{{ segment.text }}</a><span class="fx-prose__mark">{{ segment.after }}</span>
+                {%- else -%}
+                    {%- set style = {
+                        'strong': 'fx-prose__strong',
+                        'emphasis': 'fx-prose__emphasis',
+                        'code': 'fx-prose__code',
+                    }[segment.style]|default('') -%}
+                    <span class="{{ style }}"><span class="fx-prose__mark">{{ segment.before }}</span>{{ segment.text }}<span class="fx-prose__mark">{{ segment.after }}</span></span>
+                {%- endif -%}
+            {%- endfor -%}
+        </p>
+    {%- endfor -%}
+</div>

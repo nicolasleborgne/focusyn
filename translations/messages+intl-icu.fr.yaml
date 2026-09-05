@@ -140,6 +140,7 @@ notebook:
     deleted: Note supprimée.
     obsessions_label: Obsessions de la note
     obsessions_placeholder: Obsessions, séparées par des virgules
+    preview: Aperçu de la note
     title_label: Titre de la note
     title_required: Une note doit avoir un titre.
     reading_minutes: '{count, plural, one {# min de lecture} other {# min de lecture}}'

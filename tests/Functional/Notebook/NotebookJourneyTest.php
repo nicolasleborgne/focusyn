@@ -125,6 +125,65 @@ final class NotebookJourneyTest extends WebTestCase
         self::assertCount(0, $crawler->filter('.fx-note-row'));
     }
 
+    public function testThePreviewShowsTheNoteWithoutItsMarks(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+        $noteId = $this->writeNote($client, 'Deux sommeils', "# Deux sommeils\n\nUn **gras** et un [lien](https://exemple.fr).");
+
+        $crawler = $client->request('GET', '/notes/'.$noteId);
+        $preview = $crawler->filter('.fx-app__pane--preview');
+
+        self::assertCount(1, $preview);
+        self::assertStringContainsString('Deux sommeils', $preview->text());
+        self::assertStringNotContainsString(
+            '**',
+            $preview->text(),
+            'L\'aperçu montre la note sans ses marques : c\'est toute sa raison d\'être.',
+        );
+        self::assertSame('https://exemple.fr', $preview->filter('a.fx-prose__link')->attr('href'));
+    }
+
+    public function testTheSaveEndpointReturnsTheRefreshedPreview(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+        $noteId = $this->writeNote($client, 'Deux sommeils');
+
+        $crawler = $client->request('GET', '/notes/'.$noteId);
+        $token = (string) $crawler->filter('.fx-note__editor')->attr('data-note-editor-token-value');
+
+        $client->request(
+            'POST',
+            '/notes/'.$noteId.'/corps',
+            server: ['CONTENT_TYPE' => 'application/json', 'HTTP_X_CSRF_TOKEN' => $token],
+            content: json_encode(['body' => '## Nouveau titre'], \JSON_THROW_ON_ERROR),
+        );
+
+        self::assertResponseIsSuccessful((string) $client->getResponse()->getContent());
+        $payload = json_decode((string) $client->getResponse()->getContent(), true, flags: \JSON_THROW_ON_ERROR);
+
+        self::assertIsArray($payload);
+        self::assertIsString($payload['preview']);
+        self::assertStringContainsString('fx-prose__line--h2', $payload['preview']);
+        self::assertStringContainsString('Nouveau titre', $payload['preview']);
+    }
+
+    public function testTurningThePreviewOffRemovesThePane(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+        $noteId = $this->writeNote($client, 'Deux sommeils');
+
+        $crawler = $client->request('GET', '/reglages');
+        $token = (string) $crawler->filter('input[name="_token"]')->last()->attr('value');
+        $client->request('POST', '/reglages/affichage', ['_token' => $token, 'previewPane' => '0']);
+
+        $crawler = $client->request('GET', '/notes/'.$noteId);
+
+        self::assertCount(0, $crawler->filter('.fx-app__pane--preview'));
+    }
+
     public function testANoteOfAnotherAccountIsNotFound(): void
     {
         $client = self::createClient();

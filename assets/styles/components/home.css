@@ -831,3 +831,16 @@
     background: none;
     cursor: pointer;
 }
+
+/* --- Panneau d'aperçu ---------------------------------------------------------- */
+
+.fx-preview {
+    padding: var(--fx-space-14) var(--fx-space-14) var(--fx-space-24);
+}
+
+/* L'aperçu partage exactement les règles de prose de l'éditeur ; seule
+   l'opacité des marques change, ce qui garantit que les deux colonnes se
+   correspondent ligne pour ligne. */
+.fx-app__pane--preview .fx-prose {
+    max-width: 58ch;
+}

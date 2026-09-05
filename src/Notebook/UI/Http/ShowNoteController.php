@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Notebook\UI\Http;
 
+use App\Notebook\Application\Query\MarkdownOutline;
 use App\Notebook\Application\Query\NotebookQuery;
+use App\Notebook\Domain\Model\NoteBody;
 use App\Notebook\Domain\Model\NoteId;
 use App\Shared\Application\Shell\ShellSection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +18,7 @@ final class ShowNoteController extends AbstractController
 {
     public function __construct(
         private readonly NotebookQuery $notebook,
+        private readonly MarkdownOutline $outline,
     ) {
     }
 
@@ -38,6 +41,7 @@ final class ShowNoteController extends AbstractController
             'section' => ShellSection::Library,
             'note' => $note,
             'focusable' => true,
+            'preview' => $this->outline->lines(NoteBody::fromString($note->body), withMarks: false),
         ]);
     }
 }

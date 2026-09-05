@@ -166,6 +166,13 @@ validation explicite dans `SaveNoteBodyController`.
 Les couleurs et tailles de l'éditeur sont lues depuis les variables CSS du
 design system : aucune valeur en dur dans le JavaScript.
 
+**Le panneau d'aperçu est rendu par le serveur**, jamais reconstruit côté
+client : `MarkdownOutline` découpe le corps en lignes, et le point d'entrée de
+sauvegarde renvoie l'aperçu déjà rendu, que le contrôleur Stimulus substitue.
+Écrire un second analyseur markdown en JavaScript créerait deux vérités qui
+finiraient par diverger. Le même gabarit `notebook/_prose.html.twig` sert à
+l'aperçu (`marks: false`) et servira à tout rendu figé.
+
 **Responsive, pas de bascule d'appareil.** La maquette propose un interrupteur
 DESKTOP/MOBILE : c'était un outil d'aperçu du logiciel de design, pas une
 fonction du produit. La coquille utilise un seul balisage et une requête média
