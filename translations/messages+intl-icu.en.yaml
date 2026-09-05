@@ -41,6 +41,11 @@ offline:
     body: Focusyn could not reach the server. Screens you have already visited remain available; syncing resumes automatically once the network is back.
 
 auth:
+    sign_in_title: Back to your notebook.
+    sign_up_title: Open a notebook.
+    forgotten: Forgotten password
+    back_to_sign_in: Back to sign-in
+    signed_out: You have been signed out.
     sign_in: Sign in
     sign_in_lead: Your notes stay on your account, encrypted in transit.
     sign_up: Create an account
@@ -139,3 +144,22 @@ task:
     remove: Remove task
     open_count: '{count, plural, =0 {Nothing open} one {# open task} other {# open tasks}}'
     completed: '{count, plural, one {# task done} other {# tasks done}}'
+
+password_reset:
+    request_title: Reset your password.
+    request_lead: A link valid for thirty minutes will be sent to your email.
+    send_link: Send the link
+    sent: If an account exists for this address, the link has been sent. Check your spam folder too.
+    title: Choose a new password.
+    new_password: New password
+    save: Save and sign in
+    done: Password changed. You can sign in.
+    expired_title: This link is no longer valid.
+    expired_lead: A reset link expires after thirty minutes, and works only once.
+    request_again: Request a new link
+    email:
+        subject: Reset your Focusyn password
+        intro: You asked to reset your notebook password.
+        action: Choose a new password
+        validity: This link is valid for thirty minutes and works only once.
+        ignore: 'If you did not make this request, ignore this message: nothing has changed.'

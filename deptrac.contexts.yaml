@@ -21,6 +21,8 @@ deptrac:
                     must_not:
                         -   type: directory
                             value: src/[^/]+/Domain/Event/.*
+                        -   type: classNameRegex
+                            value: '#^App\\Shared\\UI\\Console\\SeedDemoDataCommand$#'
         -   name: Identity
             collectors:
                 -   type: bool
@@ -93,6 +95,14 @@ deptrac:
                     must_not:
                         -   type: directory
                             value: src/[^/]+/Domain/Event/.*
+        # Les jeux de données de démonstration traversent les contextes par
+        # nature : semer un carnet suppose un compte, une organisation, des
+        # notes et des listes. Ce n'est pas du code de production, et
+        # l'exception est nominative — un seul fichier, nommé ici.
+        -   name: DevFixtures
+            collectors:
+                -   type: classNameRegex
+                    value: '#^App\\Shared\\UI\\Console\\SeedDemoDataCommand$#'
         -   name: PublishedEvents
             collectors:
                 -   type: directory
@@ -111,9 +121,17 @@ deptrac:
         Assistant: [Shared, PublishedEvents]
         Billing: [Shared, PublishedEvents]
         Privacy: [Shared, PublishedEvents]
+        DevFixtures:
+            - Shared
+            - PublishedEvents
+            - Identity
+            - Organization
+            - Notebook
+            - Task
         Kernel:
             - Shared
             - PublishedEvents
+            - DevFixtures
             - Identity
             - Organization
             - Notebook

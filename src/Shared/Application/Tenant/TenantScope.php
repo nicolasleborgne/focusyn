@@ -13,15 +13,8 @@ use App\Shared\Domain\TenantId;
  * organisation n'est établie et le filtre ne laisse rien passer. Ce port permet
  * de dire explicitement « pour cette organisation-là », au lieu de désarmer le
  * cloisonnement et d'espérer que la requête soit correctement filtrée à la main.
- *
- * @template T
  */
 interface TenantScope
 {
-    /**
-     * @param callable(): T $work
-     *
-     * @return T
-     */
     public function runAs(TenantId $tenant, callable $work): mixed;
 }

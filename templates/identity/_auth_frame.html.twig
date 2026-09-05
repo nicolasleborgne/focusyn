@@ -1,0 +1,21 @@
+{#
+   Cadre commun aux écrans d'authentification : la marque, puis le contenu.
+   Extrait parce que quatre écrans le partagent, et qu'ils doivent rester
+   rigoureusement identiques — c'est ce qui donne l'impression d'une seule
+   porte d'entrée plutôt que de quatre formulaires.
+#}
+<div class="fx-overlay">
+    <div class="fx-overlay__panel">
+        <div class="fx-auth__brand">
+            <span class="fx-mark" aria-hidden="true">
+                <span class="fx-mark__pill">
+                    <span class="fx-mark__cap"></span>
+                    <span class="fx-mark__body"></span>
+                </span>
+            </span>
+            <span class="fx-auth__brand-name">{{ 'shell.brand'|trans }}</span>
+        </div>
+
+        {% block auth %}{% endblock %}
+    </div>
+</div>

@@ -124,7 +124,7 @@ final class AuthenticationTest extends WebTestCase
 
         $crawler = $client->followRedirect();
 
-        self::assertCount(1, $crawler->filter('.fx-auth__error'));
+        self::assertCount(1, $crawler->filter('.fx-auth__message--error'));
         $client->request('GET', '/');
         self::assertResponseRedirects('http://localhost/connexion');
     }

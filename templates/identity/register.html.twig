@@ -3,30 +3,23 @@
 {% block title %}{{ 'auth.sign_up'|trans }} — Focusyn{% endblock %}
 
 {% block body %}
-    <div class="fx-overlay">
-        <div class="fx-overlay__panel">
-            <span class="fx-mark" aria-hidden="true">
-                <span class="fx-mark__pill">
-                    <span class="fx-mark__cap"></span>
-                    <span class="fx-mark__body"></span>
-                </span>
-            </span>
+    {% embed 'identity/_auth_frame.html.twig' %}
+        {% block auth %}
+            <h1 class="fx-heading fx-heading--dialog">{{ 'auth.sign_up_title'|trans }}</h1>
+            <p class="fx-auth__lead">{{ 'auth.sign_up_lead'|trans }}</p>
 
-            <h1 class="fx-heading fx-heading--dialog fx-auth__title">{{ 'auth.sign_up'|trans }}</h1>
-            <p class="fx-card__help fx-auth__lead">{{ 'auth.sign_up_lead'|trans }}</p>
-
-            {{ form_start(form, { attr: { class: 'fx-auth__form' } }) }}
-                <div class="fx-field">
-                    {{ form_label(form.email, null, { label_attr: { class: 'fx-field__label' } }) }}
-                    {{ form_widget(form.email, { attr: { class: 'fx-field__control' } }) }}
-                    {{ form_errors(form.email) }}
-                </div>
-
-                <div class="fx-field">
-                    {{ form_label(form.plainPassword, null, { label_attr: { class: 'fx-field__label' } }) }}
-                    {{ form_widget(form.plainPassword, { attr: { class: 'fx-field__control' } }) }}
-                    <span class="fx-field__help">{{ 'registration.password.help'|trans }}</span>
-                    {{ form_errors(form.plainPassword) }}
+            {{ form_start(form) }}
+                <div class="fx-auth__fields">
+                    {{ form_widget(form.email, { attr: {
+                        class: 'fx-auth__input',
+                        placeholder: 'auth.email'|trans,
+                        'aria-label': 'auth.email'|trans,
+                    } }) }}
+                    {{ form_widget(form.plainPassword, { attr: {
+                        class: 'fx-auth__input',
+                        placeholder: 'auth.password'|trans,
+                        'aria-label': 'auth.password'|trans,
+                    } }) }}
                 </div>
 
                 <button type="submit" class="fx-button fx-button--primary fx-button--block">
@@ -34,10 +27,15 @@
                 </button>
             {{ form_end(form) }}
 
-            <p class="fx-auth__switch">
-                {{ 'auth.have_account'|trans }}
-                <a href="{{ path('login') }}">{{ 'auth.sign_in'|trans }}</a>
+            <p class="fx-auth__recourse">
+                <a href="{{ path('login') }}">{{ 'auth.have_account'|trans }}</a>
             </p>
-        </div>
-    </div>
+
+            <div class="fx-auth__message {{ not form.vars.valid ? 'fx-auth__message--error' }}" role="status">
+                {%- for error in form.email.vars.errors %}{{ error.message }} {% endfor -%}
+                {%- for error in form.plainPassword.vars.errors %}{{ error.message }} {% endfor -%}
+                {%- if form.vars.valid %}{{ 'registration.password.help'|trans }}{% endif -%}
+            </div>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}

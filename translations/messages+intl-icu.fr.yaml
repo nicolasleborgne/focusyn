@@ -42,6 +42,11 @@ offline:
     body: Focusyn n'a pas pu joindre le serveur. Les écrans déjà consultés restent accessibles ; la reprise se fera automatiquement au retour du réseau.
 
 auth:
+    sign_in_title: Reprendre le carnet.
+    sign_up_title: Ouvrir un carnet.
+    forgotten: Mot de passe oublié
+    back_to_sign_in: Revenir à la connexion
+    signed_out: Vous êtes déconnecté.
     sign_in: Se connecter
     sign_in_lead: Vos notes restent sur votre compte, chiffrées en transit.
     sign_up: Créer un compte
@@ -59,8 +64,8 @@ registration:
     password:
         help: Douze caractères au minimum. Une phrase dont vous vous souvenez vaut mieux qu'un sigle compliqué.
 two_factor:
-    title: Double authentification
-    lead: Saisissez le code à six chiffres affiché par votre application, ou l'un de vos codes de secours.
+    title: Vérification en deux étapes.
+    lead: Code à six chiffres de votre application d'authentification, ou l'un de vos codes de secours.
     code: Code
     help: Le code change toutes les trente secondes.
     verify: Vérifier
@@ -140,3 +145,22 @@ task:
     remove: Retirer la tâche
     open_count: '{count, plural, =0 {Rien d''ouvert} one {# tâche ouverte} other {# tâches ouvertes}}'
     completed: '{count, plural, one {# tâche faite} other {# tâches faites}}'
+
+password_reset:
+    request_title: Réinitialiser le mot de passe.
+    request_lead: Un lien valable trente minutes part sur votre courriel.
+    send_link: Envoyer le lien
+    sent: Si un compte existe pour cette adresse, le lien vient de partir. Vérifiez aussi les indésirables.
+    title: Choisir un nouveau mot de passe.
+    new_password: Nouveau mot de passe
+    save: Enregistrer et se connecter
+    done: Mot de passe modifié. Vous pouvez vous connecter.
+    expired_title: Ce lien n'est plus valable.
+    expired_lead: Un lien de réinitialisation expire au bout de trente minutes, et ne sert qu'une fois.
+    request_again: Demander un nouveau lien
+    email:
+        subject: Réinitialiser votre mot de passe Focusyn
+        intro: Vous avez demandé à réinitialiser le mot de passe de votre carnet.
+        action: Choisir un nouveau mot de passe
+        validity: Ce lien est valable trente minutes et ne fonctionne qu'une seule fois.
+        ignore: 'Si vous n''êtes pas à l''origine de cette demande, ignorez ce message : rien n''a changé.'

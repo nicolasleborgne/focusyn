@@ -541,3 +541,126 @@
 .fx-checklist__empty {
     margin-top: var(--fx-space-8);
 }
+
+/* --- Écrans d'authentification ---------------------------------------------- */
+/*
+ * Reprend la composition de la maquette : la marque, une phrase en serif, des
+ * champs sans étiquette visible, un bouton pleine largeur, puis les recours.
+ * Pas d'accroche explicative : l'écran doit se traverser sans être lu.
+ */
+
+.fx-overlay__panel .fx-heading {
+    margin-bottom: var(--fx-space-11);
+}
+
+/* Quand une phrase d'explication suit le titre, elle prend le relais de la
+   marge : deux respirations empilées creuseraient un trou. */
+.fx-overlay__panel .fx-heading + .fx-auth__lead {
+    margin-top: calc(-1 * var(--fx-space-11) + var(--fx-space-2));
+}
+
+.fx-auth__brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: var(--fx-space-15, 30px);
+}
+
+.fx-auth__brand-name {
+    font-size: 1.313rem;
+    font-weight: var(--fx-weight-brand);
+    letter-spacing: var(--fx-tracking-tight);
+    color: var(--fx-text-primary);
+}
+
+.fx-auth__lead {
+    margin-top: var(--fx-space-2);
+    margin-bottom: var(--fx-space-10);
+    font-size: var(--fx-size-lg);
+    line-height: 1.65;
+    color: var(--fx-ink-200);
+}
+
+.fx-auth__fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-4);
+    margin-bottom: var(--fx-space-7);
+}
+
+/* Champ d'authentification : plus haut et un peu plus grand que les champs de
+   réglages, parce qu'il est le seul élément de l'écran. */
+.fx-auth__input {
+    width: 100%;
+    padding: 11px var(--fx-space-6);
+    border: 1px solid var(--fx-neutral-550);
+    outline: none;
+    background: var(--fx-surface-app);
+    font-size: var(--fx-size-nav);
+    color: var(--fx-text-body);
+}
+
+/*
+ * Sur un champ, le changement de bordure signale déjà le focus. L'anneau
+ * général s'y superposait en un double trait épais, absent de la maquette —
+ * on le neutralise ici, sans le retirer partout ailleurs.
+ */
+.fx-auth__input:focus,
+.fx-auth__input:focus-visible {
+    border-color: var(--fx-accent);
+    box-shadow: inset 0 0 0 1px var(--fx-accent);
+}
+
+.fx-auth__input::placeholder {
+    color: var(--fx-text-disabled);
+}
+
+/* Code à six chiffres : espacé et centré, on le recopie d'un écran à l'autre. */
+.fx-auth__input--code {
+    font-family: var(--fx-font-meta);
+    font-size: 1.188rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+}
+
+.fx-auth__recourse {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--fx-space-6);
+    margin-top: var(--fx-space-8);
+    font-size: var(--fx-size-md);
+}
+
+.fx-auth__recourse a {
+    color: var(--fx-ink-200);
+    text-decoration: none;
+}
+
+.fx-auth__recourse a:hover {
+    color: var(--fx-text-primary);
+}
+
+.fx-auth__back {
+    display: inline-block;
+    margin-top: var(--fx-space-8);
+    font-size: var(--fx-size-md);
+    color: var(--fx-ink-200);
+    text-decoration: none;
+}
+
+/*
+ * Ligne de message. Sa hauteur est réservée en permanence : sans cela, l'appui
+ * sur « Se connecter » ferait sauter tout le bloc au moment où une erreur
+ * apparaît.
+ */
+.fx-auth__message {
+    min-height: 17px;
+    margin-top: var(--fx-space-8);
+    font-size: var(--fx-size-smd);
+    line-height: 1.6;
+    color: var(--fx-text-faint);
+}
+
+.fx-auth__message--error {
+    color: var(--fx-danger);
+}

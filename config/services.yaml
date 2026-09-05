@@ -90,3 +90,10 @@ services:
     App\Shared\Application\Tenant\TenantScope:
         alias: App\Shared\Infrastructure\Tenant\DoctrineTenantScope
         public: true
+
+    App\Identity\Application\Port\PasswordResetLink:
+        alias: App\Identity\Infrastructure\Security\SignedPasswordResetLink
+        public: true
+
+    App\Identity\Application\Port\PasswordResetMailer:
+        alias: App\Identity\Infrastructure\Mail\SymfonyPasswordResetMailer

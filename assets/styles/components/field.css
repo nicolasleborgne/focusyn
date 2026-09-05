@@ -31,8 +31,10 @@
     color: var(--fx-text-body);
 }
 
-.fx-field__control:focus {
+.fx-field__control:focus,
+.fx-field__control:focus-visible {
     border-color: var(--fx-accent);
+    box-shadow: inset 0 0 0 1px var(--fx-accent);
 }
 
 .fx-field__control::placeholder {

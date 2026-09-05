@@ -3,32 +3,18 @@
 {% block title %}{{ 'two_factor.title'|trans }} — Focusyn{% endblock %}
 
 {% block body %}
-    <div class="fx-overlay">
-        <div class="fx-overlay__panel">
-            <span class="fx-mark" aria-hidden="true">
-                <span class="fx-mark__pill">
-                    <span class="fx-mark__cap"></span>
-                    <span class="fx-mark__body"></span>
-                </span>
-            </span>
+    {% embed 'identity/_auth_frame.html.twig' %}
+        {% block auth %}
+            <h1 class="fx-heading fx-heading--dialog">{{ 'two_factor.title'|trans }}</h1>
+            <p class="fx-auth__lead">{{ 'two_factor.lead'|trans }}</p>
 
-            <h1 class="fx-heading fx-heading--dialog fx-auth__title">{{ 'two_factor.title'|trans }}</h1>
-            <p class="fx-card__help fx-auth__lead">{{ 'two_factor.lead'|trans }}</p>
-
-            {% if authenticationError %}
-                <p class="fx-auth__error" role="alert">
-                    {{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}
-                </p>
-            {% endif %}
-
-            <form class="fx-auth__form" action="{{ checkPathUrl|default(path(checkPathRoute)) }}" method="post">
-                <div class="fx-field">
-                    <label class="fx-field__label" for="_auth_code">{{ 'two_factor.code'|trans }}</label>
-                    <input id="_auth_code" class="fx-field__control fx-field__control--code"
-                           type="text" name="{{ authCodeParameterName }}"
+            <form action="{{ checkPathUrl|default(path(checkPathRoute)) }}" method="post">
+                <div class="fx-auth__fields">
+                    <input class="fx-auth__input fx-auth__input--code" type="text"
+                           name="{{ authCodeParameterName }}" placeholder="000000"
+                           aria-label="{{ 'two_factor.code'|trans }}"
                            inputmode="numeric" autocomplete="one-time-code"
                            pattern="[0-9A-Za-z\-]*" autofocus required>
-                    <span class="fx-field__help">{{ 'two_factor.help'|trans }}</span>
                 </div>
 
                 {% if isCsrfProtectionEnabled %}
@@ -40,9 +26,13 @@
                 </button>
             </form>
 
-            <form action="{{ logoutPath }}" method="post" class="fx-auth__switch">
-                <button type="submit" class="fx-sidebar__logout">{{ 'two_factor.cancel'|trans }}</button>
+            <form action="{{ logoutPath }}" method="post">
+                <button type="submit" class="fx-auth__back">← {{ 'two_factor.cancel'|trans }}</button>
             </form>
-        </div>
-    </div>
+
+            <p class="fx-auth__message {{ authenticationError ? 'fx-auth__message--error' }}" role="status">
+                {{- authenticationError ? authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') : 'two_factor.help'|trans -}}
+            </p>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}

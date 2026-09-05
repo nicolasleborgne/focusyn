@@ -196,6 +196,16 @@ sémantique (`--fx-surface-app`, `--fx-text-muted`, `--fx-accent`). Les réglage
 utilisateur sont des attributs `data-fx-*` sur `<html>` qui redéfinissent des
 variables ; aucun style n'est calculé côté serveur.
 
+**L'accent par défaut est l'ardoise** (`--fx-accent-slate`, #41586e), comme la
+maquette. « Encre » reste un choix possible dans les réglages, mais ce n'est pas
+le réglage d'origine.
+
+**Les écrans d'authentification partagent `identity/_auth_frame.html.twig`** et
+suivent une composition fixe : marque, phrase en serif 24 px, champs **sans
+étiquette visible** (placeholder + `aria-label`), bouton pleine largeur, recours,
+puis une ligne de message dont la hauteur est réservée en permanence — sinon
+l'apparition d'une erreur fait sauter le formulaire au moment du clic.
+
 **La graisse par défaut est 400, partout.** La maquette n'emploie 600 qu'à trois
 endroits, tous le mot « Focusyn » (`--fx-weight-brand`), et 600/650 pour les
 titres **à l'intérieur** d'une note (`--fx-weight-heading`, `--fx-weight-strong`).

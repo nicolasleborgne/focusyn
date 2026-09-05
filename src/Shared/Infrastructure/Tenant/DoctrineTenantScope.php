@@ -9,11 +9,6 @@ use App\Shared\Domain\TenantId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Filter\TenantFilter;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * @template T
- *
- * @implements TenantScope<T>
- */
 final readonly class DoctrineTenantScope implements TenantScope
 {
     public function __construct(

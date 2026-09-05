@@ -3,37 +3,19 @@
 {% block title %}{{ 'auth.sign_in'|trans }} — Focusyn{% endblock %}
 
 {% block body %}
-    <div class="fx-overlay">
-        <div class="fx-overlay__panel">
-            <span class="fx-mark" aria-hidden="true">
-                <span class="fx-mark__pill">
-                    <span class="fx-mark__cap"></span>
-                    <span class="fx-mark__body"></span>
-                </span>
-            </span>
+    {% embed 'identity/_auth_frame.html.twig' %}
+        {% block auth %}
+            <h1 class="fx-heading fx-heading--dialog">{{ 'auth.sign_in_title'|trans }}</h1>
 
-            <h1 class="fx-heading fx-heading--dialog fx-auth__title">{{ 'auth.sign_in'|trans }}</h1>
-            <p class="fx-card__help fx-auth__lead">{{ 'auth.sign_in_lead'|trans }}</p>
+            <form method="post" action="{{ path('login') }}">
+                <div class="fx-auth__fields">
+                    <input class="fx-auth__input" type="email" name="login[email]"
+                           value="{{ lastEmail }}" placeholder="{{ 'auth.email'|trans }}"
+                           aria-label="{{ 'auth.email'|trans }}" autocomplete="email" required autofocus>
 
-            {% for message in app.flashes('oauth_error') %}
-                <p class="fx-auth__error" role="alert">{{ message }}</p>
-            {% endfor %}
-
-            {% if error %}
-                <p class="fx-auth__error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
-            {% endif %}
-
-            <form method="post" action="{{ path('login') }}" class="fx-auth__form">
-                <div class="fx-field">
-                    <label class="fx-field__label" for="login-email">{{ 'auth.email'|trans }}</label>
-                    <input id="login-email" class="fx-field__control" type="email" name="login[email]"
-                           value="{{ lastEmail }}" autocomplete="email" required autofocus>
-                </div>
-
-                <div class="fx-field">
-                    <label class="fx-field__label" for="login-password">{{ 'auth.password'|trans }}</label>
-                    <input id="login-password" class="fx-field__control" type="password" name="login[password]"
-                           autocomplete="current-password" required>
+                    <input class="fx-auth__input" type="password" name="login[password]"
+                           placeholder="{{ 'auth.password'|trans }}"
+                           aria-label="{{ 'auth.password'|trans }}" autocomplete="current-password" required>
                 </div>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -42,6 +24,11 @@
                     {{ 'auth.sign_in'|trans }}
                 </button>
             </form>
+
+            <p class="fx-auth__recourse">
+                <a href="{{ path('password_request') }}">{{ 'auth.forgotten'|trans }}</a>
+                <a href="{{ path('register') }}">{{ 'auth.sign_up'|trans }}</a>
+            </p>
 
             {% if providers is not empty %}
                 <p class="fx-auth__separator">{{ 'auth.or'|trans }}</p>
@@ -54,10 +41,16 @@
                 </div>
             {% endif %}
 
-            <p class="fx-auth__switch">
-                {{ 'auth.no_account'|trans }}
-                <a href="{{ path('register') }}">{{ 'auth.sign_up'|trans }}</a>
+            {# Hauteur réservée en permanence : l'apparition d'un message ne doit
+               pas faire sauter le formulaire au moment où on clique. #}
+            <p class="fx-auth__message {{ (error or app.flashes('oauth_error')) ? 'fx-auth__message--error' }}" role="status">
+                {%- if error -%}
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                {%- else -%}
+                    {%- for message in app.flashes('oauth_error') %}{{ message }}{% endfor -%}
+                    {%- for message in app.flashes('success') %}{{ message|trans }}{% endfor -%}
+                {%- endif -%}
             </p>
-        </div>
-    </div>
+        {% endblock %}
+    {% endembed %}
 {% endblock %}

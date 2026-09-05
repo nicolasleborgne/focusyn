@@ -48,7 +48,9 @@
     --fx-text-on-accent: var(--fx-neutral-50);
 
     /* --- Accent ------------------------------------------------------------- */
-    --fx-accent: var(--fx-accent-ink);
+    /* Ardoise par défaut, comme la maquette. « Encre » reste disponible dans
+       les réglages, mais ce n'est pas le choix d'origine. */
+    --fx-accent: var(--fx-accent-slate);
     --fx-accent-contrast: var(--fx-text-on-accent);
     --fx-accent-soft: color-mix(in srgb, var(--fx-accent) 35%, transparent);
     --fx-accent-faint: color-mix(in srgb, var(--fx-accent) 12%, transparent);
@@ -74,6 +76,7 @@
 }
 
 /* Accents sélectionnables dans les réglages. */
+:root[data-fx-accent="ink"] { --fx-accent: var(--fx-accent-ink); }
 :root[data-fx-accent="slate"] { --fx-accent: var(--fx-accent-slate); }
 :root[data-fx-accent="olive"] { --fx-accent: var(--fx-accent-olive); }
 :root[data-fx-accent="tobacco"] { --fx-accent: var(--fx-accent-tobacco); }

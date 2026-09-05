@@ -95,7 +95,7 @@ final class TwoFactorJourneyTest extends WebTestCase
         $client->submit($form);
 
         self::assertRouteSame('two_factor_login');
-        self::assertStringContainsString('Double authentification', $client->getCrawler()->text());
+        self::assertStringContainsString('Vérification en deux étapes', $client->getCrawler()->text());
     }
 
     public function testDisablingReturnsToASinglePasswordStep(): void
