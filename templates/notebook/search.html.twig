@@ -1,0 +1,8 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ 'shell.nav.search'|trans }} — Focusyn{% endblock %}
+{% block crumb %}{{ 'shell.nav.search'|trans }}{% endblock %}
+
+{% block page %}
+    {{ include('shell/_upcoming.html.twig', { title: 'shell.nav.search'|trans, context: 'Notebook' }) }}
+{% endblock %}

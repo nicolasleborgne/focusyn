@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'offline.title'|trans }} — Focusyn{% endblock %}
+
+{% block body %}
+    <div class="fx-app">
+        <div class="fx-app__frame">
+            <main class="fx-app__main">
+                <div class="fx-app__content fx-offline">
+                    <span class="fx-mark" aria-hidden="true">
+                        <span class="fx-mark__pill">
+                            <span class="fx-mark__cap"></span>
+                            <span class="fx-mark__body"></span>
+                        </span>
+                    </span>
+                    <h1 class="fx-heading fx-offline__title">{{ 'offline.title'|trans }}</h1>
+                    <p class="fx-card__help fx-offline__text">{{ 'offline.body'|trans }}</p>
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}

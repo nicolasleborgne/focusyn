@@ -1,0 +1,9 @@
+{#
+   Écran routé mais pas encore construit : il arrive avec son contexte borné.
+   Volontairement sobre — ce n'est pas une page d'erreur.
+#}
+<div class="fx-app__content">
+    <h1 class="fx-heading">{{ title }}</h1>
+    <p class="fx-card__help fx-upcoming__text">{{ 'upcoming.body'|trans }}</p>
+    <p class="fx-meta fx-upcoming__meta">{{ 'upcoming.context'|trans({ context: context }) }}</p>
+</div>

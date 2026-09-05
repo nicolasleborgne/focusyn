@@ -71,9 +71,14 @@ Quatre règles vérifiées mécaniquement — les enfreindre fait échouer `qa` 
 
 **Contrôleurs invocables.** Une classe, une action, une méthode `__invoke()`,
 dans `src/<Contexte>/UI/Http/`. Nommées à l'impératif du cas d'usage
-(`ShowDesignSystemController`, `HealthCheckController`). Ne pas étendre
-`AbstractController` : injecter ce dont on a besoin (`Twig\Environment`,
-`Connection`…), ce qui rend le contrôleur testable sans conteneur.
+(`ShowLibraryController`, `SearchNotesController`). Elles étendent
+`AbstractController`, conformément aux bonnes pratiques Symfony ; la logique
+reste dans la couche Application, le contrôleur ne fait que traduire une requête
+HTTP en appel de cas d'usage.
+
+**Routes localisées.** Chaque écran a une adresse par langue, déclarée dans
+l'attribut : `#[Route(path: ['fr' => '/bibliotheque', 'en' => '/library'])]`.
+Pas de préfixe `/{_locale}` : c'est l'adresse empruntée qui fixe la langue.
 
 **Persistance.** Les agrégats ne portent aucun attribut Doctrine. Le mapping
 est du XML dans
@@ -87,9 +92,29 @@ générés par le domaine). Ne jamais passer un `string` nu comme identifiant.
 fonctionnel doit prouver l'étanchéité pour chaque nouvelle ressource : un membre
 de l'organisation A ne doit jamais atteindre une donnée de B.
 
-**Interface.** Rendu serveur en Twig, interactions en Live Components. Seul
-l'éditeur de note échappe à la règle : CodeMirror 6 piloté par Stimulus, parce
-qu'un aller-retour réseau par frappe serait inutilisable.
+**Interface.** Rendu serveur en Twig. Partage du travail entre les deux outils
+front, à respecter strictement :
+
+- **Live Component** dès qu'une interaction touche l'état du serveur (recherche,
+  cochage d'une tâche, bascule d'un réglage, enregistrement d'un rappel) ;
+- **Stimulus** pour l'état purement présentationnel, local à l'onglet (ouverture
+  d'un menu, mode focus). Faire un aller-retour réseau pour ouvrir un menu
+  serait un gaspillage visible à l'œil.
+
+Seul l'éditeur de note échappe aux deux : CodeMirror 6 piloté par Stimulus,
+parce qu'un aller-retour par frappe serait inutilisable.
+
+**Responsive, pas de bascule d'appareil.** La maquette propose un interrupteur
+DESKTOP/MOBILE : c'était un outil d'aperçu du logiciel de design, pas une
+fonction du produit. La coquille utilise un seul balisage et une requête média
+à 900 px. Ne pas réintroduire l'interrupteur.
+
+**Données provisoires.** `PrototypeShellDataProvider` et
+`PrototypeHomeDataProvider` (dans `Shared/Infrastructure/`) servent les données
+de la maquette pour que la coquille soit visible avant que les contextes
+n'existent. Elles implémentent des ports de la couche Application : les
+remplacer ne doit toucher aucun gabarit. Les supprimer dès que Notebook et Task
+exposent leurs requêtes.
 
 **Traductions.** Aucun texte en dur dans les templates : catalogues `fr` et `en`
 dès l'écriture. La copie française de référence est celle de la maquette.
@@ -118,6 +143,20 @@ variables ; aucun style n'est calculé côté serveur.
 `/_design-system` (dev uniquement) rend tous les blocs avec leurs variantes :
 s'en servir comme vérification visuelle après toute modification de jeton.
 
+## PWA
+
+`public/manifest.webmanifest`, `public/sw.js` et `public/icons/` sont des
+fichiers statiques, hors AssetMapper : le service worker doit être servi depuis
+la racine, sans condensat dans son nom, pour contrôler toute l'origine et rester
+détectable à la mise à jour. Le Caddyfile lui impose `Cache-Control: no-cache`.
+
+Stratégies du service worker : réseau d'abord pour les navigations avec repli
+sur `/offline`, cache d'abord pour `/assets/*` (versionnés par condensat, donc
+immuables). Pas d'écriture hors ligne — écartée à la conception.
+
+En touchant aux icônes, penser à `tests/Unit/Shared/Pwa/ManifestTest.php` :
+c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
+
 ## Pièges connus
 
 - **Ne jamais exporter `APP_ENV` comme variable d'environnement réelle** (par
@@ -128,6 +167,11 @@ s'en servir comme vérification visuelle après toute modification de jeton.
   charger si un commentaire contient une option en double tiret.
 - Le collecteur Deptrac s'appelle `classNameRegex` et attend une expression
   **avec délimiteurs** (`'#^App\\Kernel$#'`).
+- Un `{% set %}` placé dans un gabarit inclus **ne remonte pas** dans la portée
+  appelante. Ce qui est partagé entre plusieurs gabarits (la navigation, par
+  exemple) est construit en PHP et exposé par une fonction Twig.
+- En zsh, `path` est lié à `PATH` : ne jamais s'en servir comme variable dans un
+  script shell, sous peine de vider le `PATH` en cours d'exécution.
 
 ## La maquette (`project/`)
 

@@ -1,0 +1,76 @@
+{% extends 'shell.html.twig' %}
+
+{% set focusable = false %}
+
+{% block title %}{{ 'shell.nav.home'|trans }} — Focusyn{% endblock %}
+{% block crumb %}{{ 'home.crumb'|trans }}{% endblock %}
+
+{% block page %}
+    <div class="fx-app__content">
+
+        <p class="fx-eyebrow">{{ 'now'|format_datetime(pattern: 'EEEE d MMMM', locale: app.request.locale) }}</p>
+        <h1 class="fx-heading fx-home__title">{{ 'home.title'|trans }}</h1>
+
+        <section class="fx-home__stats" aria-label="{{ 'home.stats'|trans }}">
+            {% set stats = [
+                { value: shell().noteCount,        label: 'home.stat.notes' },
+                { value: shell().obsessionCount,   label: 'home.stat.obsessions' },
+                { value: home.monthlyWordCount|format_number(locale: app.request.locale), label: 'home.stat.words' },
+                { value: shell().openTaskCount,    label: 'home.stat.open_tasks' },
+            ] %}
+            {% for stat in stats %}
+                <div class="fx-stat">
+                    <div class="fx-stat__value">{{ stat.value }}</div>
+                    <div class="fx-stat__label">{{ stat.label|trans }}</div>
+                </div>
+            {% endfor %}
+        </section>
+
+        <section class="fx-home__section">
+            <p class="fx-eyebrow">{{ 'home.resume'|trans }}</p>
+            <div class="fx-home__notes">
+                {% for note in home.recentNotes %}
+                    <a class="fx-note-row" href="{{ path('library') }}">
+                        <span class="fx-note-row__title">{{ note.title }}</span>
+                        <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
+                        <span class="fx-note-row__footer">
+                            <span class="fx-note-row__meta">{{ note.obsessions|join(' · ') }}</span>
+                            <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
+                            <span class="fx-note-row__meta">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="fx-home__section">
+            <p class="fx-eyebrow">{{ 'home.next_tasks'|trans }}</p>
+            {% if home.hasNothingPending %}
+                <p class="fx-card__help">{{ 'home.all_clear'|trans }}</p>
+            {% else %}
+                <ul class="fx-home__tasks">
+                    {% for task in home.nextTasks %}
+                        <li class="fx-task-line">
+                            <span class="fx-check" aria-hidden="true"><span class="fx-check__tick">✓</span></span>
+                            <span class="fx-task-line__text">{{ task.text }}</span>
+                            <a class="fx-task-line__list" href="{{ path('tasks') }}#{{ task.listSlug }}">{{ task.listName }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+
+        <section class="fx-home__section">
+            <p class="fx-eyebrow">{{ 'shell.section.obsessions'|trans }}</p>
+            <div class="fx-home__obsessions">
+                {% for obsession in shell().obsessions %}
+                    <a class="fx-chip" href="{{ path('library') }}#{{ obsession.slug }}">
+                        {{ obsession.name }}
+                        <span class="fx-chip__count">{{ obsession.noteCount }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+
+    </div>
+{% endblock %}

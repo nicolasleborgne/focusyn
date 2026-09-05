@@ -42,3 +42,16 @@
 .fx-tabbar__item--current .fx-tabbar__label {
     color: var(--fx-text-primary);
 }
+
+/* Pastille tenant lieu d'icône tant que le jeu d'icônes n'est pas dessiné. */
+.fx-tabbar__glyph {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border: 1px solid currentcolor;
+    border-radius: var(--fx-radius-xs);
+}
+
+.fx-tabbar__item--current .fx-tabbar__glyph {
+    background: currentcolor;
+}

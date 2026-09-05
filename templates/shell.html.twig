@@ -1,0 +1,33 @@
+{#
+   Coquille applicative.
+
+   Un seul balisage pour les deux gabarits : la barre latérale et la barre
+   d'onglets sont montrées ou masquées par des requêtes média, pas par un
+   basculement d'état. La maquette proposait un interrupteur DESKTOP/MOBILE,
+   mais c'était un outil d'aperçu du logiciel de design, pas une fonction du
+   produit.
+#}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="fx-app"
+         data-controller="shell"
+         data-shell-focus-class="fx-app--focus"
+         data-shell-focusable-value="{{ focusable|default(false) ? 'true' : 'false' }}">
+        <div class="fx-app__frame">
+
+            {{ include('shell/_sidebar.html.twig') }}
+
+            <main class="fx-app__main">
+                {{ include('shell/_header.html.twig') }}
+
+                <div class="fx-app__scroll">
+                    {% block page %}{% endblock %}
+                </div>
+
+                {{ include('shell/_tabbar.html.twig') }}
+            </main>
+
+        </div>
+    </div>
+{% endblock %}

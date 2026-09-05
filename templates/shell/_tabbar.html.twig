@@ -1,0 +1,13 @@
+<nav class="fx-tabbar" aria-label="{{ 'shell.nav.label'|trans }}">
+    {% for item in shell_navigation() %}
+        {% set current = section.value == item.key %}
+        <a class="fx-tabbar__item {{ current ? 'fx-tabbar__item--current' }}"
+           href="{{ path(item.route) }}"
+           {{ current ? 'aria-current="page"' : '' }}>
+            <span class="fx-tabbar__icon" aria-hidden="true">
+                <span class="fx-tabbar__glyph"></span>
+            </span>
+            <span class="fx-tabbar__label">{{ ('shell.nav.' ~ item.key)|trans }}</span>
+        </a>
+    {% endfor %}
+</nav>

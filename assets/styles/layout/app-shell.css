@@ -1,12 +1,16 @@
 /**
  * Coquille applicative.
  *
- * Deux gabarits pour un même balisage :
- *   - bureau : barre latérale fixe de 250 px + colonne principale ;
- *   - mobile : cadre de 392 px avec barre d'onglets basse.
+ * Un seul balisage, deux gabarits décidés par la largeur réelle de la fenêtre :
+ *   ≥ 900 px  barre latérale fixe de 250 px ;
+ *   < 900 px  barre d'onglets basse, barre latérale masquée.
+ *
+ * La maquette proposait un interrupteur DESKTOP/MOBILE ; c'était un outil
+ * d'aperçu du logiciel de design, pas une fonction du produit. Le vrai
+ * responsive le remplace.
  *
  * Le mode « focus profond » (`.fx-app--focus`) masque toute la chrome sans
- * changer la structure : seule la colonne d'édition subsiste.
+ * changer la structure : seule la colonne de lecture subsiste.
  */
 
 .fx-app {
@@ -30,12 +34,13 @@
     display: flex;
     flex: 1;
     min-width: 0;
+    min-height: 100vh;
     flex-direction: column;
 }
 
 .fx-app__scroll {
     flex: 1;
-    overflow: auto;
+    min-height: 0;
 }
 
 .fx-app__content {
@@ -73,25 +78,27 @@
     background: var(--fx-surface-sunken);
 }
 
-/* --- Aperçu mobile (bascule de la maquette) --------------------------------- */
+/* --- Gabarit compact ---------------------------------------------------- */
+/* 900 px : en dessous, la barre latérale et le contenu ne tiennent plus côte
+   à côte sans réduire la mesure de lecture sous 60 caractères. */
+@media (max-width: 899px) {
+    .fx-sidebar {
+        display: none;
+    }
 
-.fx-app--device .fx-app__frame {
-    flex: 0 0 var(--fx-device-width);
-    width: var(--fx-device-width);
-    height: min(var(--fx-device-height), calc(100vh - var(--fx-space-24)));
-    min-height: 0;
-    margin: var(--fx-space-12) 0;
-    overflow: hidden;
-    flex-direction: column;
-    border-radius: var(--fx-radius-device);
-    box-shadow: var(--fx-shadow-device);
+    .fx-app__content {
+        padding: var(--fx-space-12) var(--fx-space-8) var(--fx-space-16);
+    }
 }
 
-.fx-app--device .fx-app__content {
-    padding: var(--fx-space-10) var(--fx-space-8);
+@media (min-width: 900px) {
+    .fx-tabbar,
+    .fx-header__mark {
+        display: none;
+    }
 }
 
-/* --- Focus profond ----------------------------------------------------------- */
+/* --- Focus profond ------------------------------------------------------- */
 
 .fx-app--focus .fx-sidebar,
 .fx-app--focus .fx-tabbar,

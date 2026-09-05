@@ -118,3 +118,22 @@
 .fx-check--done .fx-check__tick {
     opacity: 1;
 }
+
+/* --- État piloté par une classe -------------------------------------------- */
+/*
+ * L'interrupteur de l'en-tête est décoratif : c'est le bouton qui porte
+ * l'état accessible (`aria-pressed`), pas une case à cocher. Il lui faut donc
+ * une variante de classe en plus des sélecteurs `:checked`.
+ */
+
+.fx-switch--on .fx-switch__track {
+    background: var(--fx-accent);
+}
+
+.fx-switch--on .fx-switch__knob {
+    margin-left: 16px;
+}
+
+.fx-switch--small.fx-switch--on .fx-switch__knob {
+    margin-left: 12px;
+}

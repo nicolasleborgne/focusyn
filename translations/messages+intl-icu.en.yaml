@@ -1,0 +1,45 @@
+shell:
+    brand: Focusyn
+    version: v0.1
+    nav:
+        label: Main navigation
+        home: Home
+        library: Library
+        tasks: Tasks
+        search: Search
+        settings: Settings
+    section:
+        obsessions: Obsessions
+        lists: Task lists
+    action:
+        logout: Sign out
+        focus: Deep focus
+        focus_exit: Leave focus
+    create:
+        label: Create
+        note: Note
+        note_hint: markdown
+        list: Task list
+        list_hint: checklist
+
+home:
+    crumb: Focusyn — home
+    title: Pick up where you left off
+    stats: Notebook figures
+    stat:
+        notes: notes
+        obsessions: obsessions tracked
+        words: words this month
+        open_tasks: open tasks
+    resume: Resume
+    next_tasks: Next tasks
+    all_clear: Nothing pending.
+    words: '{count, plural, one {# word} other {# words}}'
+
+upcoming:
+    body: This screen is routed; its implementation ships with its bounded context.
+    context: '{context} context'
+
+offline:
+    title: Offline
+    body: Focusyn could not reach the server. Screens you have already visited remain available; syncing resumes automatically once the network is back.

@@ -1,0 +1,29 @@
+<header class="fx-header">
+    <span class="fx-mark fx-header__mark" aria-hidden="true">
+        <span class="fx-mark__pill">
+            <span class="fx-mark__cap"></span>
+            <span class="fx-mark__body"></span>
+        </span>
+    </span>
+
+    <span class="fx-header__crumb">{% block crumb %}{% endblock %}</span>
+
+    <div class="fx-header__actions">
+        {% if focusable|default(false) %}
+            <button type="button"
+                    class="fx-button fx-button--meta"
+                    data-shell-target="focusButton"
+                    data-action="shell#toggleFocus"
+                    aria-pressed="false">
+                <span class="fx-switch fx-switch--small" aria-hidden="true">
+                    <span class="fx-switch__track" data-shell-target="focusTrack">
+                        <span class="fx-switch__knob"></span>
+                    </span>
+                </span>
+                <span data-shell-target="focusLabel"
+                      data-off="{{ 'shell.action.focus'|trans }}"
+                      data-on="{{ 'shell.action.focus_exit'|trans }}">{{ 'shell.action.focus'|trans }}</span>
+            </button>
+        {% endif %}
+    </div>
+</header>

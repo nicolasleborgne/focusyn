@@ -1,0 +1,81 @@
+<aside class="fx-sidebar">
+    <div class="fx-sidebar__brand">
+        <span class="fx-mark" aria-hidden="true">
+            <span class="fx-mark__pill">
+                <span class="fx-mark__cap"></span>
+                <span class="fx-mark__body"></span>
+            </span>
+        </span>
+        <span class="fx-sidebar__name">{{ 'shell.brand'|trans }}</span>
+        <span class="fx-sidebar__version">{{ 'shell.version'|trans }}</span>
+    </div>
+
+    <nav class="fx-sidebar__nav" aria-label="{{ 'shell.nav.label'|trans }}">
+        {% for item in shell_navigation() %}
+            {% set current = section.value == item.key %}
+            <a class="fx-nav-item {{ current ? 'fx-nav-item--current' }}"
+               href="{{ path(item.route) }}"
+               {{ current ? 'aria-current="page"' : '' }}>
+                <span class="fx-nav-item__marker" aria-hidden="true"></span>
+                <span class="fx-nav-item__label">{{ ('shell.nav.' ~ item.key)|trans }}</span>
+                {% if item.count is not null %}
+                    <span class="fx-nav-item__count">{{ item.count }}</span>
+                {% elseif item.shortcut is not null %}
+                    <span class="fx-nav-item__shortcut">{{ item.shortcut }}</span>
+                {% endif %}
+            </a>
+        {% endfor %}
+    </nav>
+
+    <div class="fx-sidebar__scroll">
+        <p class="fx-eyebrow fx-sidebar__section">{{ 'shell.section.obsessions'|trans }}</p>
+        <div class="fx-sidebar__group">
+            {% for obsession in shell().obsessions %}
+                <a class="fx-nav-item fx-nav-item--sub" href="{{ path('library') }}#{{ obsession.slug }}">
+                    <span class="fx-nav-item__dot" aria-hidden="true"></span>
+                    <span class="fx-nav-item__label">{{ obsession.name }}</span>
+                    <span class="fx-nav-item__count">{{ obsession.noteCount }}</span>
+                </a>
+            {% endfor %}
+        </div>
+
+        <p class="fx-eyebrow fx-sidebar__section">{{ 'shell.section.lists'|trans }}</p>
+        <div class="fx-sidebar__group">
+            {% for list in shell().taskLists %}
+                <a class="fx-nav-item fx-nav-item--sub" href="{{ path('tasks') }}#{{ list.slug }}">
+                    <span class="fx-nav-item__square {{ list.hasOpenTasks ? 'fx-nav-item__square--open' }}" aria-hidden="true"></span>
+                    <span class="fx-nav-item__label">{{ list.name }}</span>
+                    <span class="fx-nav-item__count">{{ list.openCount ?: '·' }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="fx-sidebar__footer">
+        <span class="fx-avatar" aria-hidden="true">{{ shell().accountInitial }}</span>
+        <span class="fx-sidebar__account">{{ shell().accountEmail }}</span>
+        <span class="fx-meta fx-meta--caps">{{ 'shell.action.logout'|trans }}</span>
+    </div>
+
+    <div class="fx-sidebar__create" data-controller="menu">
+        <div class="fx-menu" data-menu-target="panel" hidden>
+            <button type="button" class="fx-menu__item">
+                {{ 'shell.create.note'|trans }}
+                <span class="fx-menu__hint">{{ 'shell.create.note_hint'|trans }}</span>
+            </button>
+            <button type="button" class="fx-menu__item">
+                {{ 'shell.create.list'|trans }}
+                <span class="fx-menu__hint">{{ 'shell.create.list_hint'|trans }}</span>
+            </button>
+        </div>
+        <button type="button"
+                class="fx-button fx-button--create"
+                data-menu-target="trigger"
+                data-action="menu#toggle"
+                aria-expanded="false">
+            <span class="fx-button__icon" aria-hidden="true">+</span>
+            {{ 'shell.create.label'|trans }}
+            <span class="fx-button__caret" aria-hidden="true">▾</span>
+        </button>
+    </div>
+</aside>

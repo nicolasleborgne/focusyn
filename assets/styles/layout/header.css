@@ -29,3 +29,8 @@
     gap: var(--fx-space-4);
     margin-left: auto;
 }
+
+/* Marque affichée dans l'en-tête quand la barre latérale est masquée. */
+.fx-header__mark {
+    flex: 0 0 24px;
+}

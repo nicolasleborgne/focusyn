@@ -1,0 +1,94 @@
+/**
+ * Écran d'accueil et écrans en attente.
+ */
+
+.fx-home__title {
+    margin-top: var(--fx-space-2);
+}
+
+.fx-home__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-16);
+    margin-top: var(--fx-space-14);
+    padding-bottom: var(--fx-space-14);
+    border-bottom: 1px solid var(--fx-border-faint);
+}
+
+.fx-home__section {
+    margin-top: var(--fx-space-16);
+}
+
+.fx-home__notes {
+    margin-top: var(--fx-space-4);
+}
+
+.fx-home__obsessions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-4);
+    margin-top: var(--fx-space-6);
+}
+
+.fx-home__tasks {
+    margin: var(--fx-space-6) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* --- Ligne de tâche ------------------------------------------------------- */
+
+.fx-task-line {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fx-space-5);
+    padding: var(--fx-space-3) 0;
+}
+
+.fx-task-line__text {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--fx-size-xl);
+    line-height: var(--fx-leading-relaxed);
+    color: var(--fx-text-body);
+}
+
+.fx-task-line__list {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+    text-decoration: none;
+}
+
+.fx-task-line__list:hover {
+    color: var(--fx-text-primary);
+}
+
+/* --- Écran routé mais pas encore construit -------------------------------- */
+
+.fx-upcoming__text {
+    max-width: 52ch;
+    margin-top: var(--fx-space-6);
+}
+
+.fx-upcoming__meta {
+    margin-top: var(--fx-space-4);
+}
+
+/* --- Page hors ligne ------------------------------------------------------- */
+
+.fx-offline {
+    max-width: 46ch;
+    padding-top: 16vh;
+}
+
+.fx-offline__title {
+    margin-top: var(--fx-space-6);
+}
+
+.fx-offline__text {
+    margin-top: var(--fx-space-6);
+    line-height: var(--fx-leading-relaxed);
+}

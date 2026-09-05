@@ -1,0 +1,46 @@
+# Catalogue de référence : la copie française de la maquette fait foi.
+shell:
+    brand: Focusyn
+    version: v0.1
+    nav:
+        label: Navigation principale
+        home: Accueil
+        library: Bibliothèque
+        tasks: Tâches
+        search: Recherche
+        settings: Réglages
+    section:
+        obsessions: Obsessions
+        lists: Tâches
+    action:
+        logout: Sortir
+        focus: Deep focus
+        focus_exit: Sortir du focus
+    create:
+        label: Créer
+        note: Note
+        note_hint: markdown
+        list: Liste de tâches
+        list_hint: à cocher
+
+home:
+    crumb: Focusyn — accueil
+    title: Reprendre le fil
+    stats: Chiffres du carnet
+    stat:
+        notes: notes
+        obsessions: obsessions suivies
+        words: mots ce mois
+        open_tasks: tâches ouvertes
+    resume: Reprendre
+    next_tasks: Prochaines tâches
+    all_clear: Rien en attente.
+    words: '{count, plural, one {# mot} other {# mots}}'
+
+upcoming:
+    body: Cet écran est routé, sa mise en œuvre arrive avec son contexte borné.
+    context: 'Contexte {context}'
+
+offline:
+    title: Hors ligne
+    body: Focusyn n'a pas pu joindre le serveur. Les écrans déjà consultés restent accessibles ; la reprise se fera automatiquement au retour du réseau.
