@@ -73,7 +73,7 @@
             {% set busiest = max(shell().obsessions|map(o => o.noteCount)|default([1])) %}
             <div class="fx-home__obsessions">
                 {% for obsession in shell().obsessions %}
-                    <a class="fx-obsession" href="{{ path('library', { obsession: obsession.slug }) }}">
+                    <a class="fx-obsession" href="{{ path('obsession_show', { slug: obsession.slug }) }}">
                         <span class="fx-obsession__header">
                             <span class="fx-obsession__name">{{ obsession.name }}</span>
                             <span class="fx-obsession__count">{{ obsession.noteCount }}</span>

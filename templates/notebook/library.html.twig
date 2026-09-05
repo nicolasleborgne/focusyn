@@ -18,7 +18,7 @@
                 </a>
                 {% for obsession in obsessions %}
                     <a class="fx-chip {{ currentObsession == obsession.slug ? 'fx-chip--selected' }}"
-                       href="{{ path('library', { obsession: obsession.slug }) }}">
+                       href="{{ path('obsession_show', { slug: obsession.slug }) }}">
                         {{ obsession.name }}
                         <span class="fx-chip__count">{{ obsession.noteCount }}</span>
                     </a>

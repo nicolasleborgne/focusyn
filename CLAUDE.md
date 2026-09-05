@@ -56,6 +56,12 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
+**Une obsession n'est pas créée, elle est mentionnée.** Elle existe dès qu'une
+note la porte ; l'agrégat `Obsession` n'est que sa *fiche éditoriale*, et son
+absence est un état normal. C'est ce qui évite toute synchronisation :
+étiqueter une note ne crée rien, retirer la dernière note ne casse rien. Une
+fiche vidée de son contenu est supprimée plutôt que conservée vide.
+
 Cinq règles vérifiées mécaniquement — les enfreindre fait échouer `qa` :
 
 1. **Le domaine ne dépend de rien**, pas même de Symfony ou Doctrine. Trois

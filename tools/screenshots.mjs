@@ -27,6 +27,7 @@ const SCREENS = [
     { name: 'recherche', path: '/recherche?query=sommeil' },
     { name: 'taches', path: '/taches' },
     { name: 'reglages', path: '/reglages' },
+    { name: 'obsession', path: '/obsessions/sommeil' },
     { name: 'design-system', path: '/_design-system' },
 ];
 

@@ -12,8 +12,13 @@ use App\Notebook\Domain\Model\Note;
 use App\Notebook\Domain\Model\NoteBody;
 use App\Notebook\Domain\Model\NoteId;
 use App\Notebook\Domain\Model\NoteTitle;
+use App\Notebook\Domain\Model\Obsession;
+use App\Notebook\Domain\Model\ObsessionBlurb;
+use App\Notebook\Domain\Model\ObsessionId;
 use App\Notebook\Domain\Model\ObsessionName;
+use App\Notebook\Domain\Model\ObsessionPoint;
 use App\Notebook\Domain\Repository\NoteRepository;
+use App\Notebook\Domain\Repository\ObsessionRepository;
 use App\Organization\Domain\Model\MemberId;
 use App\Organization\Domain\Repository\OrganizationRepository;
 use App\Shared\Application\Command\CommandBus;
@@ -54,6 +59,7 @@ final class SeedDemoDataCommand extends Command
         private readonly UserRepository $users,
         private readonly OrganizationRepository $organizations,
         private readonly NoteRepository $notes,
+        private readonly ObsessionRepository $obsessions,
         private readonly TaskListRepository $lists,
         private readonly TenantScope $scope,
         private readonly ClockInterface $clock,
@@ -89,6 +95,7 @@ final class SeedDemoDataCommand extends Command
         $this->scope->runAs($tenant, function () use ($tenant, $author): void {
             $this->purge();
             $this->seedNotes($tenant, $author);
+            $this->seedObsessions($tenant);
             $this->seedLists($tenant);
         });
 
@@ -110,6 +117,14 @@ final class SeedDemoDataCommand extends Command
         foreach ($this->lists->all() as $list) {
             $this->lists->remove($list);
         }
+
+        foreach (self::obsessions() as [$name]) {
+            $existing = $this->obsessions->ofSlug(ObsessionName::fromString($name)->slug());
+
+            if (null !== $existing) {
+                $this->obsessions->remove($existing);
+            }
+        }
     }
 
     private function seedNotes(TenantId $tenant, AuthorId $author): void
@@ -126,6 +141,24 @@ final class SeedDemoDataCommand extends Command
                 array_map(ObsessionName::fromString(...), $obsessions),
                 $now->modify(\sprintf('-%d hours', ($index + 1) * 7)),
             ));
+        }
+    }
+
+    private function seedObsessions(TenantId $tenant): void
+    {
+        $now = $this->clock->now();
+
+        foreach (self::obsessions() as [$name, $blurb, $points]) {
+            $obsession = Obsession::describe(
+                ObsessionId::generate(),
+                $tenant,
+                ObsessionName::fromString($name),
+                ObsessionBlurb::fromString($blurb),
+                array_map(ObsessionPoint::fromString(...), $points),
+                $now,
+            );
+
+            $this->obsessions->save($obsession);
         }
     }
 
@@ -280,6 +313,47 @@ final class SeedDemoDataCommand extends Command
                     > Le changement n'est pas le sommeil, c'est l'anxiété autour.
                     MD,
             ],
+        ];
+    }
+
+    /** @return list<array{string, string, list<string>}> */
+    private static function obsessions(): array
+    {
+        return [
+            ['Sommeil', 'Segmentation, lumière, anxiété nocturne.', [
+                'La veille nocturne est un fait historique, pas un trouble.',
+                'La lumière artificielle est la variable qui a soudé la nuit en un bloc.',
+                'Sur douze semaines, c\'est l\'anxiété qui bouge — pas la durée.',
+            ]],
+            ['Café', 'Extraction, mouture, ce que le ratio ne dit pas.', [
+                'Le ratio est un repère, pas une cause.',
+                'Fixer la mouture avant de toucher au temps.',
+                'Le goût plat signale une sous-extraction, pas un mauvais grain.',
+            ]],
+            ['Typographie', 'Grille suisse, marges, hiérarchie par le poids.', [
+                'Le blanc est structurel.',
+                'Deux graisses suffisent si la grille est juste.',
+                'Retirer jusqu\'à ce que ça casse.',
+            ]],
+            ['Mémoire', 'Palais, espacement, reformulation.', [
+                'L\'ordre du lieu porte l\'ordre du contenu.',
+                'L\'image absurde survit à l\'image logique.',
+                'Sans reformulation, pas de trace.',
+            ]],
+            ['Vélo', 'Acier, fatigue, géométrie du confort.', [
+                'Le matériau décide de la réparation, la géométrie du confort.',
+                'Les contraintes réelles restent sous le seuil de fatigue.',
+            ]],
+            ['Fermentation', 'pH, temps, journal de bord.', [
+                'Une mesure vaut dix impressions.',
+                '4,6 de pH : le point de bascule du goût.',
+            ]],
+            ['Histoire', 'Sources anciennes des habitudes actuelles.', [
+                'Beaucoup d\'habitudes « naturelles » ont une date.',
+            ]],
+            ['Lecture', 'Relire activement plutôt que lire beaucoup.', [
+                'Le nombre de livres est une mauvaise métrique.',
+            ]],
         ];
     }
 

@@ -1,0 +1,89 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ obsession.name }} — Focusyn{% endblock %}
+{% set crumb = 'obsession.crumb'|trans ~ ' / ' ~ obsession.name %}
+
+{% block page %}
+    <div class="fx-app__content fx-app__content--obsession">
+
+        {% for message in app.flashes('success') %}
+            <p class="fx-settings__notice" role="status">{{ message|trans }}</p>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message }}</p>
+        {% endfor %}
+
+        <p class="fx-eyebrow">{{ 'obsession.eyebrow'|trans({ count: obsession.noteCount }) }}</p>
+        <h1 class="fx-heading fx-heading--hero fx-obsession-page__title">{{ obsession.name }}</h1>
+
+        {% if obsession.blurb %}
+            <p class="fx-obsession-page__blurb">{{ obsession.blurb }}</p>
+        {% endif %}
+
+        {% if obsession.points is not empty %}
+            <p class="fx-eyebrow fx-section-title fx-obsession-page__section">{{ 'obsession.what_emerges'|trans }}</p>
+            <ol class="fx-points">
+                {% for point in obsession.points %}
+                    <li class="fx-points__item">
+                        <span class="fx-points__number">{{ '%02d'|format(loop.index) }}</span>
+                        <span class="fx-points__text">{{ point }}</span>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+
+        <p class="fx-eyebrow fx-section-title fx-obsession-page__section">
+            {{ 'obsession.notes'|trans({ count: obsession.notes|length }) }}
+        </p>
+        <div class="fx-library__notes">
+            {% for note in obsession.notes %}
+                <a class="fx-note-row" href="{{ path('note_show', { id: note.id }) }}">
+                    <span class="fx-note-row__main">
+                        <span class="fx-note-row__title">{{ note.title }}</span>
+                        {% if note.excerpt is not empty %}
+                            <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
+                        {% endif %}
+                    </span>
+                    <span class="fx-note-row__aside">
+                        <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
+                        <span class="fx-note-row__meta">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
+                    </span>
+                </a>
+            {% else %}
+                <p class="fx-card__help">{{ 'obsession.no_notes'|trans }}</p>
+            {% endfor %}
+        </div>
+
+        {# La maquette montre une fiche déjà écrite ; il faut bien un endroit
+           pour l'écrire. Le formulaire reste replié tant qu'on ne l'ouvre pas. #}
+        <details class="fx-obsession-page__editor" {{ obsession.saysSomething ? '' : 'open' }}>
+            <summary class="fx-eyebrow fx-obsession-page__summary">{{ 'obsession.describe'|trans }}</summary>
+
+            <form method="post" action="{{ path('obsession_describe', { slug: obsession.slug }) }}" class="fx-obsession-form">
+                <input type="hidden" name="_token" value="{{ csrf_token('obsession-describe') }}">
+
+                <div class="fx-field">
+                    <label class="fx-field__label" for="obsession-blurb">{{ 'obsession.blurb_label'|trans }}</label>
+                    <input id="obsession-blurb" class="fx-field__control" type="text" name="blurb"
+                           maxlength="220" value="{{ obsession.blurb }}"
+                           placeholder="{{ 'obsession.blurb_placeholder'|trans }}">
+                </div>
+
+                <div class="fx-field">
+                    <span class="fx-field__label">{{ 'obsession.points_label'|trans }}</span>
+                    {% for index in 0..5 %}
+                        <input class="fx-field__control fx-obsession-form__point" type="text" name="points[]"
+                               maxlength="240" value="{{ obsession.points[index]|default('') }}"
+                               aria-label="{{ 'obsession.point_number'|trans({ number: index + 1 }) }}"
+                               placeholder="{{ index == 0 ? 'obsession.points_placeholder'|trans : '' }}">
+                    {% endfor %}
+                    <span class="fx-field__help">{{ 'obsession.points_help'|trans }}</span>
+                </div>
+
+                <button type="submit" class="fx-button fx-button--primary fx-button--small">
+                    {{ 'obsession.save'|trans }}
+                </button>
+            </form>
+        </details>
+    </div>
+{% endblock %}

@@ -97,3 +97,7 @@ services:
 
     App\Identity\Application\Port\PasswordResetMailer:
         alias: App\Identity\Infrastructure\Mail\SymfonyPasswordResetMailer
+
+    App\Notebook\Domain\Repository\ObsessionRepository:
+        alias: App\Notebook\Infrastructure\Persistence\Doctrine\DoctrineObsessionRepository
+        public: true

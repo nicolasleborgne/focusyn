@@ -78,6 +78,11 @@
     padding-top: var(--fx-space-24);
 }
 
+.fx-app__content--obsession {
+    max-width: var(--fx-measure-obsession);
+    padding-bottom: var(--fx-space-24);
+}
+
 .fx-app__content--settings {
     max-width: var(--fx-measure-settings);
 }

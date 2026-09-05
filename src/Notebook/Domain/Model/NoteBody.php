@@ -79,17 +79,32 @@ final readonly class NoteBody implements Stringable
      */
     public function excerpt(): string
     {
+        $fallback = null;
+
         foreach (explode("\n", $this->value) as $line) {
             $trimmed = trim($line);
 
-            if ('' === $trimmed || $this->isDecoration($trimmed)) {
+            if ('' === $trimmed) {
+                continue;
+            }
+
+            if ($this->isDecoration($trimmed)) {
+                // Retenu au cas où la note n'aurait aucune ligne de prose :
+                // un journal fait de puces vaut mieux qu'un extrait vide.
+                $fallback ??= $this->withoutLeadingMark($trimmed);
+
                 continue;
             }
 
             return $this->truncate($this->stripInlineMarks($trimmed));
         }
 
-        return '';
+        return null === $fallback ? '' : $this->truncate($this->stripInlineMarks($fallback));
+    }
+
+    private function withoutLeadingMark(string $line): string
+    {
+        return trim(preg_replace('/^(#{1,6}\s+|>\s?|[-*]\s+|\d+\.\s+|```.*|---+)/u', '', $line) ?? $line);
     }
 
     private function isDecoration(string $line): bool

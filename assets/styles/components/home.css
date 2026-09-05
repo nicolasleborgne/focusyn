@@ -664,3 +664,134 @@
 .fx-auth__message--error {
     color: var(--fx-danger);
 }
+
+/* --- Page d'une obsession ----------------------------------------------------- */
+
+.fx-obsession-page__title {
+    margin-top: var(--fx-space-3);
+    letter-spacing: -0.025em;
+}
+
+.fx-obsession-page__blurb {
+    margin: var(--fx-space-6) 0 0;
+    font-family: var(--fx-font-prose);
+    font-size: 1.188rem;
+    line-height: 1.65;
+    color: var(--fx-text-secondary);
+}
+
+.fx-obsession-page__section {
+    margin-top: var(--fx-space-16);
+    margin-bottom: var(--fx-space-4);
+}
+
+/*
+ * Points clés : numérotés en monospace pâle, texte à côté. La numérotation
+ * n'est pas décorative — elle dit qu'il y en a peu et qu'ils se lisent dans
+ * l'ordre.
+ */
+.fx-points {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fx-points__item {
+    display: flex;
+    gap: var(--fx-space-8);
+    padding: var(--fx-space-8) 0;
+    border-bottom: 1px solid var(--fx-surface-muted);
+}
+
+.fx-points__number {
+    padding-top: 4px;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-neutral-800);
+}
+
+.fx-points__text {
+    flex: 1;
+    font-size: 0.906rem;
+    line-height: var(--fx-leading-relaxed);
+    color: var(--fx-text-body);
+}
+
+/* --- Rédaction de la fiche ---------------------------------------------------- */
+
+.fx-obsession-page__editor {
+    margin-top: var(--fx-space-20);
+    padding-top: var(--fx-space-8);
+    border-top: 1px solid var(--fx-border-faint);
+}
+
+.fx-obsession-page__summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.fx-obsession-page__summary::-webkit-details-marker {
+    display: none;
+}
+
+.fx-obsession-page__summary:hover {
+    color: var(--fx-text-primary);
+}
+
+.fx-obsession-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-8);
+    align-items: flex-start;
+    margin-top: var(--fx-space-8);
+}
+
+.fx-obsession-form .fx-field {
+    width: 100%;
+}
+
+.fx-obsession-form__point + .fx-obsession-form__point {
+    margin-top: var(--fx-space-2);
+}
+
+/* Étiquetage d'une note : un champ qui ne se voit pas tant qu'on n'y touche pas. */
+.fx-note__obsessions-input {
+    width: 100%;
+    padding: var(--fx-space-2) 0;
+    border: none;
+    border-bottom: 1px solid transparent;
+    outline: none;
+    background: transparent;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    letter-spacing: 0.04em;
+    color: var(--fx-text-meta);
+}
+
+.fx-note__obsessions-input:hover {
+    border-bottom-color: var(--fx-border-faint);
+}
+
+.fx-note__obsessions-input:focus {
+    border-bottom-color: var(--fx-accent);
+}
+
+.fx-note__obsessions-input::placeholder {
+    color: var(--fx-text-disabled);
+}
+
+.fx-note__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-3);
+    margin-top: var(--fx-space-4);
+}
+
+.fx-note__tags .fx-tag {
+    text-decoration: none;
+}
+
+.fx-note__tags .fx-tag:hover {
+    border-color: var(--fx-border-default);
+    color: var(--fx-text-primary);
+}

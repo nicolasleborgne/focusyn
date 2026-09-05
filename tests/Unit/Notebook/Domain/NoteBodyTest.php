@@ -57,6 +57,15 @@ final class NoteBodyTest extends TestCase
         self::assertStringNotContainsString('mo…', $excerpt);
     }
 
+    public function testItFallsBackToTheFirstLineWhenThereIsNoProse(): void
+    {
+        // Une note faite de titres et de puces n'a aucune ligne de prose ;
+        // laisser l'extrait vide donnerait une ligne muette dans les listes.
+        $body = NoteBody::fromString("# Journal\n\n- Semaine 1-2 : réveil vers 3 h 10\n- Semaine 5 : réveil accepté");
+
+        self::assertSame('Journal', $body->excerpt());
+    }
+
     public function testAnEmptyBodyHasNoExcerpt(): void
     {
         self::assertSame('', NoteBody::empty()->excerpt());

@@ -31,7 +31,7 @@
         <p class="fx-eyebrow fx-sidebar__section">{{ 'shell.section.obsessions'|trans }}</p>
         <div class="fx-sidebar__group">
             {% for obsession in shell().obsessions %}
-                <a class="fx-nav-item fx-nav-item--sub" href="{{ path('library') }}#{{ obsession.slug }}">
+                <a class="fx-nav-item fx-nav-item--sub" href="{{ path('obsession_show', { slug: obsession.slug }) }}">
                     <span class="fx-nav-item__dot" aria-hidden="true"></span>
                     <span class="fx-nav-item__label">{{ obsession.name }}</span>
                     <span class="fx-nav-item__count">{{ obsession.noteCount }}</span>

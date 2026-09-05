@@ -7,7 +7,9 @@ namespace App\Notebook\Application\Query;
 use App\Notebook\Domain\Model\Note;
 use App\Notebook\Domain\Model\NoteId;
 use App\Notebook\Domain\Model\ObsessionName;
+use App\Notebook\Domain\Model\ObsessionPoint;
 use App\Notebook\Domain\Repository\NoteRepository;
+use App\Notebook\Domain\Repository\ObsessionRepository;
 use DateTimeImmutable;
 
 /**
@@ -20,6 +22,7 @@ final readonly class NotebookQuery
 {
     public function __construct(
         private NoteRepository $notes,
+        private ObsessionRepository $obsessions,
     ) {
     }
 
@@ -66,6 +69,47 @@ final readonly class NotebookQuery
             updatedAt: $note->updatedAt(),
             wordCount: $note->body()->wordCount(),
             readingMinutes: $note->body()->readingMinutes(),
+        );
+    }
+
+    /**
+     * Page d'une obsession : ce qui en est écrit, et ce qu'elle rassemble.
+     *
+     * Retourne une vue même sans fiche éditoriale : l'obsession existe dès
+     * qu'une note la mentionne, la fiche n'est qu'un supplément.
+     */
+    public function obsession(string $slug): ?ObsessionPageView
+    {
+        $counted = null;
+
+        foreach ($this->notes->obsessionCounts() as $candidate) {
+            if ($candidate['slug'] === $slug) {
+                $counted = $candidate;
+                break;
+            }
+        }
+
+        $record = $this->obsessions->ofSlug($slug);
+
+        if (null === $counted && null === $record) {
+            return null;
+        }
+
+        $name = $counted['name'] ?? $record?->name()->toString() ?? $slug;
+
+        return new ObsessionPageView(
+            name: $name,
+            slug: $slug,
+            noteCount: $counted['count'] ?? 0,
+            blurb: $record?->blurb()?->toString(),
+            points: array_map(
+                static fn (ObsessionPoint $point): string => $point->toString(),
+                $record?->points() ?? [],
+            ),
+            notes: null === $counted ? [] : array_map(
+                $this->summarise(...),
+                $this->notes->taggedWith(ObsessionName::fromString($name)),
+            ),
         );
     }
 

@@ -114,6 +114,8 @@ notebook:
     write_first: Écrire la première
     delete: Supprimer la note
     deleted: Note supprimée.
+    obsessions_label: Obsessions de la note
+    obsessions_placeholder: Obsessions, séparées par des virgules
     title_label: Titre de la note
     title_required: Une note doit avoir un titre.
     reading_minutes: '{count, plural, one {# min de lecture} other {# min de lecture}}'
@@ -164,3 +166,19 @@ password_reset:
         action: Choisir un nouveau mot de passe
         validity: Ce lien est valable trente minutes et ne fonctionne qu'une seule fois.
         ignore: 'Si vous n''êtes pas à l''origine de cette demande, ignorez ce message : rien n''a changé.'
+
+obsession:
+    crumb: Obsession
+    eyebrow: '{count, plural, =0 {Obsession · aucune note} one {Obsession · # note} other {Obsession · # notes}}'
+    what_emerges: Ce qui se dégage
+    notes: '{count, plural, =0 {Aucune note} one {# note} other {# notes}}'
+    no_notes: Aucune note ne porte encore cette obsession.
+    describe: Décrire cette obsession
+    blurb_label: Accroche
+    blurb_placeholder: Une phrase qui dit de quoi il s'agit.
+    points_label: Ce qui se dégage
+    points_placeholder: Une affirmation, pas un paragraphe.
+    points_help: Six points au plus. Les champs laissés vides sont ignorés.
+    point_number: 'Point {number}'
+    save: Enregistrer
+    saved: Fiche enregistrée.
