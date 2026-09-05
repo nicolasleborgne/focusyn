@@ -129,6 +129,11 @@
  * La monospace est réservée aux métadonnées (dates, ratios, étiquettes) ; un
  * chiffre mis en avant est composé comme un titre.
  */
+.fx-stat {
+    padding: var(--fx-space-9) var(--fx-space-9) var(--fx-space-8);
+    background: var(--fx-surface-app);
+}
+
 .fx-stat__value {
     font-family: var(--fx-font-prose);
     font-size: var(--fx-title-stat);
@@ -138,8 +143,9 @@
 }
 
 .fx-stat__label {
-    margin-top: var(--fx-space-1);
-    font-size: var(--fx-size-md);
+    margin-top: var(--fx-space-4);
+    font-size: var(--fx-size-smd);
+    letter-spacing: 0.01em;
     color: var(--fx-text-muted);
 }
 

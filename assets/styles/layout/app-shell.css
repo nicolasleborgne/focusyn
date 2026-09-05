@@ -50,12 +50,36 @@
     padding: var(--fx-space-28) var(--fx-space-14);
 }
 
-.fx-app__content--wide {
-    max-width: var(--fx-measure-wide);
+/* Variantes de mesure, une par nature d'écran. */
+.fx-app__content--library {
+    max-width: var(--fx-measure-library);
+    padding-top: var(--fx-space-20);
 }
 
-.fx-app__content--tight {
-    padding: var(--fx-space-24) var(--fx-space-14);
+.fx-app__content--home {
+    max-width: var(--fx-measure-home);
+}
+
+.fx-app__content--search {
+    padding-top: var(--fx-space-28);
+}
+
+.fx-app__content--editor {
+    max-width: var(--fx-measure-editor);
+    padding: var(--fx-space-14) var(--fx-space-16);
+}
+
+.fx-app__content--board {
+    padding-top: var(--fx-space-24);
+}
+
+.fx-app__content--list {
+    max-width: var(--fx-measure-list);
+    padding-top: var(--fx-space-24);
+}
+
+.fx-app__content--settings {
+    max-width: var(--fx-measure-settings);
 }
 
 /* Colonne d'édition + panneau d'aperçu. */
@@ -76,36 +100,4 @@
     max-width: 46%;
     border-left: 1px solid var(--fx-border-faint);
     background: var(--fx-surface-sunken);
-}
-
-/* --- Gabarit compact ---------------------------------------------------- */
-/* 900 px : en dessous, la barre latérale et le contenu ne tiennent plus côte
-   à côte sans réduire la mesure de lecture sous 60 caractères. */
-@media (max-width: 899px) {
-    .fx-sidebar {
-        display: none;
-    }
-
-    .fx-app__content {
-        padding: var(--fx-space-12) var(--fx-space-8) var(--fx-space-16);
-    }
-}
-
-@media (min-width: 900px) {
-    .fx-tabbar,
-    .fx-header__mark {
-        display: none;
-    }
-}
-
-/* --- Focus profond ------------------------------------------------------- */
-
-.fx-app--focus .fx-sidebar,
-.fx-app--focus .fx-tabbar,
-.fx-app--focus .fx-app__pane--preview {
-    display: none;
-}
-
-.fx-app--focus .fx-header {
-    border-bottom-color: transparent;
 }

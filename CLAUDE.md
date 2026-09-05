@@ -224,8 +224,21 @@ peut pas se permettre. Les trois familles sont variables — une déclaration pa
 plage de graisses, jamais par graisse isolée, sinon le navigateur simule les
 autres et cela se voit.
 
-`/_design-system` (dev uniquement) rend tous les blocs avec leurs variantes :
-s'en servir comme vérification visuelle après toute modification de jeton.
+`/_design-system` (dev uniquement) rend tous les blocs avec leurs variantes.
+
+**Vérifier le rendu, ne pas le déduire.** `devenv shell -- shots` sème un compte
+de démonstration (`app:demo`) puis capture chaque écran en 1280 et 390 px dans
+`var/screenshots/`. C'est ainsi qu'ont été trouvés une barre d'onglets mobile
+visible sur bureau, un fil d'Ariane jamais rendu et une erreur 500 sur l'accueil
+qu'aucun test ne voyait. Comparer les captures à `project/Focusyn.dc.html`.
+
+**Chaque écran a sa propre mesure** (`fx-app__content--home`, `--library`,
+`--editor`, `--list`, `--settings`…) : la largeur de lecture suit la nature du
+contenu, elle n'est pas uniforme.
+
+**Les bascules d'affichage vivent dans `layout/responsive.css`, importée en
+dernier.** Une requête média n'ajoute aucune spécificité : placée plus haut,
+elle se fait écraser par n'importe quel `display` déclaré après.
 
 ## PWA
 

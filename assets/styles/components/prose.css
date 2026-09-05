@@ -71,7 +71,7 @@
 .fx-prose__line--quote {
     margin-bottom: calc(16px * var(--fx-prose-density));
     padding-left: var(--fx-space-8);
-    border-left: 2px solid var(--fx-neutral-700);
+    border-left: 2px solid var(--fx-border-floating);
     font-style: italic;
     line-height: var(--fx-leading-relaxed);
     color: var(--fx-text-quote);

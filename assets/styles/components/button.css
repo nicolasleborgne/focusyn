@@ -107,7 +107,7 @@
 
 .fx-button--block {
     width: 100%;
-    padding: var(--fx-space-6) var(--fx-space-6);
+    padding: 11px var(--fx-space-6);
     font-size: var(--fx-size-nav);
 }
 

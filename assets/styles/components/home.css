@@ -6,13 +6,22 @@
     margin-top: var(--fx-space-2);
 }
 
+/*
+ * Grille de compteurs.
+ *
+ * Les filets ne sont pas des bordures : c'est le fond du conteneur qui
+ * transparaît dans un écart de grille d'un pixel. Des bordures sur chaque
+ * cellule se doubleraient aux jonctions et laisseraient un trait plus épais
+ * au milieu qu'aux extrémités.
+ */
 .fx-home__stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--fx-space-16);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
     margin-top: var(--fx-space-14);
-    padding-bottom: var(--fx-space-14);
-    border-bottom: 1px solid var(--fx-border-faint);
+    margin-bottom: var(--fx-space-22);
+    border: 1px solid var(--fx-border-faint);
+    background: var(--fx-border-faint);
 }
 
 .fx-home__section {
@@ -23,11 +32,62 @@
     margin-top: var(--fx-space-4);
 }
 
+/*
+ * Obsessions de l'accueil : des cartes, pas des pastilles.
+ *
+ * La barre proportionnelle donne d'un coup d'œil le poids relatif de chaque
+ * sujet — ce qu'une simple liste de noms ne dit pas.
+ */
 .fx-home__obsessions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--fx-space-4);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: var(--fx-space-6);
     margin-top: var(--fx-space-6);
+}
+
+.fx-obsession {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-3);
+    padding: var(--fx-space-8) var(--fx-space-8) var(--fx-space-7);
+    border: 1px solid var(--fx-border-faint);
+    text-decoration: none;
+}
+
+.fx-obsession:hover {
+    border-color: var(--fx-border-default);
+}
+
+.fx-obsession__header {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+}
+
+.fx-obsession__name {
+    font-size: var(--fx-size-xl);
+    font-weight: var(--fx-weight-medium);
+    color: var(--fx-text-primary);
+}
+
+.fx-obsession__count {
+    margin-left: auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-obsession__bar {
+    height: 2px;
+    margin-top: 2px;
+    background: var(--fx-surface-muted);
+}
+
+.fx-obsession__fill {
+    display: block;
+    height: 2px;
+    background: var(--fx-accent);
+    opacity: 0.35;
 }
 
 .fx-home__tasks {
@@ -49,7 +109,7 @@
     flex: 1;
     min-width: 0;
     font-size: var(--fx-size-xl);
-    line-height: var(--fx-leading-relaxed);
+    line-height: 1.6;
     color: var(--fx-text-body);
 }
 
@@ -330,10 +390,13 @@
 }
 
 .fx-note__title {
+    display: block;
     width: 100%;
     padding: 0;
     border: none;
     outline: none;
+    overflow: hidden;
+    resize: none;
     background: transparent;
     font-family: var(--fx-font-prose);
     font-size: var(--fx-prose-display);
@@ -461,7 +524,7 @@
 .fx-task-line__text--done {
     color: var(--fx-text-disabled);
     text-decoration: line-through;
-    text-decoration-color: var(--fx-neutral-700);
+    text-decoration-color: var(--fx-line-strike);
 }
 
 .fx-checklist__add {

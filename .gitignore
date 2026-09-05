@@ -42,3 +42,8 @@ phpstan.neon
 ###> déploiement ###
 /.env.prod.local
 ###< déploiement ###
+
+###> outillage de vérification visuelle ###
+/node_modules/
+/var/screenshots/
+###< outillage de vérification visuelle ###

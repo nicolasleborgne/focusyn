@@ -10,8 +10,8 @@
     display: inline-flex;
     align-items: center;
     gap: var(--fx-space-3);
-    padding: var(--fx-space-3) var(--fx-space-6);
-    border: 1px solid var(--fx-border-subtle);
+    padding: 5px 11px;
+    border: 1px solid var(--fx-neutral-550);
     border-radius: var(--fx-radius-pill);
     background: transparent;
     font-size: var(--fx-size-md);
@@ -47,13 +47,13 @@
 .fx-pill {
     display: inline-flex;
     align-items: center;
-    padding: var(--fx-space-3) var(--fx-space-4);
-    border: 1px solid var(--fx-border-subtle);
+    padding: 5px 9px;
+    border: 1px solid var(--fx-neutral-550);
     border-radius: var(--fx-radius-md);
     background: transparent;
     font-family: var(--fx-font-meta);
     font-size: var(--fx-size-xs);
-    color: var(--fx-ink-600);
+    color: var(--fx-text-muted);
     cursor: pointer;
 }
 
@@ -85,4 +85,25 @@
     border-color: var(--fx-accent);
     background: transparent;
     color: var(--fx-accent);
+}
+
+
+/*
+ * Étiquette d'obsession **dans une ligne de note**.
+ *
+ * Ce n'est pas une pastille cliquable : c'est une mention discrète, en
+ * monospace, qui ne doit pas rivaliser avec le titre. Employer `fx-chip` ici
+ * alourdit visiblement les listes.
+ */
+.fx-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px var(--fx-space-3);
+    border: 1px solid var(--fx-neutral-280);
+    border-radius: var(--fx-radius-sm);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    letter-spacing: 0.04em;
+    color: var(--fx-text-muted);
+    white-space: nowrap;
 }

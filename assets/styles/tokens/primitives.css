@@ -18,13 +18,16 @@
     --fx-neutral-100: #f6f6f4;
     --fx-neutral-150: #f4f4f2;
     --fx-neutral-200: #f1f1ef;
+    --fx-neutral-280: #ebebe8;
     --fx-neutral-300: #ececea;
     --fx-neutral-400: #eaeae8;
     --fx-neutral-450: #e8e8e5;
     --fx-neutral-500: #e6e6e3;
     --fx-neutral-550: #e4e4e1;
     --fx-neutral-600: #e0e0dd;
+    --fx-neutral-620: #dededa;
     --fx-neutral-700: #d8d8d4;
+    --fx-neutral-730: #d4d4d0;
     --fx-neutral-750: #d0d0cc;
     --fx-neutral-800: #c9c9c5;
     --fx-neutral-850: #b8b8b4;
@@ -60,6 +63,7 @@
     --fx-size-2xs: 0.625rem;   /* 10px   — étiquettes de section */
     --fx-size-xs: 0.656rem;    /* 10.5px — puces monospace */
     --fx-size-sm: 0.688rem;    /* 11px   — compteurs */
+    --fx-size-smd: 0.719rem;   /* 11.5px — libellés de compteur, pied de compte */
     --fx-size-md: 0.75rem;     /* 12px   — métadonnées, chips */
     --fx-size-lg: 0.781rem;    /* 12.5px */
     --fx-size-base: 0.813rem;  /* 13px   — texte d'interface courant */
@@ -124,6 +128,7 @@
     --fx-space-14: 1.75rem;  /* 28px */
     --fx-space-16: 2rem;     /* 32px */
     --fx-space-20: 2.5rem;   /* 40px */
+    --fx-space-22: 2.75rem;  /* 44px */
     --fx-space-24: 3rem;     /* 48px */
     --fx-space-28: 3.5rem;   /* 56px */
 
@@ -154,8 +159,16 @@
     --fx-header-height: 54px;
     --fx-device-width: 392px;
     --fx-device-height: 812px;
+    /* Une mesure par écran : la largeur de lecture suit la nature du contenu.
+       Une liste de tâches n'a pas besoin de la même colonne qu'une
+       bibliothèque, et un formulaire de réglages encore moins. */
+    --fx-measure-library: 900px;
+    --fx-measure-home: 860px;
+    --fx-measure-obsession: 820px;
     --fx-measure-prose: 760px;
-    --fx-measure-wide: 900px;
+    --fx-measure-editor: 720px;
+    --fx-measure-list: 660px;
+    --fx-measure-settings: 640px;
     --fx-measure-narrow: 460px;
 
     /* --- Profondeurs ------------------------------------------------------ */

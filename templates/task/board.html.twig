@@ -1,10 +1,10 @@
 {% extends 'shell.html.twig' %}
 
 {% block title %}{{ 'shell.nav.tasks'|trans }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'shell.nav.tasks'|trans }}{% endblock %}
+{% set crumb = 'shell.nav.tasks'|trans %}
 
 {% block page %}
-    <div class="fx-app__content">
+    <div class="fx-app__content fx-app__content--board">
         <div class="fx-board__header">
             <h1 class="fx-heading">{{ 'shell.nav.tasks'|trans }}</h1>
             <form method="post" action="{{ path('task_list_open') }}">

@@ -103,6 +103,24 @@ final class TenantIsolationTest extends KernelTestCase
         self::assertSame(1, array_sum(array_column($counts, 'count')) - 1);
     }
 
+    public function testObsessionCountsComeBackAsPrimitives(): void
+    {
+        $this->workingIn($this->alice);
+
+        $counts = $this->notes()->obsessionCounts();
+
+        // Le nom est hydraté en objet valeur par le type Doctrine ; le contrat
+        // du dépôt annonce des chaînes. Sans cette conversion, la barre
+        // latérale explose au premier rendu.
+        foreach ($counts as $obsession) {
+            self::assertIsString($obsession['name']);
+            self::assertIsString($obsession['slug']);
+            self::assertIsInt($obsession['count']);
+        }
+
+        self::assertSame(['Café', 'Sommeil'], array_column($counts, 'name'));
+    }
+
     public function testWithoutAnyOrganizationNothingIsVisible(): void
     {
         $this->enableFilterWithoutTenant();

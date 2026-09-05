@@ -1,10 +1,10 @@
 {% extends 'shell.html.twig' %}
 
 {% block title %}{{ 'settings.two_factor.enable'|trans }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'shell.nav.settings'|trans }} / {{ 'settings.two_factor.totp'|trans }}{% endblock %}
+{% set crumb = 'shell.nav.settings'|trans ~ ' / ' ~ 'settings.two_factor.totp'|trans %}
 
 {% block page %}
-    <div class="fx-app__content">
+    <div class="fx-app__content fx-app__content--settings">
         <h1 class="fx-heading">{{ 'settings.two_factor.enable'|trans }}</h1>
 
         {% for message in app.flashes('error') %}

@@ -1,10 +1,10 @@
 {% extends 'shell.html.twig' %}
 
 {% block title %}{{ note.title }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'shell.nav.library'|trans }} / {{ note.title }}{% endblock %}
+{% set crumb = 'shell.nav.library'|trans ~ ' / ' ~ note.title %}
 
 {% block page %}
-    <div class="fx-app__content fx-note">
+    <div class="fx-app__content fx-app__content--editor fx-note">
 
         {% for message in app.flashes('error') %}
             <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
@@ -14,9 +14,11 @@
            là où le corps se sauvegarde en continu. #}
         <form method="post" action="{{ path('note_rename', { id: note.id }) }}" class="fx-note__title-form">
             <input type="hidden" name="_token" value="{{ csrf_token('note-rename') }}">
-            <input class="fx-note__title" type="text" name="title" value="{{ note.title }}"
-                   aria-label="{{ 'notebook.title_label'|trans }}"
-                   onchange="this.form.requestSubmit()">
+            <textarea class="fx-note__title" name="title" rows="1"
+                      data-controller="autogrow"
+                      data-action="keydown->autogrow#submit change->autogrow#save"
+                      aria-label="{{ 'notebook.title_label'|trans }}"
+                      onchange="this.form.requestSubmit()">{{ note.title }}</textarea>
         </form>
 
         <p class="fx-note__meta">
@@ -30,7 +32,7 @@
         {% if note.obsessions is not empty %}
             <div class="fx-note__obsessions">
                 {% for obsession in note.obsessions %}
-                    <span class="fx-chip">{{ obsession }}</span>
+                    <span class="fx-tag">{{ obsession }}</span>
                 {% endfor %}
             </div>
         {% endif %}

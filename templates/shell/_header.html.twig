@@ -6,7 +6,7 @@
         </span>
     </span>
 
-    <span class="fx-header__crumb">{% block crumb %}{% endblock %}</span>
+    <span class="fx-header__crumb">{{ crumb|default('') }}</span>
 
     <div class="fx-header__actions">
         {% if focusable|default(false) %}

@@ -40,7 +40,9 @@ final class NotebookJourneyTest extends WebTestCase
 
         self::assertRouteSame('note_show');
         self::assertCount(1, $crawler->filter('.fx-note__editor'));
-        self::assertSame('Sans titre', $crawler->filter('.fx-note__title')->attr('value'));
+        // Le titre est une zone de texte extensible, pas un `input` : sa valeur
+        // est son contenu, et un titre long reste lisible au lieu d'être tronqué.
+        self::assertSame('Sans titre', trim($crawler->filter('.fx-note__title')->text()));
     }
 
     public function testTheEditorReceivesEverythingItNeedsToSaveOnItsOwn(): void

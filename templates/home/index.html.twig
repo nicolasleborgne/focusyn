@@ -3,10 +3,10 @@
 {% set focusable = false %}
 
 {% block title %}{{ 'shell.nav.home'|trans }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'home.crumb'|trans }}{% endblock %}
+{% set crumb = 'home.crumb'|trans %}
 
 {% block page %}
-    <div class="fx-app__content">
+    <div class="fx-app__content fx-app__content--home">
 
         <p class="fx-eyebrow">{{ 'now'|format_datetime(pattern: 'EEEE d MMMM', locale: app.request.locale) }}</p>
         <h1 class="fx-heading fx-heading--hero fx-home__title">{{ 'home.title'|trans }}</h1>
@@ -27,7 +27,7 @@
         </section>
 
         <section class="fx-home__section">
-            <p class="fx-eyebrow">{{ 'home.resume'|trans }}</p>
+            <p class="fx-eyebrow fx-section-title">{{ 'home.resume'|trans }}</p>
             <div class="fx-home__notes">
                 {% for note in home.recentNotes %}
                     <a class="fx-note-row fx-note-row--compact" href="{{ path('library') }}">
@@ -37,7 +37,7 @@
                             {% if note.obsessions is not empty %}
                                 <span class="fx-note-row__tags">
                                     {% for obsession in note.obsessions %}
-                                        <span class="fx-chip">{{ obsession }}</span>
+                                        <span class="fx-tag">{{ obsession }}</span>
                                     {% endfor %}
                                 </span>
                             {% endif %}
@@ -52,7 +52,7 @@
         </section>
 
         <section class="fx-home__section">
-            <p class="fx-eyebrow">{{ 'home.next_tasks'|trans }}</p>
+            <p class="fx-eyebrow fx-section-title">{{ 'home.next_tasks'|trans }}</p>
             {% if home.hasNothingPending %}
                 <p class="fx-card__help">{{ 'home.all_clear'|trans }}</p>
             {% else %}
@@ -69,12 +69,18 @@
         </section>
 
         <section class="fx-home__section">
-            <p class="fx-eyebrow">{{ 'shell.section.obsessions'|trans }}</p>
+            <p class="fx-eyebrow fx-section-title">{{ 'shell.section.obsessions'|trans }}</p>
+            {% set busiest = max(shell().obsessions|map(o => o.noteCount)|default([1])) %}
             <div class="fx-home__obsessions">
                 {% for obsession in shell().obsessions %}
-                    <a class="fx-chip" href="{{ path('library') }}#{{ obsession.slug }}">
-                        {{ obsession.name }}
-                        <span class="fx-chip__count">{{ obsession.noteCount }}</span>
+                    <a class="fx-obsession" href="{{ path('library', { obsession: obsession.slug }) }}">
+                        <span class="fx-obsession__header">
+                            <span class="fx-obsession__name">{{ obsession.name }}</span>
+                            <span class="fx-obsession__count">{{ obsession.noteCount }}</span>
+                        </span>
+                        <span class="fx-obsession__bar">
+                            <span class="fx-obsession__fill" style="width: {{ (obsession.noteCount / busiest * 100)|round }}%"></span>
+                        </span>
                     </a>
                 {% endfor %}
             </div>

@@ -1,0 +1,39 @@
+/**
+ * Bascules d'affichage selon la largeur.
+ *
+ * Importée **en dernier**, et c'est essentiel : une requête média n'ajoute pas
+ * de spécificité. Placées plus haut, ces règles étaient écrasées par le
+ * `display: flex` de `.fx-tabbar` et de `.fx-mark`, déclarés dans des fichiers
+ * importés après — la barre d'onglets mobile restait visible sur bureau.
+ *
+ * Point de bascule : 900 px. En dessous, la barre latérale et le contenu ne
+ * tiennent plus côte à côte sans réduire la mesure de lecture sous 60 signes.
+ */
+
+@media (max-width: 899px) {
+    .fx-sidebar {
+        display: none;
+    }
+
+    .fx-app__content {
+        padding: var(--fx-space-12) var(--fx-space-8) var(--fx-space-16);
+    }
+
+    .fx-app__pane--preview {
+        display: none;
+    }
+}
+
+@media (min-width: 900px) {
+    .fx-tabbar,
+    .fx-header__mark {
+        display: none;
+    }
+}
+
+/* Le mode focus profond masque la chrome à toute largeur. */
+.fx-app--focus .fx-sidebar,
+.fx-app--focus .fx-tabbar,
+.fx-app--focus .fx-app__pane--preview {
+    display: none;
+}

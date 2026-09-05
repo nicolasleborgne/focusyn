@@ -10,7 +10,7 @@
     bottom: calc(100% + var(--fx-space-4));
     z-index: var(--fx-z-menu);
     overflow: hidden;
-    border: 1px solid var(--fx-neutral-700);
+    border: 1px solid var(--fx-border-floating);
     background: var(--fx-surface-raised);
     box-shadow: var(--fx-shadow-menu);
 }
@@ -20,7 +20,7 @@
     align-items: baseline;
     gap: var(--fx-space-4);
     width: 100%;
-    padding: var(--fx-space-6) var(--fx-space-6);
+    padding: 11px 13px;
     border-bottom: 1px solid var(--fx-surface-muted);
     text-align: left;
     font-size: var(--fx-size-base);
@@ -62,7 +62,7 @@
     width: 100%;
     max-width: var(--fx-measure-narrow);
     padding: var(--fx-space-12);
-    border: 1px solid var(--fx-neutral-700);
+    border: 1px solid var(--fx-border-floating);
     background: var(--fx-surface-raised);
     box-shadow: var(--fx-shadow-menu);
 }

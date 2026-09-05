@@ -79,6 +79,17 @@
     serve-d.exec = "symfony server:start --no-tls --port=8000 --daemon";
     unserve.exec = "symfony server:stop";
     logs.exec = "symfony server:log";
+
+    # Vérification visuelle : sème un compte de démonstration puis capture
+    # chaque écran. Chromium vient de nix — les binaires téléchargés par
+    # Playwright ne démarrent pas sur NixOS.
+    shots.exec = ''
+      set -e
+      php bin/console app:demo
+      nix --extra-experimental-features "nix-command flakes" shell nixpkgs#chromium \
+        --command node tools/screenshots.mjs
+      echo "→ var/screenshots/"
+    '';
     tests.exec = "vendor/bin/phpunit \"$@\"";
     stan.exec = "vendor/bin/phpstan analyse --memory-limit=1G \"$@\"";
     cs.exec = "vendor/bin/php-cs-fixer fix \"$@\"";

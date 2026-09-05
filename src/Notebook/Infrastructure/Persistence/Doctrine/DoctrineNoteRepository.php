@@ -10,6 +10,7 @@ use App\Notebook\Domain\Model\NoteObsession;
 use App\Notebook\Domain\Model\ObsessionName;
 use App\Notebook\Domain\Repository\NoteRepository;
 use App\Shared\Application\Event\DomainEventBus;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class DoctrineNoteRepository implements NoteRepository
@@ -95,6 +96,17 @@ final readonly class DoctrineNoteRepository implements NoteRepository
         return $notes;
     }
 
+    public function updatedSince(DateTimeImmutable $since): array
+    {
+        /** @var list<Note> $notes */
+        $notes = $this->entityManager
+            ->createQuery('SELECT n FROM '.Note::class.' n WHERE n.updatedAt >= :since')
+            ->setParameter('since', $since)
+            ->getResult();
+
+        return $notes;
+    }
+
     public function count(): int
     {
         return (int) $this->entityManager
@@ -104,7 +116,7 @@ final readonly class DoctrineNoteRepository implements NoteRepository
 
     public function obsessionCounts(): array
     {
-        /** @var list<array{name: string, slug: string, count: int|string}> $rows */
+        /** @var list<array{name: mixed, slug: string, count: int|string}> $rows */
         $rows = $this->entityManager
             ->createQuery(
                 'SELECT o.name AS name, o.slug AS slug, COUNT(o.slug) AS count'
@@ -115,9 +127,12 @@ final readonly class DoctrineNoteRepository implements NoteRepository
             )
             ->getResult();
 
+        // `o.name` est hydraté par le type Doctrine `obsession_name`, donc en
+        // objet valeur, y compris dans un SELECT scalaire. Le contrat du dépôt
+        // annonce des primitives : la conversion appartient à cette frontière.
         return array_map(
             static fn (array $row): array => [
-                'name' => $row['name'],
+                'name' => (string) $row['name'],
                 'slug' => $row['slug'],
                 'count' => (int) $row['count'],
             ],

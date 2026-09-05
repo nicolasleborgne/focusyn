@@ -10,6 +10,7 @@ use App\Notebook\Application\Query\ObsessionSummary as NotebookObsession;
 use App\Shared\Application\Home\NoteTeaser;
 use App\Shared\Application\Shell\NotebookSummaryProvider;
 use App\Shared\Application\Shell\ObsessionSummary;
+use Psr\Clock\ClockInterface;
 
 /**
  * Traduit les lectures du carnet dans le vocabulaire de la coquille.
@@ -21,6 +22,7 @@ final readonly class NotebookShellSummary implements NotebookSummaryProvider
 {
     public function __construct(
         private NotebookQuery $notebook,
+        private ClockInterface $clock,
     ) {
     }
 
@@ -38,6 +40,13 @@ final readonly class NotebookShellSummary implements NotebookSummaryProvider
                 $obsession->noteCount,
             ),
             $this->notebook->obsessions(),
+        );
+    }
+
+    public function wordsWrittenThisMonth(): int
+    {
+        return $this->notebook->wordsWrittenSince(
+            $this->clock->now()->modify('first day of this month')->setTime(0, 0),
         );
     }
 

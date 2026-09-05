@@ -7,6 +7,7 @@ namespace App\Notebook\Domain\Repository;
 use App\Notebook\Domain\Model\Note;
 use App\Notebook\Domain\Model\NoteId;
 use App\Notebook\Domain\Model\ObsessionName;
+use DateTimeImmutable;
 
 /**
  * Les requêtes ne prennent pas d'organisation en paramètre : le cloisonnement
@@ -39,6 +40,13 @@ interface NoteRepository
     public function matching(string $query, int $limit = 50): array;
 
     public function count(): int;
+
+    /**
+     * Notes modifiées depuis une date, pour les décomptes de période.
+     *
+     * @return list<Note>
+     */
+    public function updatedSince(DateTimeImmutable $since): array;
 
     /**
      * Nombre de notes par obsession, de la plus fournie à la moins fournie.

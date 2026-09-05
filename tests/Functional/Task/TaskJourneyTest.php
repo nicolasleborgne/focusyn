@@ -42,7 +42,7 @@ final class TaskJourneyTest extends WebTestCase
         $crawler = $client->followRedirect();
 
         self::assertRouteSame('task_list_show');
-        self::assertSame('Nouvelle liste', $crawler->filter('.fx-note__title')->attr('value'));
+        self::assertSame('Nouvelle liste', trim($crawler->filter('.fx-note__title')->text()));
         self::assertStringContainsString('Cette liste est vide', $crawler->text());
     }
 

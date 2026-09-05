@@ -1,10 +1,10 @@
 {% extends 'shell.html.twig' %}
 
 {% block title %}{{ 'shell.nav.search'|trans }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'shell.nav.search'|trans }}{% endblock %}
+{% set crumb = 'shell.nav.search'|trans %}
 
 {% block page %}
-    <div class="fx-app__content">
+    <div class="fx-app__content fx-app__content--search">
         <h1 class="fx-heading">{{ 'shell.nav.search'|trans }}</h1>
         <twig:NoteSearch :query="query" />
     </div>

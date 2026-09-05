@@ -86,3 +86,7 @@ services:
 
     App\Shared\Application\Shell\TaskSummaryProvider:
         alias: App\Task\Infrastructure\Shell\TaskShellSummary
+
+    App\Shared\Application\Tenant\TenantScope:
+        alias: App\Shared\Infrastructure\Tenant\DoctrineTenantScope
+        public: true

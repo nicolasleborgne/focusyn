@@ -29,6 +29,10 @@
     --fx-border-default: var(--fx-neutral-600);
     --fx-border-strong: var(--fx-neutral-700);
     --fx-border-contrast: var(--fx-neutral-800);
+    /* Contour des surfaces flottantes : menus, dialogues, filet de citation. */
+    --fx-border-floating: var(--fx-neutral-620);
+    /* Barré d'une tâche accomplie. */
+    --fx-line-strike: var(--fx-neutral-730);
 
     /* --- Texte -------------------------------------------------------------- */
     --fx-text-title: var(--fx-ink-900);

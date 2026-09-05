@@ -8,6 +8,7 @@ use App\Notebook\Domain\Model\Note;
 use App\Notebook\Domain\Model\NoteId;
 use App\Notebook\Domain\Model\ObsessionName;
 use App\Notebook\Domain\Repository\NoteRepository;
+use DateTimeImmutable;
 
 /**
  * Lectures du carnet, façonnées pour l'affichage.
@@ -80,6 +81,22 @@ final readonly class NotebookQuery
     public function count(): int
     {
         return $this->notes->count();
+    }
+
+    /**
+     * Mots écrits depuis une date.
+     *
+     * Le compte est recalculé à la volée : le nombre de mots n'est pas stocké,
+     * et le corps d'une note peut changer à chaque frappe. Acceptable sur un
+     * carnet personnel ; à remplacer par un compteur entretenu le jour où une
+     * organisation en accumulera des milliers.
+     */
+    public function wordsWrittenSince(DateTimeImmutable $since): int
+    {
+        return array_sum(array_map(
+            static fn (Note $note): int => $note->body()->wordCount(),
+            $this->notes->updatedSince($since),
+        ));
     }
 
     private function summarise(Note $note): NoteSummary

@@ -30,12 +30,7 @@ final readonly class AggregatedHomeDataProvider implements HomeDataProvider
         return new HomeView(
             recentNotes: $recent,
             nextTasks: $this->tasks->nextTasks(self::NEXT_TASKS),
-            // Approximation assumée : le total des notes récemment touchées.
-            // Un vrai compteur mensuel demandera un historique d'écriture.
-            monthlyWordCount: array_sum(array_map(
-                static fn ($note): int => $note->wordCount,
-                $recent,
-            )),
+            monthlyWordCount: $this->notebook->wordsWrittenThisMonth(),
         );
     }
 }

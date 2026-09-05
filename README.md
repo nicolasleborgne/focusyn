@@ -36,6 +36,8 @@ automatiquement à l'entrée dans le dossier.
 | `stan` | Analyse statique PHPStan |
 | `cs` | Correction du style de code |
 | `qa` | Style + statique + architecture + tests (ce que vérifie la CI) |
+| `console app:demo` | Sème un compte de démonstration (`demo@focusyn.fr`) |
+| `shots` | Capture chaque écran dans `var/screenshots/` |
 | `devenv up -d` | Démarre PostgreSQL et Mailpit en arrière-plan |
 
 Mailpit expose les courriels de développement sur <http://127.0.0.1:8025>.

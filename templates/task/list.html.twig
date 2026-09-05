@@ -1,19 +1,21 @@
 {% extends 'shell.html.twig' %}
 
 {% block title %}{{ list.name }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'shell.nav.tasks'|trans }} / {{ list.name }}{% endblock %}
+{% set crumb = 'shell.nav.tasks'|trans ~ ' / ' ~ list.name %}
 
 {% block page %}
-    <div class="fx-app__content">
+    <div class="fx-app__content fx-app__content--list">
         {% for message in app.flashes('error') %}
             <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
         {% endfor %}
 
         <form method="post" action="{{ path('task_list_rename', { id: list.id }) }}" class="fx-note__title-form">
             <input type="hidden" name="_token" value="{{ csrf_token('task-list-rename') }}">
-            <input class="fx-note__title" type="text" name="name" value="{{ list.name }}"
-                   aria-label="{{ 'task.name_label'|trans }}"
-                   onchange="this.form.requestSubmit()">
+            <textarea class="fx-note__title" name="name" rows="1"
+                      data-controller="autogrow"
+                      data-action="keydown->autogrow#submit"
+                      aria-label="{{ 'task.name_label'|trans }}"
+                      onchange="this.form.requestSubmit()">{{ list.name }}</textarea>
         </form>
 
         <twig:TaskChecklist :listId="list.id" />

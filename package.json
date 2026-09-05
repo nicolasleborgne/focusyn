@@ -1,0 +1,9 @@
+{
+    "name": "focusyn-tools",
+    "private": true,
+    "type": "module",
+    "description": "Outillage de vérification visuelle. Le front de l'application n'a pas de build Node : les assets passent par AssetMapper.",
+    "devDependencies": {
+        "playwright-core": "^1.49.0"
+    }
+}

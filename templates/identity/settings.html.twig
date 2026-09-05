@@ -1,10 +1,10 @@
 {% extends 'shell.html.twig' %}
 
 {% block title %}{{ 'shell.nav.settings'|trans }} — Focusyn{% endblock %}
-{% block crumb %}{{ 'shell.nav.settings'|trans }}{% endblock %}
+{% set crumb = 'shell.nav.settings'|trans %}
 
 {% block page %}
-    <div class="fx-app__content">
+    <div class="fx-app__content fx-app__content--settings">
         <h1 class="fx-heading">{{ 'settings.title'|trans }}</h1>
 
         {% for message in app.flashes('success') %}

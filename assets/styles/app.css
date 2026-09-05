@@ -7,7 +7,8 @@
  *   2. tokens/semantic    rôles (surface, texte, bordure, accent) ;
  *   3. base               remise à zéro et typographie ;
  *   4. layout             coquille, barre latérale, en-tête, onglets ;
- *   5. components         blocs BEM réutilisables.
+ *   5. components         blocs BEM réutilisables ;
+ *   6. layout/responsive  bascules d'affichage, en dernier mot du cascade.
  *
  * Convention de nommage : BEM strict, préfixe `fx-`.
  *   bloc        .fx-button
@@ -41,3 +42,7 @@
 @import url("./components/overlay.css");
 @import url("./components/prose.css");
 @import url("./components/switch.css");
+
+/* En dernier : les bascules d'affichage doivent pouvoir écraser tout le reste,
+   une requête média n'apportant aucune spécificité supplémentaire. */
+@import url("./layout/responsive.css");
