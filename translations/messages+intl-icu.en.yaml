@@ -43,3 +43,25 @@ upcoming:
 offline:
     title: Offline
     body: Focusyn could not reach the server. Screens you have already visited remain available; syncing resumes automatically once the network is back.
+
+auth:
+    sign_in: Sign in
+    sign_in_lead: Your notes stay on your account, encrypted in transit.
+    sign_up: Create an account
+    sign_up_lead: A personal notebook is opened automatically when you sign up.
+    create_account: Create account
+    email: Email
+    password: Password
+    no_account: No account yet?
+    have_account: Already have an account?
+
+registration:
+    email:
+        required: Enter your email address.
+        invalid: This address does not look valid.
+        taken: An account already exists for this address.
+    password:
+        required: Choose a password.
+        too_short: 'Twelve characters minimum.'
+        compromised: This password appears in known breaches; please choose another.
+        help: Twelve characters minimum. A sentence you remember beats a complicated acronym.

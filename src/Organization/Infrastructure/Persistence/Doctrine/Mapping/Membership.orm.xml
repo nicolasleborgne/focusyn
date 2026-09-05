@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Organization\Domain\Model\Membership" table="organization_memberships">
+        <id name="id" type="membership_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <!--
+            member_id porte la même valeur que le UserId du contexte Identity,
+            sans clé étrangère : une contrainte de base entre deux contextes
+            bornés les souderait, et interdirait de les séparer plus tard.
+            L'intégrité est tenue par le domaine, pas par le schéma.
+        -->
+        <field name="memberId" type="member_id" column="member_id"/>
+        <field name="role" type="string" column="role" length="20"
+               enum-type="App\Organization\Domain\Model\OrganizationRole"/>
+        <field name="joinedAt" type="datetime_immutable" column="joined_at"/>
+
+        <many-to-one field="organization"
+                     target-entity="App\Organization\Domain\Model\Organization"
+                     inversed-by="memberships">
+            <join-column name="organization_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <unique-constraints>
+            <unique-constraint name="uniq_membership_org_member" columns="organization_id,member_id"/>
+        </unique-constraints>
+
+        <indexes>
+            <index name="idx_membership_member" columns="member_id"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

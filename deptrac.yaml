@@ -29,9 +29,13 @@ deptrac:
         # toucher : c'est ce qui garantit qu'un agrégat se teste sans conteneur
         # et survivra à une montée de version majeure de Symfony.
         #
-        # Deux exceptions assumées, toutes deux sans dépendance transitive et
-        # sans état : symfony/uid (génération d'UUID v7) et symfony/clock
-        # (implémentation de PSR-20).
+        # Trois exceptions assumées, toutes sans couplage à l'infrastructure :
+        #   symfony/uid                   génération d'UUID v7 ;
+        #   symfony/clock                 implémentation de PSR-20 ;
+        #   doctrine/collections          structure de données pure, requise
+        #     pour qu'un agrégat porte une collection hydratable par l'ORM.
+        #     Sans elle, il faudrait un second modèle de persistance et un
+        #     mapper par agrégat — le coût que le mapping XML évite justement.
         -   name: FrameworkInternals
             collectors:
                 -   type: bool
@@ -41,6 +45,8 @@ deptrac:
                     must_not:
                         -   type: classNameRegex
                             value: '#^Symfony\\Component\\(Uid|Clock)\\#'
+                        -   type: classNameRegex
+                            value: '#^Doctrine\\Common\\Collections\\#'
         -   name: Kernel
             collectors:
                 -   type: classNameRegex

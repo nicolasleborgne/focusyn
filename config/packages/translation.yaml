@@ -3,7 +3,10 @@ framework:
     # l'anglais en est la traduction.
     default_locale: fr
     enabled_locales: ['fr', 'en']
-    set_locale_from_accept_language: true
+    # Volontairement pas de `set_locale_from_accept_language` : c'est l'adresse
+    # empruntée qui fixe la langue (/bibliotheque contre /library), pas un
+    # en-tête du navigateur. Sans cette règle, la même URL rendrait deux langues
+    # selon le visiteur, et les liens générés cesseraient d'être prévisibles.
     translator:
         default_path: '%kernel.project_dir%/translations'
         fallbacks:

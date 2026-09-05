@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'auth.sign_in'|trans }} — Focusyn{% endblock %}
+
+{% block body %}
+    <div class="fx-overlay">
+        <div class="fx-overlay__panel">
+            <span class="fx-mark" aria-hidden="true">
+                <span class="fx-mark__pill">
+                    <span class="fx-mark__cap"></span>
+                    <span class="fx-mark__body"></span>
+                </span>
+            </span>
+
+            <h1 class="fx-heading fx-auth__title">{{ 'auth.sign_in'|trans }}</h1>
+            <p class="fx-card__help fx-auth__lead">{{ 'auth.sign_in_lead'|trans }}</p>
+
+            {% if error %}
+                <p class="fx-auth__error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+            {% endif %}
+
+            <form method="post" action="{{ path('login') }}" class="fx-auth__form">
+                <div class="fx-field">
+                    <label class="fx-field__label" for="login-email">{{ 'auth.email'|trans }}</label>
+                    <input id="login-email" class="fx-field__control" type="email" name="login[email]"
+                           value="{{ lastEmail }}" autocomplete="email" required autofocus>
+                </div>
+
+                <div class="fx-field">
+                    <label class="fx-field__label" for="login-password">{{ 'auth.password'|trans }}</label>
+                    <input id="login-password" class="fx-field__control" type="password" name="login[password]"
+                           autocomplete="current-password" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="fx-button fx-button--primary fx-button--block">
+                    {{ 'auth.sign_in'|trans }}
+                </button>
+            </form>
+
+            <p class="fx-auth__switch">
+                {{ 'auth.no_account'|trans }}
+                <a href="{{ path('register') }}">{{ 'auth.sign_up'|trans }}</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

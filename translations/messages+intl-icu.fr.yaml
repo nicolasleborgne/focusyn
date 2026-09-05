@@ -44,3 +44,25 @@ upcoming:
 offline:
     title: Hors ligne
     body: Focusyn n'a pas pu joindre le serveur. Les écrans déjà consultés restent accessibles ; la reprise se fera automatiquement au retour du réseau.
+
+auth:
+    sign_in: Se connecter
+    sign_in_lead: Vos notes restent sur votre compte, chiffrées en transit.
+    sign_up: Créer un compte
+    sign_up_lead: Un carnet personnel est ouvert automatiquement à l'inscription.
+    create_account: Créer le compte
+    email: Courriel
+    password: Mot de passe
+    no_account: Pas encore de compte ?
+    have_account: Vous avez déjà un compte ?
+
+registration:
+    email:
+        required: Indiquez votre adresse électronique.
+        invalid: Cette adresse ne semble pas valide.
+        taken: Un compte existe déjà pour cette adresse.
+    password:
+        required: Choisissez un mot de passe.
+        too_short: 'Douze caractères au minimum.'
+        compromised: Ce mot de passe figure dans des fuites connues ; choisissez-en un autre.
+        help: Douze caractères au minimum. Une phrase dont vous vous souvenez vaut mieux qu'un sigle compliqué.

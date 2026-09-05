@@ -16,3 +16,36 @@ services:
         exclude:
             - '../src/Kernel.php'
             - '../src/*/Domain/'
+
+    # ---------------------------------------------------------------------
+    # Ports → adaptateurs
+    # ---------------------------------------------------------------------
+    # Déclarés explicitement plutôt que laissés à la déduction automatique :
+    # le jour où un port aura deux implémentations, l'arbitrage sera ici, visible,
+    # et non dans un message d'erreur d'autowiring.
+    App\Identity\Domain\Repository\UserRepository:
+        alias: App\Identity\Infrastructure\Persistence\Doctrine\DoctrineUserRepository
+        public: true
+
+    App\Organization\Domain\Repository\OrganizationRepository:
+        alias: App\Organization\Infrastructure\Persistence\Doctrine\DoctrineOrganizationRepository
+        public: true
+
+    App\Shared\Application\Event\DomainEventBus:
+        alias: App\Shared\Infrastructure\Messenger\MessengerDomainEventBus
+
+    App\Identity\Application\Port\PasswordHasher:
+        alias: App\Identity\Infrastructure\Security\SymfonyPasswordHasher
+
+    App\Shared\Application\Command\CommandBus:
+        alias: App\Shared\Infrastructure\Messenger\MessengerCommandBus
+        public: true
+
+    App\Organization\Application\Port\SlugGenerator:
+        alias: App\Organization\Infrastructure\Slug\AsciiSlugGenerator
+
+    App\Shared\Application\Account\CurrentAccount:
+        alias: App\Identity\Infrastructure\Security\SecurityCurrentAccount
+
+    App\Identity\Application\Port\SessionStarter:
+        alias: App\Identity\Infrastructure\Security\SecuritySessionStarter

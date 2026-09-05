@@ -56,15 +56,20 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
-Quatre règles vérifiées mécaniquement — les enfreindre fait échouer `qa` :
+Cinq règles vérifiées mécaniquement — les enfreindre fait échouer `qa` :
 
-1. **Le domaine ne dépend de rien**, pas même de Symfony ou Doctrine. Seules
-   exceptions : `symfony/uid` et `symfony/clock`.
-2. **Un contexte ne connaît que lui-même et `Shared`.** Entre contextes : un
-   événement de domaine ou un port applicatif, jamais un appel direct.
-3. `Infrastructure` et `UI` dépendent de `Application` et `Domain`, jamais
-   l'inverse.
-4. `src/*/Domain/` est exclu du conteneur de services (`config/services.yaml`) :
+1. **Le domaine ne dépend de rien**, pas même de Symfony ou Doctrine. Trois
+   exceptions : `symfony/uid`, `symfony/clock`, `doctrine/collections`.
+2. **Un contexte ne connaît que lui-même, `Shared`, et les événements publiés
+   par les autres.** `src/<Contexte>/Domain/Event/` est le contrat public d'un
+   contexte ; tout le reste lui est privé.
+3. **Un événement publié ne transporte que des primitives.** Un consommateur qui
+   devrait importer `UserId` pour lire `UserWasRegistered` dépendrait des types
+   internes d'Identity.
+4. `Infrastructure` et `UI` dépendent de `Application` et `Domain`, jamais
+   l'inverse. En particulier **`UI` ne touche jamais `Infrastructure`** : passer
+   par un port applicatif (voir `SessionStarter`).
+5. `src/*/Domain/` est exclu du conteneur de services (`config/services.yaml`) :
    un agrégat ne s'injecte pas.
 
 ## Conventions
@@ -90,7 +95,23 @@ générés par le domaine). Ne jamais passer un `string` nu comme identifiant.
 
 **Multi-tenant.** Toute table métier porte `organization_id`. Un test
 fonctionnel doit prouver l'étanchéité pour chaque nouvelle ressource : un membre
-de l'organisation A ne doit jamais atteindre une donnée de B.
+de l'organisation A ne doit jamais atteindre une donnée de B. Le filtre Doctrine
+qui applique ce discriminant automatiquement arrive avec le premier agrégat
+concerné (Notebook) — écrire un filtre sans sujet à filtrer serait du code
+non testé.
+
+**Cas d'usage.** Une commande immuable + un gestionnaire `#[AsMessageHandler]`,
+dispatchés par le port `CommandBus` (jamais `MessageBusInterface` depuis un
+contrôleur). Le bus déballe les `HandlerFailedException` : un appelant attrape
+l'exception métier, pas une exception de transport.
+
+**Bus.** `command.bus` (une intention, un gestionnaire, une transaction) et
+`event.bus` (un fait acquis, zéro à N gestionnaires). Les dépôts publient les
+événements d'un agrégat **après** le flush.
+
+**Sécurité.** L'agrégat `User` n'implémente pas `UserInterface` : l'adaptateur
+`SecurityUser` le fait à sa place. Les habilitations fines dépendront de
+l'organisation courante et passeront par des voteurs, pas par un rôle global.
 
 **Interface.** Rendu serveur en Twig. Partage du travail entre les deux outils
 front, à respecter strictement :
@@ -172,6 +193,20 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   exemple) est construit en PHP et exposé par une fonction Twig.
 - En zsh, `path` est lié à `PATH` : ne jamais s'en servir comme variable dans un
   script shell, sous peine de vider le `PATH` en cours d'exécution.
+- **`ResetDatabase` de Foundry est incompatible avec les tests fonctionnels
+  ici** : il coupe les connexions ouvertes (« terminating connection due to
+  administrator command »). Les suites `functional` s'appuient sur la seule
+  transaction annulée par DAMA ; `ResetDatabase` reste dans `integration`.
+- `loginUser()` d'un client de test exige un compte **réellement enregistré** :
+  à chaque requête le pare-feu recharge l'utilisateur par le fournisseur, et un
+  compte fabriqué de toutes pièces est aussitôt déconnecté. Voir le trait
+  `App\Tests\Functional\LogsIn`.
+- Pas de `set_locale_from_accept_language` : c'est l'adresse empruntée qui fixe
+  la langue. Sinon la même URL rend deux langues selon le visiteur et les liens
+  générés cessent d'être prévisibles.
+- DBAL 4 : `Type::getName()` n'existe plus (les types sont nommés dans
+  `doctrine.yaml`) et les erreurs de conversion passent par
+  `Doctrine\DBAL\Types\Exception\InvalidType::new()`.
 
 ## La maquette (`project/`)
 

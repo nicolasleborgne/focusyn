@@ -92,3 +92,46 @@
     margin-top: var(--fx-space-6);
     line-height: var(--fx-leading-relaxed);
 }
+
+/* --- Écrans d'authentification --------------------------------------------- */
+
+.fx-auth__title {
+    margin-top: var(--fx-space-6);
+    font-size: var(--fx-prose-h2);
+}
+
+.fx-auth__lead {
+    margin-top: var(--fx-space-3);
+    line-height: var(--fx-leading-normal);
+}
+
+.fx-auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-8);
+    margin-top: var(--fx-space-12);
+}
+
+.fx-auth__error {
+    margin-top: var(--fx-space-8);
+    padding: var(--fx-space-5) var(--fx-space-6);
+    border: 1px solid var(--fx-danger);
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-danger);
+}
+
+.fx-auth__switch {
+    margin-top: var(--fx-space-10);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-muted);
+}
+
+/* Les erreurs de formulaire Symfony sortent dans une liste non stylée. */
+.fx-auth__form ul {
+    margin: var(--fx-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fx-size-md);
+    color: var(--fx-danger);
+}

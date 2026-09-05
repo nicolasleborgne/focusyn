@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Shared;
 
+use App\Tests\Functional\LogsIn;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * Les deux langues sont livrées dès le départ : chaque écran a une adresse dans
@@ -12,9 +14,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 final class LocalizedRoutingTest extends WebTestCase
 {
+    use Factories;
+    use LogsIn;
+
     public function testTheFrenchPathRendersFrench(): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', '/bibliotheque');
 
         self::assertResponseIsSuccessful();
@@ -25,6 +31,7 @@ final class LocalizedRoutingTest extends WebTestCase
     public function testTheEnglishPathRendersEnglish(): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', '/library');
 
         self::assertResponseIsSuccessful();
@@ -35,6 +42,7 @@ final class LocalizedRoutingTest extends WebTestCase
     public function testEachScreenIsReachableInBothLanguages(): void
     {
         $client = self::createClient();
+        $this->logIn($client);
 
         foreach ([['/taches', '/tasks'], ['/recherche', '/search'], ['/reglages', '/settings']] as [$fr, $en]) {
             $client->request('GET', $fr);

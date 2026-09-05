@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Shell;
 
+use App\Shared\Application\Account\CurrentAccount;
 use App\Shared\Application\Shell\ObsessionSummary;
 use App\Shared\Application\Shell\ShellDataProvider;
 use App\Shared\Application\Shell\ShellView;
@@ -19,10 +20,17 @@ use App\Shared\Application\Shell\TaskListSummary;
  */
 final readonly class PrototypeShellDataProvider implements ShellDataProvider
 {
+    public function __construct(
+        private CurrentAccount $account,
+    ) {
+    }
+
     public function forCurrentUser(): ShellView
     {
         return new ShellView(
-            accountEmail: 'moi@focusyn.fr',
+            // Seule donnée déjà réelle : le compte connecté. Le reste attend
+            // les contextes Notebook et Task.
+            accountEmail: $this->account->emailOrNull() ?? '',
             noteCount: 8,
             obsessions: [
                 new ObsessionSummary('Sommeil', 'sommeil', 2),

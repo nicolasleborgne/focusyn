@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Organization\Domain\Model\Organization" table="organizations">
+        <id name="id" type="organization_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="name" type="string" column="name" length="120"/>
+        <field name="slug" type="string" column="slug" length="140" unique="true"/>
+        <field name="personal" type="boolean" column="is_personal"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at"/>
+
+        <!--
+            Les appartenances appartiennent à l'agrégat : elles sont écrites et
+            supprimées avec lui (cascade + orphan-removal), jamais séparément.
+        -->
+        <one-to-many field="memberships"
+                     target-entity="App\Organization\Domain\Model\Membership"
+                     mapped-by="organization"
+                     orphan-removal="true"
+                     fetch="EAGER">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <unique-constraints>
+            <unique-constraint name="uniq_organizations_slug" columns="slug"/>
+        </unique-constraints>
+    </entity>
+</doctrine-mapping>

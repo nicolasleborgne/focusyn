@@ -1,46 +1,119 @@
 # Étanchéité entre contextes bornés.
 # Exécuter : vendor/bin/deptrac analyse --config-file=deptrac.contexts.yaml
 #
-# Un contexte ne connaît que lui-même et le noyau partagé. Toute communication
-# entre contextes passe par un événement de domaine ou par un port déclaré dans
-# la couche Application — jamais par un appel direct à une classe voisine.
+# Un contexte ne connaît que lui-même, le noyau partagé, et les événements de
+# domaine publiés par les autres.
+#
+# `Domain/Event/` est le contrat public d'un contexte : ce qu'il accepte de dire
+# au reste du monde. Tout le reste — agrégats, dépôts, services — lui est privé.
+# C'est pourquoi les dossiers d'événements sont extraits des couches de contexte
+# et regroupés dans `PublishedEvents`, que chacun a le droit de lire.
 deptrac:
     paths:
         - ./src
     layers:
         -   name: Shared
-            collectors: [{ type: directory, value: src/Shared/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Shared/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Identity
-            collectors: [{ type: directory, value: src/Identity/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Identity/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Organization
-            collectors: [{ type: directory, value: src/Organization/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Organization/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Notebook
-            collectors: [{ type: directory, value: src/Notebook/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Notebook/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Task
-            collectors: [{ type: directory, value: src/Task/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Task/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Reminder
-            collectors: [{ type: directory, value: src/Reminder/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Reminder/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Assistant
-            collectors: [{ type: directory, value: src/Assistant/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Assistant/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Billing
-            collectors: [{ type: directory, value: src/Billing/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Billing/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Privacy
-            collectors: [{ type: directory, value: src/Privacy/.* }]
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Privacy/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
+        -   name: PublishedEvents
+            collectors:
+                -   type: directory
+                    value: src/[^/]+/Domain/Event/.*
         -   name: Kernel
             collectors: [{ type: classNameRegex, value: '#^App\\Kernel$#' }]
 
     ruleset:
-        Shared: ~
-        Identity: [Shared]
-        Organization: [Shared]
-        Notebook: [Shared]
-        Task: [Shared]
-        Reminder: [Shared]
-        Assistant: [Shared]
-        Billing: [Shared]
-        Privacy: [Shared]
+        Shared: [PublishedEvents]
+        PublishedEvents: [Shared]
+        Identity: [Shared, PublishedEvents]
+        Organization: [Shared, PublishedEvents]
+        Notebook: [Shared, PublishedEvents]
+        Task: [Shared, PublishedEvents]
+        Reminder: [Shared, PublishedEvents]
+        Assistant: [Shared, PublishedEvents]
+        Billing: [Shared, PublishedEvents]
+        Privacy: [Shared, PublishedEvents]
         Kernel:
             - Shared
+            - PublishedEvents
             - Identity
             - Organization
             - Notebook

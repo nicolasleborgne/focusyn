@@ -166,3 +166,17 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* Déconnexion : un bouton dans un formulaire POST, jamais un lien — une
+   déconnexion déclenchable par un simple GET est vulnérable au CSRF. */
+.fx-sidebar__logout {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.fx-sidebar__logout:hover {
+    color: var(--fx-text-primary);
+}

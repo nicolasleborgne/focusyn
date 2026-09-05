@@ -5,6 +5,18 @@ doctrine:
         charset: utf8
         profiling_collect_backtrace: '%kernel.debug%'
 
+        # Types portant les objets valeur du domaine jusqu'à la base.
+        # Les identifiants sont stockés en `uuid` natif PostgreSQL : deux fois
+        # moins d'octets qu'une chaîne de 36 caractères, et comparaison plus
+        # rapide sur les clés primaires et étrangères.
+        types:
+            user_id: App\Identity\Infrastructure\Persistence\Doctrine\Type\UserIdType
+            email_address: App\Identity\Infrastructure\Persistence\Doctrine\Type\EmailAddressType
+            hashed_password: App\Identity\Infrastructure\Persistence\Doctrine\Type\HashedPasswordType
+            organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
+            membership_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MembershipIdType
+            member_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MemberIdType
+
     orm:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware

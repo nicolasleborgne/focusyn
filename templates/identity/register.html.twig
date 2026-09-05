@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'auth.sign_up'|trans }} — Focusyn{% endblock %}
+
+{% block body %}
+    <div class="fx-overlay">
+        <div class="fx-overlay__panel">
+            <span class="fx-mark" aria-hidden="true">
+                <span class="fx-mark__pill">
+                    <span class="fx-mark__cap"></span>
+                    <span class="fx-mark__body"></span>
+                </span>
+            </span>
+
+            <h1 class="fx-heading fx-auth__title">{{ 'auth.sign_up'|trans }}</h1>
+            <p class="fx-card__help fx-auth__lead">{{ 'auth.sign_up_lead'|trans }}</p>
+
+            {{ form_start(form, { attr: { class: 'fx-auth__form' } }) }}
+                <div class="fx-field">
+                    {{ form_label(form.email, null, { label_attr: { class: 'fx-field__label' } }) }}
+                    {{ form_widget(form.email, { attr: { class: 'fx-field__control' } }) }}
+                    {{ form_errors(form.email) }}
+                </div>
+
+                <div class="fx-field">
+                    {{ form_label(form.plainPassword, null, { label_attr: { class: 'fx-field__label' } }) }}
+                    {{ form_widget(form.plainPassword, { attr: { class: 'fx-field__control' } }) }}
+                    <span class="fx-field__help">{{ 'registration.password.help'|trans }}</span>
+                    {{ form_errors(form.plainPassword) }}
+                </div>
+
+                <button type="submit" class="fx-button fx-button--primary fx-button--block">
+                    {{ 'auth.create_account'|trans }}
+                </button>
+            {{ form_end(form) }}
+
+            <p class="fx-auth__switch">
+                {{ 'auth.have_account'|trans }}
+                <a href="{{ path('login') }}">{{ 'auth.sign_in'|trans }}</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

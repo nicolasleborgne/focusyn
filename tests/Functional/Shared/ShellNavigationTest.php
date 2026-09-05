@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Shared;
 
+use App\Tests\Functional\LogsIn;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Zenstruck\Foundry\Test\Factories;
 
 /**
  * La coquille est le cadre de tous les écrans : si elle casse, tout casse.
  */
 final class ShellNavigationTest extends WebTestCase
 {
+    use Factories;
+    use LogsIn;
+
     /** @return iterable<string, array{string, string}> */
     public static function frenchScreens(): iterable
     {
@@ -26,6 +31,7 @@ final class ShellNavigationTest extends WebTestCase
     public function testEveryScreenRendersTheShell(string $uri, string $section): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', $uri);
 
         self::assertResponseIsSuccessful();
@@ -38,6 +44,7 @@ final class ShellNavigationTest extends WebTestCase
     public function testTheCurrentSectionIsMarkedForAssistiveTechnologies(string $uri, string $section): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', $uri);
 
         $current = $crawler->filter('.fx-sidebar [aria-current="page"]');
@@ -49,6 +56,7 @@ final class ShellNavigationTest extends WebTestCase
     public function testTheSidebarShowsTheNotebookCounters(): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', '/');
 
         $counts = $crawler->filter('.fx-sidebar__nav .fx-nav-item__count')->each(
@@ -61,6 +69,7 @@ final class ShellNavigationTest extends WebTestCase
     public function testTheHomeScreenListsWhatIsPending(): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', '/');
 
         self::assertCount(4, $crawler->filter('.fx-stat'));
@@ -71,6 +80,7 @@ final class ShellNavigationTest extends WebTestCase
     public function testScreensNotYetBuiltAnnounceThemselvesWithoutFailing(): void
     {
         $client = self::createClient();
+        $this->logIn($client);
         $crawler = $client->request('GET', '/bibliotheque');
 
         self::assertResponseIsSuccessful();

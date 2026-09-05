@@ -54,7 +54,9 @@
     <div class="fx-sidebar__footer">
         <span class="fx-avatar" aria-hidden="true">{{ shell().accountInitial }}</span>
         <span class="fx-sidebar__account">{{ shell().accountEmail }}</span>
-        <span class="fx-meta fx-meta--caps">{{ 'shell.action.logout'|trans }}</span>
+        <form method="post" action="{{ path('logout') }}">
+            <button type="submit" class="fx-sidebar__logout fx-meta fx-meta--caps">{{ 'shell.action.logout'|trans }}</button>
+        </form>
     </div>
 
     <div class="fx-sidebar__create" data-controller="menu">
