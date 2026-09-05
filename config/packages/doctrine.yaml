@@ -15,6 +15,12 @@ doctrine:
             hashed_password: App\Identity\Infrastructure\Persistence\Doctrine\Type\HashedPasswordType
             totp_secret: App\Identity\Infrastructure\Persistence\Doctrine\Type\TotpSecretType
             oauth_identity_id: App\Identity\Infrastructure\Persistence\Doctrine\Type\OAuthIdentityIdType
+            tenant_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\TenantIdType
+            note_id: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteIdType
+            author_id: App\Notebook\Infrastructure\Persistence\Doctrine\Type\AuthorIdType
+            note_title: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteTitleType
+            note_body: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteBodyType
+            obsession_name: App\Notebook\Infrastructure\Persistence\Doctrine\Type\ObsessionNameType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
             membership_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MembershipIdType
             member_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MemberIdType
@@ -29,6 +35,14 @@ doctrine:
         # mapping. Le type est TOUJOURS `xml` — les agrégats du domaine ne portent
         # aucun attribut Doctrine, la correspondance objet/table vit dans
         # l'infrastructure du contexte concerné.
+        # Désactivé par défaut : les commandes console et les workers
+        # travaillent hors de toute organisation. En contexte HTTP, un écouteur
+        # l'active systématiquement (voir EnableTenantFilterListener).
+        filters:
+            tenant:
+                class: App\Shared\Infrastructure\Persistence\Doctrine\Filter\TenantFilter
+                enabled: false
+
         auto_mapping: false
         mappings:
             Identity:

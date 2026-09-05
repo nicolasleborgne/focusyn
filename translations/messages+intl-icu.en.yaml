@@ -104,3 +104,24 @@ settings:
         unlink: Unlink
         unlinked: Provider unlinked.
         sign_in_with: 'Continue with {provider}'
+
+notebook:
+    untitled: Untitled
+    all: All
+    empty: No notes yet.
+    write_first: Write the first one
+    delete: Delete note
+    deleted: Note deleted.
+    title_label: Note title
+    title_required: A note must have a title.
+    reading_minutes: '{count, plural, one {# min read} other {# min read}}'
+    search:
+        placeholder: Search notes…
+        prompt: Type to search note titles and bodies.
+        results: '{count, plural, =0 {No results} one {# result} other {# results}}'
+        nothing: 'Nothing matches “{query}”.'
+    editor:
+        saved: Saved
+        saving: Saving…
+        dirty: Unsaved changes
+        failed: Could not save — the connection seems to be down

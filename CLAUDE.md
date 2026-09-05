@@ -93,12 +93,20 @@ déclaré dans `config/packages/doctrine.yaml` (`auto_mapping` est désactivé).
 **Identifiants.** Dériver `App\Shared\Domain\EntityId` par agrégat (UUID v7,
 générés par le domaine). Ne jamais passer un `string` nu comme identifiant.
 
-**Multi-tenant.** Toute table métier porte `organization_id`. Un test
-fonctionnel doit prouver l'étanchéité pour chaque nouvelle ressource : un membre
-de l'organisation A ne doit jamais atteindre une donnée de B. Le filtre Doctrine
-qui applique ce discriminant automatiquement arrive avec le premier agrégat
-concerné (Notebook) — écrire un filtre sans sujet à filtrer serait du code
-non testé.
+**Multi-tenant.** Un agrégat cloisonné implémente `Shared\Domain\TenantScoped`
+et porte une colonne `organization_id`. Le filtre Doctrine `TenantFilter` ajoute
+alors la clause à *toutes* les requêtes, sans que les dépôts aient à y penser :
+un oubli dans un dépôt ne se verrait pas, la requête marcherait et retournerait
+les données de quelqu'un d'autre.
+
+Le filtre est désactivé par défaut (console, workers) et armé à chaque requête
+HTTP par `EnableTenantFilterListener`. **Armé sans organisation, il ne laisse
+rien passer** — échouer ouvert reviendrait à tout montrer.
+
+Chaque nouvelle ressource cloisonnée s'ajoute à
+`tests/Integration/Notebook/TenantIsolationTest.php`. Ce test doit échouer si le
+filtre est neutralisé : le vérifier de temps en temps en le sabotant
+volontairement, sinon il ne prouve rien.
 
 **Cas d'usage.** Une commande immuable + un gestionnaire `#[AsMessageHandler]`,
 dispatchés par le port `CommandBus` (jamais `MessageBusInterface` depuis un
@@ -140,8 +148,15 @@ front, à respecter strictement :
   d'un menu, mode focus). Faire un aller-retour réseau pour ouvrir un menu
   serait un gaspillage visible à l'œil.
 
-Seul l'éditeur de note échappe aux deux : CodeMirror 6 piloté par Stimulus,
-parce qu'un aller-retour par frappe serait inutilisable.
+Seul l'éditeur de note échappe aux deux : CodeMirror 6 piloté par Stimulus
+(`assets/controllers/note_editor_controller.js`), parce qu'un aller-retour par
+frappe serait inutilisable. Il sauvegarde en différé vers un point d'entrée
+JSON, dont le jeton CSRF voyage dans l'en-tête `X-CSRF-Token` — l'attribut
+`#[IsCsrfTokenValid]` lit un paramètre de formulaire, pas un en-tête, d'où une
+validation explicite dans `SaveNoteBodyController`.
+
+Les couleurs et tailles de l'éditeur sont lues depuis les variables CSS du
+design system : aucune valeur en dur dans le JavaScript.
 
 **Responsive, pas de bascule d'appareil.** La maquette propose un interrupteur
 DESKTOP/MOBILE : c'était un outil d'aperçu du logiciel de design, pas une
@@ -238,6 +253,13 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   commiter.
 - Les messages de contraintes de validation vivent dans le domaine
   **`validators`**, pas `messages` : `translations/validators+intl-icu.*.yaml`.
+- Un test fonctionnel ne peut créer **qu'un seul client** (un noyau par test).
+  Pour changer de compte, se déconnecter puis se reconnecter sur le même client.
+- `LogsIn::logIn()` passe par le cas d'usage `RegisterUser`, ce qui crée
+  l'organisation personnelle. Un compte fabriqué directement n'en a pas, et le
+  cloisonnement rendrait alors tous les écrans vides.
+- `EntityManager::find()` court-circuite les filtres quand il touche le cache
+  d'identité : dans un dépôt cloisonné, passer par une requête DQL.
 
 ## La maquette (`project/`)
 

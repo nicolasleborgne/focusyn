@@ -68,9 +68,16 @@ courante résolue depuis la session.
 
 Retenu contre un schéma ou une base par tenant : migrations simples, une seule
 sauvegarde, coût d'infrastructure minimal. Le prix à payer est que l'isolation
-repose sur le code — elle doit donc être couverte par des tests fonctionnels
-dédiés (« un membre de A ne voit jamais une note de B »), pas seulement par le
-filtre lui-même.
+repose sur le code.
+
+Trois garde-fous, dans cet ordre :
+
+1. `TenantFilter` applique la clause à tout agrégat marqué `TenantScoped`,
+   au niveau du SQL — les dépôts n'ont pas à y penser, donc pas à l'oublier.
+2. Armé sans organisation, le filtre ne laisse **rien** passer.
+3. `TenantIsolationTest` et `NotebookJourneyTest` vérifient qu'une organisation
+   n'atteint jamais les données d'une autre, y compris en connaissant l'adresse
+   exacte d'une note. Neutraliser le filtre fait tomber sept de ces tests.
 
 ## 6. Front : Live Components d'abord, CodeMirror pour l'éditeur
 

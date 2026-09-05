@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Notebook\Domain\Model\Note" table="notes">
+        <id name="id" type="note_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <!--
+            Le discriminant de cloisonnement. Le filtre Doctrine s'appuie sur ce
+            nom de colonne pour toutes les entités marquées TenantScoped : il
+            doit rester identique d'un contexte à l'autre.
+        -->
+        <field name="tenantId" type="tenant_id" column="organization_id"/>
+        <field name="authorId" type="author_id" column="author_id"/>
+        <field name="title" type="note_title" column="title"/>
+        <field name="body" type="note_body" column="body"/>
+        <field name="writtenAt" type="datetime_immutable" column="written_at"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at"/>
+
+        <one-to-many field="obsessions"
+                     target-entity="App\Notebook\Domain\Model\NoteObsession"
+                     mapped-by="note"
+                     orphan-removal="true"
+                     fetch="EAGER">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <indexes>
+            <!-- Toutes les listes sont « les notes de cette organisation, des
+                 plus récentes aux plus anciennes » : l'index porte les deux. -->
+            <index name="idx_notes_org_updated" columns="organization_id,updated_at"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

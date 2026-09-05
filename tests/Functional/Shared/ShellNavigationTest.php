@@ -53,35 +53,43 @@ final class ShellNavigationTest extends WebTestCase
         self::assertStringContainsString('fx-nav-item--current', (string) $current->attr('class'));
     }
 
-    public function testTheSidebarShowsTheNotebookCounters(): void
+    public function testTheSidebarCountsTheNotesActuallyWritten(): void
     {
         $client = self::createClient();
         $this->logIn($client);
+
         $crawler = $client->request('GET', '/');
+        self::assertSame('0', trim($crawler->filter('.fx-sidebar__nav .fx-nav-item__count')->first()->text()));
 
-        $counts = $crawler->filter('.fx-sidebar__nav .fx-nav-item__count')->each(
-            static fn ($node): string => trim($node->text()),
+        $this->writeNote($client, 'Deux sommeils');
+        $this->writeNote($client, 'Extraction du café');
+
+        $crawler = $client->request('GET', '/');
+        self::assertSame(
+            '2',
+            trim($crawler->filter('.fx-sidebar__nav .fx-nav-item__count')->first()->text()),
+            'Le compteur de la barre latérale vient du carnet réel, plus d\'un jeu de données figé.',
         );
-
-        self::assertSame(['8', '11'], $counts, 'Bibliothèque et Tâches affichent respectivement le nombre de notes et de tâches ouvertes.');
     }
 
-    public function testTheHomeScreenListsWhatIsPending(): void
+    public function testTheHomeScreenShowsTheNotesJustWritten(): void
     {
         $client = self::createClient();
         $this->logIn($client);
+        $this->writeNote($client, 'Deux sommeils');
+
         $crawler = $client->request('GET', '/');
 
         self::assertCount(4, $crawler->filter('.fx-stat'));
-        self::assertCount(3, $crawler->filter('.fx-note-row'));
-        self::assertCount(5, $crawler->filter('.fx-task-line'));
+        self::assertCount(1, $crawler->filter('.fx-note-row'));
+        self::assertStringContainsString('Deux sommeils', $crawler->filter('.fx-note-row')->text());
     }
 
     public function testScreensNotYetBuiltAnnounceThemselvesWithoutFailing(): void
     {
         $client = self::createClient();
         $this->logIn($client);
-        $crawler = $client->request('GET', '/bibliotheque');
+        $crawler = $client->request('GET', '/taches');
 
         self::assertResponseIsSuccessful();
         self::assertStringContainsString(

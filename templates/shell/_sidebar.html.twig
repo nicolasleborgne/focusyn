@@ -61,10 +61,13 @@
 
     <div class="fx-sidebar__create" data-controller="menu">
         <div class="fx-menu" data-menu-target="panel" hidden>
-            <button type="button" class="fx-menu__item">
-                {{ 'shell.create.note'|trans }}
-                <span class="fx-menu__hint">{{ 'shell.create.note_hint'|trans }}</span>
-            </button>
+            <form method="post" action="{{ path('note_write') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('note-write') }}">
+                <button type="submit" class="fx-menu__item">
+                    {{ 'shell.create.note'|trans }}
+                    <span class="fx-menu__hint">{{ 'shell.create.note_hint'|trans }}</span>
+                </button>
+            </form>
             <button type="button" class="fx-menu__item">
                 {{ 'shell.create.list'|trans }}
                 <span class="fx-menu__hint">{{ 'shell.create.list_hint'|trans }}</span>

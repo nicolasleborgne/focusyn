@@ -1,0 +1,56 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ note.title }} — Focusyn{% endblock %}
+{% block crumb %}{{ 'shell.nav.library'|trans }} / {{ note.title }}{% endblock %}
+
+{% block page %}
+    <div class="fx-app__content fx-note">
+
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
+        {% endfor %}
+
+        {# Le titre est un formulaire à part : il se valide à la sortie du champ,
+           là où le corps se sauvegarde en continu. #}
+        <form method="post" action="{{ path('note_rename', { id: note.id }) }}" class="fx-note__title-form">
+            <input type="hidden" name="_token" value="{{ csrf_token('note-rename') }}">
+            <input class="fx-note__title" type="text" name="title" value="{{ note.title }}"
+                   aria-label="{{ 'notebook.title_label'|trans }}"
+                   onchange="this.form.requestSubmit()">
+        </form>
+
+        <p class="fx-note__meta">
+            <span>{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
+            <span>·</span>
+            <span>{{ 'notebook.reading_minutes'|trans({ count: note.readingMinutes }) }}</span>
+            <span>·</span>
+            <span>{{ note.updatedAt|format_datetime(pattern: "d MMM 'à' HH:mm", locale: app.request.locale) }}</span>
+        </p>
+
+        {% if note.obsessions is not empty %}
+            <div class="fx-note__obsessions">
+                {% for obsession in note.obsessions %}
+                    <span class="fx-chip">{{ obsession }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="fx-note__editor"
+             data-controller="note-editor"
+             data-note-editor-body-value="{{ note.body }}"
+             data-note-editor-save-url-value="{{ path('note_save_body', { id: note.id }) }}"
+             data-note-editor-token-value="{{ csrf_token('note-save') }}"
+             data-note-editor-saved-label-value="{{ 'notebook.editor.saved'|trans }}"
+             data-note-editor-saving-label-value="{{ 'notebook.editor.saving'|trans }}"
+             data-note-editor-dirty-label-value="{{ 'notebook.editor.dirty'|trans }}"
+             data-note-editor-failed-label-value="{{ 'notebook.editor.failed'|trans }}">
+            <div data-note-editor-target="host"></div>
+            <p class="fx-note__status" data-note-editor-target="status" aria-live="polite"></p>
+        </div>
+
+        <form method="post" action="{{ path('note_delete', { id: note.id }) }}" class="fx-note__danger">
+            <input type="hidden" name="_token" value="{{ csrf_token('note-delete') }}">
+            <button type="submit" class="fx-button fx-button--danger fx-button--small">{{ 'notebook.delete'|trans }}</button>
+        </form>
+    </div>
+{% endblock %}

@@ -4,5 +4,8 @@
 {% block crumb %}{{ 'shell.nav.search'|trans }}{% endblock %}
 
 {% block page %}
-    {{ include('shell/_upcoming.html.twig', { title: 'shell.nav.search'|trans, context: 'Notebook' }) }}
+    <div class="fx-app__content">
+        <h1 class="fx-heading">{{ 'shell.nav.search'|trans }}</h1>
+        <twig:NoteSearch :query="query" />
+    </div>
 {% endblock %}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Notebook\Domain\Model\NoteObsession" table="note_obsessions">
+        <!--
+            Clé composite (note, slug) plutôt qu'un identifiant technique :
+            un rattachement n'a pas d'identité propre, et la clé exprime
+            directement l'unicité voulue.
+        -->
+        <id name="note" association-key="true"/>
+        <id name="slug" type="string" column="slug" length="60"/>
+
+        <field name="name" type="obsession_name" column="name"/>
+
+        <many-to-one field="note"
+                     target-entity="App\Notebook\Domain\Model\Note"
+                     inversed-by="obsessions">
+            <join-column name="note_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <indexes>
+            <index name="idx_note_obsessions_slug" columns="slug"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

@@ -280,3 +280,101 @@
     height: 1px;
     background: var(--fx-border-faint);
 }
+
+/* --- Bibliothèque et recherche ---------------------------------------------- */
+
+.fx-library__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-4);
+    margin-top: var(--fx-space-10);
+}
+
+.fx-library__notes {
+    margin-top: var(--fx-space-10);
+}
+
+.fx-library__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--fx-space-6);
+    padding: var(--fx-space-16) 0;
+}
+
+.fx-search__field {
+    margin-top: var(--fx-space-8);
+    padding-bottom: var(--fx-space-5);
+    border-bottom: 1px solid var(--fx-border-default);
+}
+
+.fx-search__input {
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-prose-h3);
+    color: var(--fx-text-title);
+}
+
+.fx-search__count {
+    margin-top: var(--fx-space-8);
+}
+
+.fx-search__empty {
+    margin-top: var(--fx-space-10);
+}
+
+/* --- Éditeur de note --------------------------------------------------------- */
+
+.fx-note__title-form {
+    margin: 0;
+}
+
+.fx-note__title {
+    width: 100%;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-prose-display);
+    font-weight: var(--fx-weight-regular);
+    letter-spacing: var(--fx-tracking-snug);
+    line-height: var(--fx-leading-tight);
+    color: var(--fx-text-title);
+}
+
+.fx-note__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--fx-space-3);
+    margin-top: var(--fx-space-6);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+}
+
+.fx-note__obsessions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-3);
+    margin-top: var(--fx-space-6);
+}
+
+.fx-note__editor {
+    margin-top: var(--fx-space-12);
+    min-height: 40vh;
+}
+
+.fx-note__status {
+    margin-top: var(--fx-space-10);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    letter-spacing: 0.04em;
+    color: var(--fx-text-disabled);
+}
+
+.fx-note__danger {
+    margin-top: var(--fx-space-20);
+    padding-top: var(--fx-space-8);
+    border-top: 1px solid var(--fx-border-faint);
+}

@@ -1,0 +1,38 @@
+{# Le débounce est côté client : sans lui, chaque frappe déclencherait une
+   requête, ce qui rendrait la frappe saccadée sur une connexion lente. #}
+<div {{ attributes }} class="fx-search">
+    <div class="fx-search__field">
+        <input type="search"
+               class="fx-field__control fx-field__control--bare fx-search__input"
+               placeholder="{{ 'notebook.search.placeholder'|trans }}"
+               aria-label="{{ 'notebook.search.placeholder'|trans }}"
+               autofocus
+               data-model="debounce(300)|query"
+               value="{{ query }}">
+    </div>
+
+    {% set results = this.results %}
+
+    {% if this.hasSearched %}
+        <p class="fx-eyebrow fx-search__count">
+            {{ 'notebook.search.results'|trans({ count: results|length }) }}
+        </p>
+
+        {% for note in results %}
+            <a class="fx-note-row" href="{{ path('note_show', { id: note.id }) }}">
+                <span class="fx-note-row__title">{{ note.title }}</span>
+                <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
+                <span class="fx-note-row__footer">
+                    {% if note.obsessions is not empty %}
+                        <span class="fx-note-row__meta">{{ note.obsessions|join(' · ') }}</span>
+                    {% endif %}
+                    <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
+                </span>
+            </a>
+        {% else %}
+            <p class="fx-card__help fx-search__empty">{{ 'notebook.search.nothing'|trans({ query: query }) }}</p>
+        {% endfor %}
+    {% else %}
+        <p class="fx-card__help fx-search__empty">{{ 'notebook.search.prompt'|trans }}</p>
+    {% endif %}
+</div>

@@ -65,3 +65,17 @@ services:
 
     App\Identity\Application\Port\AvailableOAuthProviders:
         alias: App\Identity\Infrastructure\Security\OAuth\ConfiguredOAuthProviders
+
+    App\Shared\Application\Tenant\CurrentTenant:
+        alias: App\Organization\Infrastructure\Tenant\MembershipCurrentTenant
+        public: true
+
+    App\Notebook\Domain\Repository\NoteRepository:
+        alias: App\Notebook\Infrastructure\Persistence\Doctrine\DoctrineNoteRepository
+        public: true
+
+    App\Shared\Application\Shell\ShellDataProvider:
+        alias: App\Shared\Infrastructure\Shell\AggregatedShellDataProvider
+
+    App\Shared\Application\Shell\NotebookSummaryProvider:
+        alias: App\Notebook\Infrastructure\Shell\NotebookShellSummary

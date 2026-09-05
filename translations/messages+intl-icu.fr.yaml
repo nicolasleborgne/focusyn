@@ -105,3 +105,24 @@ settings:
         unlink: Détacher
         unlinked: Fournisseur détaché.
         sign_in_with: 'Continuer avec {provider}'
+
+notebook:
+    untitled: Sans titre
+    all: Toutes
+    empty: Aucune note pour l'instant.
+    write_first: Écrire la première
+    delete: Supprimer la note
+    deleted: Note supprimée.
+    title_label: Titre de la note
+    title_required: Une note doit avoir un titre.
+    reading_minutes: '{count, plural, one {# min de lecture} other {# min de lecture}}'
+    search:
+        placeholder: Chercher dans les notes…
+        prompt: Tapez pour chercher dans les titres et le corps des notes.
+        results: '{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}'
+        nothing: 'Rien ne correspond à « {query} ».'
+    editor:
+        saved: Enregistré
+        saving: Enregistrement…
+        dirty: Modifications non enregistrées
+        failed: Enregistrement impossible — la connexion semble coupée
