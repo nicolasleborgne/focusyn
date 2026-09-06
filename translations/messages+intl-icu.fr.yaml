@@ -207,3 +207,53 @@ obsession:
     point_number: 'Point {number}'
     save: Enregistrer
     saved: Fiche enregistrée.
+
+privacy:
+    heading: Données personnelles
+    # Cette déclaration engage : elle doit décrire l'hébergement réel.
+    statement: >-
+        Vos notes et vos listes sont hébergées sur nos serveurs, en France, pour
+        vous être accessibles depuis n'importe quel appareil. Nous ne les lisons
+        pas, nous ne les revendons pas, et nous ne les transmettons à personne
+        sans une obligation légale.
+    consent:
+        assistant: Assistant IA
+        assistant_help: >-
+            Autorise l'envoi du texte que vous sélectionnez au fournisseur d'IA
+            que vous avez configuré. Rien n'est envoyé sans cette autorisation.
+        usage: Mesure d'usage
+        usage_help: >-
+            Compte les pages consultées pour comprendre ce qui sert. Aucun
+            traceur publicitaire, aucun partage avec un tiers.
+        backup: Sauvegardes chiffrées
+        backup_help: >-
+            Conserve une copie chiffrée de votre carnet pour pouvoir le
+            restaurer si vous perdez quelque chose.
+    retention:
+        label: Durée de conservation
+        help: >-
+            Au-delà de cette durée, les notes que vous avez supprimées sont
+            purgées définitivement de nos sauvegardes.
+        twelve_months: 12 mois
+        twenty_four_months: 24 mois
+        unlimited: Sans limite
+    portability:
+        label: Emporter vos données
+        summary: >-
+            {notes, plural, =0 {Aucune note} one {# note} other {# notes}} ·
+            {lists, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}
+        json: Exporter en JSON
+        markdown: Exporter en Markdown
+    erasure:
+        label: Effacer vos données
+        help: >-
+            Supprime définitivement vos notes et vos listes. Votre compte reste
+            ouvert. Cette action est irréversible.
+        armed: >-
+            Un second envoi effacera vos notes et vos listes, sans retour
+            possible.
+        action: Effacer
+        confirm: Confirmer l'effacement
+    saved: Préférence enregistrée.
+    erase_confirm: Cliquez une seconde fois pour confirmer l'effacement.
+    erased: Vos notes et vos listes ont été effacées.

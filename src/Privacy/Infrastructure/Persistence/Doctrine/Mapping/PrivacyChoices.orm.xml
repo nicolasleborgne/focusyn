@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!--
+        Pas de colonne organization_id : ces choix appartiennent à la personne,
+        pas à l'organisation. Changer d'équipe ne remet pas un consentement.
+    -->
+    <entity name="App\Privacy\Domain\Model\PrivacyChoices" table="privacy_choices">
+        <id name="subjectId" type="subject_id" column="subject_id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="retention" type="string" column="retention" length="30"
+               enum-type="App\Privacy\Domain\Model\Retention"/>
+        <field name="granted" type="json" column="granted_consents"/>
+        <field name="openedAt" type="datetime_immutable" column="opened_at"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at"/>
+    </entity>
+</doctrine-mapping>

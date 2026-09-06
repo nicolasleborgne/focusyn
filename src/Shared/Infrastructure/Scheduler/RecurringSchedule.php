@@ -26,7 +26,7 @@ final readonly class RecurringSchedule implements ScheduleProviderInterface
 
     public function getSchedule(): SymfonySchedule
     {
-        return new SymfonySchedule()
+        return (new SymfonySchedule())
             // Rejoue les exécutions manquées après un redémarrage du worker.
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true);

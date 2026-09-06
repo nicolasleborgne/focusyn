@@ -17,6 +17,11 @@ return (new PhpCsFixer\Config())
         '@Symfony' => true,
         '@Symfony:risky' => true,
         '@PHP84Migration' => true,
+        // PHP 8.4 permet `new X()->m()`, mais le parseur embarqué dans deptrac
+        // ne le comprend pas : il écarte le fichier sans rien dire, et la règle
+        // d'architecture cesse de s'y appliquer. Une paire de parenthèses coûte
+        // moins cher qu'un garde-fou qui ne garde plus rien.
+        'new_expression_parentheses' => ['use_parentheses' => true],
         'declare_strict_types' => true,
         'strict_param' => true,
         'strict_comparison' => true,

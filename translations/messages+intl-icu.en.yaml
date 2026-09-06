@@ -206,3 +206,51 @@ obsession:
     point_number: 'Point {number}'
     save: Save
     saved: Description saved.
+
+privacy:
+    heading: Personal data
+    statement: >-
+        Your notes and lists are hosted on our servers, in France, so they reach
+        you from any device. We do not read them, we do not sell them, and we
+        do not hand them to anyone absent a legal obligation.
+    consent:
+        assistant: AI assistant
+        assistant_help: >-
+            Allows the text you select to be sent to the AI provider you have
+            configured. Nothing leaves without this permission.
+        usage: Usage measurement
+        usage_help: >-
+            Counts page views so we understand what gets used. No advertising
+            trackers, nothing shared with third parties.
+        backup: Encrypted backups
+        backup_help: >-
+            Keeps an encrypted copy of your notebook so it can be restored if
+            you lose something.
+    retention:
+        label: Retention period
+        help: >-
+            Past this period, notes you have deleted are purged for good from
+            our backups.
+        twelve_months: 12 months
+        twenty_four_months: 24 months
+        unlimited: No limit
+    portability:
+        label: Take your data with you
+        summary: >-
+            {notes, plural, =0 {No notes} one {# note} other {# notes}} ·
+            {lists, plural, =0 {no tasks} one {# task} other {# tasks}}
+        json: Export as JSON
+        markdown: Export as Markdown
+    erasure:
+        label: Erase your data
+        help: >-
+            Permanently deletes your notes and lists. Your account stays open.
+            This cannot be undone.
+        armed: >-
+            A second submission will erase your notes and lists, with no way
+            back.
+        action: Erase
+        confirm: Confirm erasure
+    saved: Preference saved.
+    erase_confirm: Click a second time to confirm the erasure.
+    erased: Your notes and lists have been erased.

@@ -124,7 +124,11 @@ final class DisplayPreferencesTest extends WebTestCase
     private function adjust(KernelBrowser $client, string $field, string $value): void
     {
         $crawler = $client->request('GET', '/reglages');
-        $token = (string) $crawler->filter('input[name="_token"]')->last()->attr('value');
+        // Ancré sur son formulaire : la page en porte plusieurs, et compter
+        // les positions ferait échouer ce test au prochain réglage ajouté.
+        $token = (string) $crawler->filter('form[action="/reglages/affichage"] input[name="_token"]')
+            ->first()
+            ->attr('value');
 
         $client->request('POST', '/reglages/affichage', ['_token' => $token, $field => $value]);
         $client->followRedirect();

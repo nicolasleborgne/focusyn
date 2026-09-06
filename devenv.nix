@@ -97,6 +97,11 @@
       set -e
       echo "→ style"      && vendor/bin/php-cs-fixer fix --dry-run --diff -q
       echo "→ statique"   && vendor/bin/phpstan analyse --memory-limit=1G --no-progress -q
+      # Le parseur embarqué dans deptrac ne comprend pas `new X()->m()` de PHP
+      # 8.4 : il écarte le fichier au lieu d'échouer, et la règle d'architecture
+      # cesse silencieusement de s'appliquer. On refuse donc la syntaxe.
+      echo "→ syntaxe"    && ! grep -rnE 'new [A-Za-z_\\]+\(\)(->|$)' src/ \
+        || { echo "Parenthésez : (new X())->m() — sinon deptrac n'analyse plus ce fichier."; exit 1; }
       echo "→ couches"    && vendor/bin/deptrac analyse --config-file=deptrac.yaml --no-progress -q
       echo "→ contextes"  && vendor/bin/deptrac analyse --config-file=deptrac.contexts.yaml --no-progress -q
       echo "→ tests"      && vendor/bin/phpunit

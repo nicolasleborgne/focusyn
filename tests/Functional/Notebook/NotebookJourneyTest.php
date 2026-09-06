@@ -176,7 +176,11 @@ final class NotebookJourneyTest extends WebTestCase
         $noteId = $this->writeNote($client, 'Deux sommeils');
 
         $crawler = $client->request('GET', '/reglages');
-        $token = (string) $crawler->filter('input[name="_token"]')->last()->attr('value');
+        // Ancré sur son formulaire : la page en porte plusieurs, et compter
+        // les positions ferait échouer ce test au prochain réglage ajouté.
+        $token = (string) $crawler->filter('form[action="/reglages/affichage"] input[name="_token"]')
+            ->first()
+            ->attr('value');
         $client->request('POST', '/reglages/affichage', ['_token' => $token, 'previewPane' => '0']);
 
         $crawler = $client->request('GET', '/notes/'.$noteId);

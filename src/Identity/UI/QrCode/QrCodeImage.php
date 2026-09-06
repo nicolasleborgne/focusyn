@@ -20,7 +20,7 @@ final readonly class QrCodeImage
 {
     public function dataUri(string $provisioningUri): string
     {
-        return new SvgWriter()->write(
+        return (new SvgWriter())->write(
             new QrCode(
                 data: $provisioningUri,
                 errorCorrectionLevel: ErrorCorrectionLevel::Medium,

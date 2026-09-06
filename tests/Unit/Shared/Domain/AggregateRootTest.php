@@ -15,7 +15,7 @@ final class AggregateRootTest extends TestCase
 {
     public function testANewAggregateHasNoPendingEvent(): void
     {
-        self::assertSame([], new FakeAggregate()->releaseEvents());
+        self::assertSame([], (new FakeAggregate())->releaseEvents());
     }
 
     public function testItKeepsRecordedEventsInOrder(): void

@@ -844,3 +844,10 @@
 .fx-app__pane--preview .fx-prose {
     max-width: 58ch;
 }
+
+/* Déclaration de traitement : elle engage, elle se lit. */
+.fx-privacy__statement {
+    max-width: 60ch;
+    margin-top: var(--fx-space-6);
+    line-height: var(--fx-leading-relaxed);
+}

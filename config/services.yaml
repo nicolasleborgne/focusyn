@@ -105,3 +105,7 @@ services:
     App\Shared\Application\Display\CurrentDisplay:
         alias: App\Identity\Infrastructure\Security\AccountDisplay
         public: true
+
+    App\Privacy\Domain\Repository\PrivacyChoicesRepository:
+        alias: App\Privacy\Infrastructure\Persistence\Doctrine\DoctrinePrivacyChoicesRepository
+        public: true

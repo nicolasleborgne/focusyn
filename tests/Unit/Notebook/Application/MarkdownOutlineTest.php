@@ -121,6 +121,6 @@ final class MarkdownOutlineTest extends TestCase
     /** @return list<ProseLine> */
     private static function outline(string $markdown, bool $withMarks = true): array
     {
-        return new MarkdownOutline()->lines(NoteBody::fromString($markdown), $withMarks);
+        return (new MarkdownOutline())->lines(NoteBody::fromString($markdown), $withMarks);
     }
 }

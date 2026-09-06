@@ -22,7 +22,7 @@ final readonly class SymfonyPasswordResetMailer implements PasswordResetMailer
     public function send(User $user, string $url): void
     {
         $this->mailer->send(
-            new TemplatedEmail()
+            (new TemplatedEmail())
                 ->from(new Address('bonjour@focusyn.fr', 'Focusyn'))
                 ->to($user->email()->toString())
                 ->subject($this->translator->trans('password_reset.email.subject'))

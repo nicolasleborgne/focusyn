@@ -1,0 +1,82 @@
+{% set privacy = this.view %}
+
+{% if privacy %}
+    <section class="fx-settings__section" {{ attributes }}>
+        <p class="fx-eyebrow">{{ 'privacy.heading'|trans }}</p>
+
+        {# Ce texte engage : il doit décrire ce que fait réellement l'application,
+           pas ce qu'en disait une maquette d'application locale. #}
+        <p class="fx-card__help fx-privacy__statement">{{ 'privacy.statement'|trans }}</p>
+
+        {% for consent in this.consents %}
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ ('privacy.consent.' ~ consent.value)|trans }}</span>
+                    <span class="fx-card__help">{{ ('privacy.consent.' ~ consent.value ~ '_help')|trans }}</span>
+                </div>
+
+                <form method="post" action="{{ path('privacy_adjust') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('privacy-adjust') }}">
+                    <input type="hidden" name="consent" value="{{ consent.value }}">
+                    <input type="hidden" name="granted" value="{{ privacy.allows(consent) ? '0' : '1' }}">
+                    <button type="submit" class="fx-switch {{ privacy.allows(consent) ? 'fx-switch--on' }}"
+                            aria-pressed="{{ privacy.allows(consent) ? 'true' : 'false' }}">
+                        <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+
+        <div class="fx-settings__row">
+            <div class="fx-settings__label">
+                <span class="fx-card__title">{{ 'privacy.retention.label'|trans }}</span>
+                <span class="fx-card__help">{{ 'privacy.retention.help'|trans }}</span>
+            </div>
+
+            <form method="post" action="{{ path('privacy_adjust') }}" class="fx-field__row">
+                <input type="hidden" name="_token" value="{{ csrf_token('privacy-adjust') }}">
+                {% for retention in this.retentions %}
+                    <button type="submit" name="retention" value="{{ retention.value }}"
+                            class="fx-pill {{ privacy.retention == retention ? 'fx-pill--selected' }}">
+                        {{ ('privacy.retention.' ~ retention.value)|trans }}
+                    </button>
+                {% endfor %}
+            </form>
+        </div>
+
+        <div class="fx-settings__row">
+            <div class="fx-settings__label">
+                <span class="fx-card__title">{{ 'privacy.portability.label'|trans }}</span>
+                <span class="fx-card__help">
+                    {{ 'privacy.portability.summary'|trans({
+                        notes: privacy.summary.notes|default(0),
+                        lists: privacy.summary.taches|default(0),
+                    }) }}
+                </span>
+            </div>
+
+            <div class="fx-field__row">
+                <a class="fx-button fx-button--small" href="{{ path('privacy_export', { format: 'json' }) }}">
+                    {{ 'privacy.portability.json'|trans }}
+                </a>
+                <a class="fx-button fx-button--small" href="{{ path('privacy_export', { format: 'md' }) }}">
+                    {{ 'privacy.portability.markdown'|trans }}
+                </a>
+            </div>
+        </div>
+
+        <div class="fx-settings__row">
+            <div class="fx-settings__label">
+                <span class="fx-card__title">{{ 'privacy.erasure.label'|trans }}</span>
+                <span class="fx-card__help">{{ (this.erasureArmed ? 'privacy.erasure.armed' : 'privacy.erasure.help')|trans }}</span>
+            </div>
+
+            <form method="post" action="{{ path('privacy_erase') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('privacy-erase') }}">
+                <button type="submit" class="fx-button fx-button--danger fx-button--small {{ this.erasureArmed ? 'is-armed' }}">
+                    {{ (this.erasureArmed ? 'privacy.erasure.confirm' : 'privacy.erasure.action')|trans }}
+                </button>
+            </form>
+        </div>
+    </section>
+{% endif %}

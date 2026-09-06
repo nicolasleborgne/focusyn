@@ -23,12 +23,17 @@ trait LogsIn
 {
     private function logIn(KernelBrowser $client, string $email = 'nicolas@focusyn.fr'): SecurityUser
     {
-        $bus = self::getContainer()->get(CommandBus::class);
-        self::assertInstanceOf(CommandBus::class, $bus);
-        $bus->dispatch(new RegisterUser($email, 'une phrase de passe tenable'));
-
         $users = self::getContainer()->get(UserRepository::class);
         self::assertInstanceOf(UserRepository::class, $users);
+
+        // Se reconnecter n'est pas se réinscrire : un test qui alterne entre
+        // deux comptes repasse ici sans devoir en recréer un.
+        if (null === $users->ofEmail(EmailAddress::fromString($email))) {
+            $bus = self::getContainer()->get(CommandBus::class);
+            self::assertInstanceOf(CommandBus::class, $bus);
+            $bus->dispatch(new RegisterUser($email, 'une phrase de passe tenable'));
+        }
+
         $user = $users->ofEmail(EmailAddress::fromString($email));
         self::assertNotNull($user);
 

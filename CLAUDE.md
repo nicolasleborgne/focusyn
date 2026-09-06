@@ -286,6 +286,20 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
 
 ## Pièges connus
 
+- **`new X()->m()` (PHP 8.4) est interdit dans `src/`** : le parseur embarqué
+  dans deptrac ne le comprend pas et *écarte le fichier* au lieu d'échouer — la
+  règle d'architecture cesse silencieusement de s'y appliquer. `qa` refuse la
+  syntaxe (étape `syntaxe`) et php-cs-fixer impose les parenthèses via
+  `new_expression_parentheses`, qui neutralise la règle inverse de
+  `@PHP84Migration`.
+- **`APP_SECRET` doit être non vide, y compris en dev** (`.env.dev`) : la
+  protection CSRF le dérive pour signer ses jetons, et sans lui *tout* écran
+  portant un formulaire tombe en 500. Le symptôme est
+  `InvalidArgumentException: A non-empty secret is required.`
+- **Ne jamais lire un jeton CSRF par position dans un test**
+  (`filter('input[name="_token"]')->last()`) : ajouter une section à l'écran des
+  réglages casse alors des tests qui n'ont rien à voir. Toujours ancrer sur le
+  formulaire : `filter('form[action="…"] input[name="_token"]')->first()`.
 - **Ne jamais exporter `APP_ENV` comme variable d'environnement réelle** (par
   exemple depuis `devenv.nix`) : elle prime sur `$_ENV`, PHPUnit démarre le
   noyau en `dev` et le conteneur de test disparaît. La configuration
