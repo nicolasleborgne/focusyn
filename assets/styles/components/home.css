@@ -98,11 +98,23 @@
 
 /* --- Ligne de tâche ------------------------------------------------------- */
 
+/*
+ * Une ligne de tâche : case, texte, puis ce qui s'y rattache.
+ *
+ * Un filet sous chaque ligne, comme dans la maquette — c'est lui qui donne à
+ * la liste sa régularité. La case est décalée de 3 px : alignée sur la
+ * majuscule du texte, pas sur le haut de sa boîte.
+ */
 .fx-task-line {
     display: flex;
     align-items: flex-start;
     gap: var(--fx-space-5);
-    padding: var(--fx-space-3) 0;
+    padding: 12px var(--fx-space-2);
+    border-bottom: 1px solid var(--fx-border-faint);
+}
+
+.fx-task-line > .fx-check {
+    margin-top: 3px;
 }
 
 .fx-task-line__text {
@@ -585,11 +597,12 @@
     text-decoration-color: var(--fx-line-strike);
 }
 
+/* La saisie occupe une ligne comme les autres : c'est la rangée qui porte le
+   filet et le rythme, pas le formulaire. */
 .fx-checklist__add {
     display: flex;
-    margin-top: var(--fx-space-6);
-    padding: var(--fx-space-4) 0;
-    border-top: 1px solid var(--fx-border-faint);
+    flex: 1;
+    min-width: 0;
 }
 
 .fx-checklist__done-title {
@@ -1108,18 +1121,21 @@
     cursor: default;
 }
 
-.fx-task-line--draft {
-    padding-top: 13px;
-    padding-bottom: 13px;
+.fx-task-line--draft .fx-check--ghost {
+    /* La case en pointillés ne se coche pas : elle annonce ce que la ligne
+       deviendra. */
+    margin-top: 3px;
 }
 
-.fx-task-line--draft .fx-checklist__add {
-    flex: 1;
-    min-width: 0;
+.fx-task-line--draft .fx-field__control--bare {
+    padding: 0;
+    font-size: var(--fx-size-xl);
+    line-height: 1.6;
 }
 
-/* Une tâche faite n'a plus ni rappel ni retrait : elle est classée. */
+/* Une tâche faite n'a plus ni rappel ni retrait, ni filet : elle est classée. */
 .fx-task-line--done {
+    padding: 10px var(--fx-space-2);
     border-bottom: 0;
 }
 
