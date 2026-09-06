@@ -16,6 +16,7 @@ doctrine:
             totp_secret: App\Identity\Infrastructure\Persistence\Doctrine\Type\TotpSecretType
             display_preferences: App\Identity\Infrastructure\Persistence\Doctrine\Type\DisplayPreferencesType
             oauth_identity_id: App\Identity\Infrastructure\Persistence\Doctrine\Type\OAuthIdentityIdType
+            device: App\Identity\Infrastructure\Persistence\Doctrine\Type\DeviceType
             tenant_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\TenantIdType
             subject_id: App\Privacy\Infrastructure\Persistence\Doctrine\Type\SubjectIdType
             note_id: App\Notebook\Infrastructure\Persistence\Doctrine\Type\NoteIdType

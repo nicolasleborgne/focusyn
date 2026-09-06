@@ -177,6 +177,17 @@ second facteur, fournisseur externe. Toute connexion programmée doit donc
 **nommer** l'authentificateur (`$security->login($user, 'form_login')`), sinon
 Symfony refuse de choisir.
 
+**Sessions.** Elles vivent en base (`session.handler.pdo`, table `sessions`),
+pas dans des fichiers : c'est ce qui rend la révocation réelle — fermer une
+session depuis un autre appareil doit la fermer, pas seulement l'ôter d'une
+liste. `LoginSession` en est l'index lisible ; **sa clé primaire est
+l'identifiant de la session PHP**, sinon il n'y aurait rien à détruire. La date
+de dernière vue n'est rafraîchie qu'au quart d'heure : l'écrire à chaque requête
+coûterait une écriture par clic pour une précision dont personne n'a l'usage.
+L'appareil est déduit de l'en-tête du navigateur, jamais d'une adresse IP — une
+ville devinée qui se trompe est pire qu'une ville absente quand il s'agit de
+décider d'une révocation.
+
 **Secrets.** Le secret TOTP est stocké en clair — l'algorithme impose que le
 serveur puisse recalculer le code. Les codes de secours, eux, sont **hachés** :
 montrés une fois, jamais relisibles. La comparaison passe par
@@ -370,6 +381,10 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   syntaxe (étape `syntaxe`) et php-cs-fixer impose les parenthèses via
   `new_expression_parentheses`, qui neutralise la règle inverse de
   `@PHP84Migration`.
+- **La table `sessions` doit exister avant la première requête** : le
+  gestionnaire PDO ne la crée pas tout seul en production. Elle est posée par
+  la migration `Version20260906092152`, pas par `createTable()`, pour qu'elle
+  se lise dans l'historique du schéma comme le reste.
 - **`APP_SECRET` doit être non vide, y compris en dev** (`.env.dev`) : la
   protection CSRF le dérive pour signer ses jetons, et sans lui *tout* écran
   portant un formulaire tombe en 500. Le symptôme est

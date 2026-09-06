@@ -90,6 +90,11 @@ settings:
     account_help: 'Identifiant de connexion. Le modifier enverra une vérification sur la nouvelle adresse — pas encore disponible.'
     password_help: Un lien de réinitialisation part sur votre adresse.
     password_reset: Réinitialiser
+    sessions:
+        current: Cet appareil · session en cours
+        last_seen: 'Dernier accès {when}'
+        revoke: Fermer
+        revoked: Session fermée.
     back: Revenir aux réglages
     accent:
         heading: Apparence

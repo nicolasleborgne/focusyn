@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!-- La clé primaire est l'identifiant de la session PHP : c'est ce qui
+         permet de la fermer réellement, et non seulement de l'ôter d'une
+         liste. Pas de organization_id : on se connecte à un compte. -->
+    <entity name="App\Identity\Domain\Model\LoginSession" table="login_sessions">
+        <id name="id" type="string" column="id" length="128">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="userId" type="user_id" column="user_id"/>
+        <field name="device" type="device" column="device"/>
+        <field name="openedAt" type="datetime_immutable" column="opened_at"/>
+        <field name="lastSeenAt" type="datetime_immutable" column="last_seen_at"/>
+
+        <indexes>
+            <index name="idx_login_sessions_user" columns="user_id,last_seen_at"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

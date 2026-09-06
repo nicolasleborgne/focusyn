@@ -12,12 +12,16 @@ namespace App\Identity\Application\Query;
  */
 final readonly class AccountSettings
 {
-    /** @param list<string> $linkedProviders */
+    /**
+     * @param list<string>       $linkedProviders
+     * @param list<SessionEntry> $sessions
+     */
     public function __construct(
         public string $email,
         public bool $twoFactorEnabled,
         public int $remainingBackupCodes,
         public array $linkedProviders,
+        public array $sessions = [],
     ) {
     }
 

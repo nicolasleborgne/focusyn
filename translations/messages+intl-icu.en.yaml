@@ -89,6 +89,11 @@ settings:
     account_help: 'Sign-in identifier. Changing it will send a verification to the new address — not available yet.'
     password_help: A reset link goes out to your address.
     password_reset: Reset
+    sessions:
+        current: This device · current session
+        last_seen: 'Last seen {when}'
+        revoke: Close
+        revoked: Session closed.
     back: Back to settings
     accent:
         heading: Appearance

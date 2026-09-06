@@ -165,6 +165,26 @@ services:
     App\Shared\Application\Search\TaskFinder:
         alias: App\Task\Infrastructure\Search\TaskListFinder
 
+    App\Identity\Domain\Repository\LoginSessionRepository:
+        alias: App\Identity\Infrastructure\Persistence\Doctrine\DoctrineLoginSessionRepository
+        public: true
+
+    # Le gestionnaire de sessions en base. La table est créée par une migration
+    # plutôt que par le gestionnaire lui-même : elle doit exister avant la
+    # première requête, et se lire dans l'historique du schéma.
+    session.handler.pdo:
+        class: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        arguments:
+            - '%env(DATABASE_URL)%'
+            - { lock_mode: 1 }
+
+    App\Identity\Application\Port\SessionCloser:
+        alias: App\Identity\Infrastructure\Session\HandlerSessionCloser
+
+    App\Identity\Infrastructure\Session\HandlerSessionCloser:
+        arguments:
+            $sessions: '@session.handler.pdo'
+
 when@test:
     services:
         _defaults:

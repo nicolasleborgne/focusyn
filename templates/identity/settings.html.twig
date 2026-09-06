@@ -76,6 +76,31 @@
                 </div>
             {% endif %}
 
+            {# Les sessions ouvertes. Fermer la sienne, c'est se déconnecter :
+               le bouton le dit, il ne fait pas semblant. #}
+            {% for session in account.sessions %}
+                <div class="fx-settings__row">
+                    <div class="fx-settings__label">
+                        <span class="fx-card__title">{{ session.device }}</span>
+                        <span class="fx-card__help">
+                            {%- if session.current -%}
+                                {{ 'settings.sessions.current'|trans }}
+                            {%- else -%}
+                                {{ 'settings.sessions.last_seen'|trans({ when: session.lastSeenAt|fx_ago }) }}
+                            {%- endif -%}
+                        </span>
+                    </div>
+
+                    <form method="post" action="{{ path('session_revoke') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('session-revoke') }}">
+                        <input type="hidden" name="sessionId" value="{{ session.id }}">
+                        <button type="submit" class="fx-button fx-button--small">
+                            {{ (session.current ? 'shell.action.logout' : 'settings.sessions.revoke')|trans }}
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+
             {% if freshBackupCodes is not empty %}
                 <div class="fx-card fx-settings__codes">
                     <p class="fx-card__title">{{ 'settings.backup_codes.fresh'|trans }}</p>

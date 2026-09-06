@@ -3,7 +3,13 @@ framework:
     secret: '%env(APP_SECRET)%'
 
     # Note that the session will be started ONLY if you read or write from it.
-    session: true
+    #
+    # Les sessions vivent en base et non dans des fichiers : c'est ce qui rend
+    # la révocation réelle — fermer une session depuis un autre appareil doit
+    # la fermer, pas seulement l'ôter d'une liste. C'est aussi la seule
+    # configuration tenable derrière plusieurs instances.
+    session:
+        handler_id: session.handler.pdo
 
     #esi: true
     #fragments: true
