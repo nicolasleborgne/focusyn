@@ -47,16 +47,22 @@ shell:
         routine_hint: qui revient
 
 home:
-    dormant: Ce qui dort
+    dormant: Dormantes
+    prompt:
+        open: 'ouvrir →'
+        revive: 'relancer →'
+        sort: 'trier →'
     dormant_since: '{count, plural, one {# semaine sans une note} other {# semaines sans une note}}'
     crumb: Focusyn — accueil
-    title: Reprendre le fil
+    title: Des obsessions en cours de synthèse.
+    lead: 'Écrivez d''abord, classez après. Les notes se relient par leurs tags — la synthèse se construit toute seule.'
     stats: Chiffres du carnet
     stat:
         notes: notes
         obsessions: obsessions suivies
         words: mots ce mois
         open_tasks: tâches ouvertes
+        routines: routines à cocher
     resume: Reprendre
     next_tasks: Prochaines tâches
     all_clear: Rien en attente.
@@ -581,6 +587,7 @@ inbox:
 routine:
     heading: Routines
     count: '{count, plural, =0 {aucune routine} one {# routine} other {# routines}}'
+    to_tick: '{count, plural, one {# à cocher aujourd''hui} other {# à cocher aujourd''hui}}'
     due_today: Routines du jour
     new: Nouvelle routine
     empty: 'Aucune routine. Une routine, c''est ce qu''on refait — et que l''on veut voir revenir.'

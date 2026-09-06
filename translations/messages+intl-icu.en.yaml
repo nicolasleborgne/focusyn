@@ -47,15 +47,21 @@ shell:
 
 home:
     dormant: Gone quiet
+    prompt:
+        open: 'open →'
+        revive: 'revive →'
+        sort: 'sort →'
     dormant_since: '{count, plural, one {# week without a note} other {# weeks without a note}}'
     crumb: Focusyn — home
-    title: Pick up where you left off
+    title: Obsessions in the making.
+    lead: 'Write first, sort later. Notes link through their tags — the synthesis builds itself.'
     stats: Notebook figures
     stat:
         notes: notes
         obsessions: obsessions tracked
         words: words this month
         open_tasks: open tasks
+        routines: routines to tick
     resume: Resume
     next_tasks: Next tasks
     all_clear: Nothing pending.
@@ -573,6 +579,7 @@ inbox:
 routine:
     heading: Routines
     count: '{count, plural, =0 {no routines} one {# routine} other {# routines}}'
+    to_tick: '{count, plural, one {# to tick today} other {# to tick today}}'
     due_today: Routines for today
     new: New routine
     empty: 'No routine yet. A routine is what you do again — and want to see come back.'

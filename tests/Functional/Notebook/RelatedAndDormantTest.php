@@ -97,11 +97,14 @@ final class RelatedAndDormantTest extends WebTestCase
         $this->seed('Extraction', 'Le ratio ne décide de rien.', ['Café']);
 
         $crawler = $client->request('GET', '/');
+        $dormant = $crawler->filter('a.fx-prompt[href^="/obsessions/"]');
 
-        self::assertStringContainsString('Typographie', $crawler->filter('.fx-dormant')->text());
-        self::assertStringContainsString('semaines sans une note', $crawler->filter('.fx-dormant')->text());
+        // Une ligne, les noms, et de quoi y retourner : c'est un rappel, pas
+        // un reproche, et le détail se lit sur l'écran de l'obsession.
+        self::assertStringContainsString('Typographie', $dormant->text());
+        self::assertStringContainsString('relancer', $dormant->text());
         // Celle qu'on vient d'alimenter n'a rien à faire là.
-        self::assertStringNotContainsString('Café', $crawler->filter('.fx-dormant')->text());
+        self::assertStringNotContainsString('Café', $dormant->text());
     }
 
     public function testANotebookKeptUpToDateShowsNoDormantSection(): void
@@ -110,7 +113,7 @@ final class RelatedAndDormantTest extends WebTestCase
         $this->logIn($client);
         $this->seed('Extraction', 'Le ratio ne décide de rien.', ['Café']);
 
-        self::assertCount(0, $client->request('GET', '/')->filter('.fx-dormant'));
+        self::assertCount(0, $client->request('GET', '/')->filter('a.fx-prompt[href^="/obsessions/"]'));
     }
 
     /** @param list<string> $obsessions */

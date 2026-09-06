@@ -93,7 +93,7 @@ final class ShellNavigationTest extends WebTestCase
         $this->logIn($client);
 
         // Plus aucun écran d'attente : les cinq destinations sont construites.
-        foreach (['/' => 'Reprendre le fil', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
+        foreach (['/' => 'obsessions en cours de synthèse', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
             $crawler = $client->request('GET', $uri);
 
             self::assertResponseIsSuccessful(\sprintf('%s doit répondre.', $uri));

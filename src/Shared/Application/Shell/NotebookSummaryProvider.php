@@ -28,6 +28,4 @@ interface NotebookSummaryProvider
 
     /** @return list<NoteTeaser> */
     public function recentNotes(int $limit): array;
-
-    public function wordsWrittenThisMonth(): int;
 }

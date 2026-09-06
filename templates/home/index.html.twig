@@ -10,13 +10,17 @@
 
         <p class="fx-eyebrow">{{ 'now'|format_datetime(pattern: 'EEEE d MMMM', locale: app.request.locale) }}</p>
         <h1 class="fx-heading fx-heading--hero fx-home__title">{{ 'home.title'|trans }}</h1>
+        <p class="fx-home__lead">{{ 'home.lead'|trans }}</p>
 
+        {# Le quatrième compteur est ce qui reste à cocher aujourd'hui, et non
+           les mots écrits ce mois-ci : la maquette a troqué l'un pour l'autre,
+           et un décompte qu'on peut faire descendre vaut mieux qu'un total. #}
         <section class="fx-home__stats" aria-label="{{ 'home.stats'|trans }}">
             {% set stats = [
                 { value: shell().noteCount,        label: 'home.stat.notes' },
                 { value: shell().obsessionCount,   label: 'home.stat.obsessions' },
-                { value: home.monthlyWordCount|format_number(locale: app.request.locale), label: 'home.stat.words' },
                 { value: shell().openTaskCount,    label: 'home.stat.open_tasks' },
+                { value: home.routinesToTick,      label: 'home.stat.routines' },
             ] %}
             {% for stat in stats %}
                 <div class="fx-stat">
@@ -25,6 +29,39 @@
                 </div>
             {% endfor %}
         </section>
+
+        {# Les routines d'abord : elles se referment chaque soir, alors qu'une
+           note attendra. Et elles se cochent ici même — devoir ouvrir chaque
+           routine pour cela reviendrait à ne pas les montrer. #}
+        <twig:RoutineToday />
+
+        {# Trois rappels sur une ligne chacun : ce qui attend un geste, sans
+           occuper la place de ce qui se lit. #}
+        <div class="fx-home__prompts">
+            <button type="button" class="fx-prompt" data-fx-dialog="review">
+                <span class="fx-eyebrow">{{ 'review.heading'|trans }}</span>
+                <span class="fx-prompt__spacer"></span>
+                <span class="fx-prompt__action">{{ 'home.prompt.open'|trans }}</span>
+            </button>
+
+            {% if home.dormantObsessions is not empty %}
+                <a class="fx-prompt" href="{{ path('obsession_show', { slug: home.dormantObsessions|first.slug }) }}">
+                    <span class="fx-eyebrow">{{ 'home.dormant'|trans }}</span>
+                    <span class="fx-prompt__detail">
+                        {{ home.dormantObsessions|map(o => o.name)|join(' · ') }}
+                    </span>
+                    <span class="fx-prompt__action">{{ 'home.prompt.revive'|trans }}</span>
+                </a>
+            {% endif %}
+
+            {% if shell().inboxCount > 0 %}
+                <a class="fx-prompt fx-prompt--wide" href="{{ path('inbox') }}">
+                    <span class="fx-eyebrow">{{ 'inbox.heading'|trans }}</span>
+                    <span class="fx-prompt__detail">{{ 'inbox.summary'|trans({ count: shell().inboxCount }) }}</span>
+                    <span class="fx-prompt__action">{{ 'home.prompt.sort'|trans }}</span>
+                </a>
+            {% endif %}
+        </div>
 
         <section class="fx-home__section">
             <p class="fx-eyebrow fx-section-title">{{ 'home.resume'|trans }}</p>
@@ -50,33 +87,6 @@
                 {% endfor %}
             </div>
         </section>
-
-        {# Les routines du jour avant les tâches : elles se referment chaque
-           soir, alors qu'une tâche attendra demain. La section disparaît quand
-           tout est fait — une liste vide de choses faites n'apprend rien. #}
-        {# La revue du soir : un bouton ici, le dialogue en fin de page — comme
-           celui des rappels, et pour la même raison. #}
-        <div class="fx-home__review">
-            <button type="button" class="fx-button fx-button--small" data-fx-dialog="review">
-                {{ 'review.open'|trans }}
-            </button>
-        </div>
-
-        {# Ce qu'on délaisse : nommé, et cliquable pour y retourner. Une seule
-           ligne — c'est un rappel, pas un reproche. #}
-        {% if home.dormantObsessions is not empty %}
-            <section class="fx-home__section fx-dormant">
-                <p class="fx-eyebrow fx-section-title">{{ 'home.dormant'|trans }}</p>
-                {% for obsession in home.dormantObsessions %}
-                    <a class="fx-dormant__row" href="{{ path('obsession_show', { slug: obsession.slug }) }}">
-                        <span class="fx-dormant__name">{{ obsession.name }}</span>
-                        <span class="fx-dormant__since">{{ 'home.dormant_since'|trans({ count: obsession.weeksSinceLastNote }) }}</span>
-                    </a>
-                {% endfor %}
-            </section>
-        {% endif %}
-
-        <twig:RoutineSection only="due" class="fx-home__routines" />
 
         <section class="fx-home__section">
             <p class="fx-eyebrow fx-section-title">{{ 'home.next_tasks'|trans }}</p>

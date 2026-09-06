@@ -33,7 +33,9 @@
                         </button>
 
                         <span class="fx-task-line__text {{ item.ticked ? 'fx-task-line__text--done' }}">{{ item.text }}</span>
-                        <span class="fx-routine-line__when">{{ routine_schedule(routine.cadence, item.days, item.rank) }}</span>
+                        {% if routine.cadence != 'daily' %}
+                            <span class="fx-routine-line__when">{{ routine_schedule(routine.cadence, item.days, item.rank) }}</span>
+                        {% endif %}
 
                         <button type="button" class="fx-checklist__remove"
                                 data-action="live#action" data-live-action-param="remove"

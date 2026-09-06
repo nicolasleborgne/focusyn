@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure\Home;
 use App\Shared\Application\Home\HomeDataProvider;
 use App\Shared\Application\Home\HomeView;
 use App\Shared\Application\Shell\NotebookSummaryProvider;
+use App\Shared\Application\Shell\RoutineSummaryProvider;
 use App\Shared\Application\Shell\TaskSummaryProvider;
 
 /**
@@ -20,6 +21,7 @@ final readonly class AggregatedHomeDataProvider implements HomeDataProvider
     public function __construct(
         private NotebookSummaryProvider $notebook,
         private TaskSummaryProvider $tasks,
+        private RoutineSummaryProvider $routines,
     ) {
     }
 
@@ -30,7 +32,7 @@ final readonly class AggregatedHomeDataProvider implements HomeDataProvider
         return new HomeView(
             recentNotes: $recent,
             nextTasks: $this->tasks->nextTasks(self::NEXT_TASKS),
-            monthlyWordCount: $this->notebook->wordsWrittenThisMonth(),
+            routinesToTick: $this->routines->remainingToday(),
             dormantObsessions: $this->notebook->dormantObsessions(),
         );
     }

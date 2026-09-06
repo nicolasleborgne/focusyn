@@ -12,4 +12,7 @@ interface RoutineSummaryProvider
 {
     /** @return list<RoutineSummary> */
     public function routines(): array;
+
+    /** Ce qu'il reste à cocher aujourd'hui, toutes routines confondues. */
+    public function remainingToday(): int;
 }

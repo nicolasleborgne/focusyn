@@ -118,9 +118,10 @@ final class RoutineJourneyTest extends WebTestCase
         $rendered = $this->component($client, $account, $id)->render()->toString();
 
         // Chaque jour : il n'y a rien à régler, et sept pastilles inutiles
-        // encombreraient la ligne.
+        // encombreraient la ligne. Rien à dire non plus en regard de chaque
+        // étape — « chaque jour » répété trois fois serait du bruit.
         self::assertStringNotContainsString('fx-routine-line__schedule', $rendered);
-        self::assertStringContainsString('chaque jour', $rendered);
+        self::assertStringNotContainsString('chaque jour', $rendered);
     }
 
     public function testAWeeklyRoutineLetsEachStepPickItsDays(): void

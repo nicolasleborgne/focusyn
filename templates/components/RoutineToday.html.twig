@@ -1,0 +1,55 @@
+{% set routines = this.due %}
+
+{# Rien à cocher : la section ne se rend pas du tout. Une bande « tout est
+   coché » occuperait la place de ce qui reste à faire. #}
+{% if routines is not empty %}
+    <div {{ attributes }} class="fx-home__section">
+        <p class="fx-search__band">
+            <span class="fx-eyebrow">{{ 'routine.due_today'|trans }}</span>
+            <span class="fx-search__rule"></span>
+            <span class="fx-search__tally">{{ 'routine.to_tick'|trans({ count: this.remaining }) }}</span>
+        </p>
+
+        <div class="fx-board">
+            {% for routine in routines %}
+                <article class="fx-routine-card">
+                    <div class="fx-routine-card__head">
+                        <a class="fx-routine-card__name" href="{{ path('routine_show', { id: routine.id }) }}">{{ routine.name }}</a>
+                        <span class="fx-tag">{{ ('routine.cadence.' ~ routine.cadence)|trans }}</span>
+                        <span class="fx-eyebrow fx-routine__left">{{ 'routine.left'|trans({ count: routine.remaining }) }}</span>
+                    </div>
+
+                    {# Les étapes du jour seulement : celles qui ne sont pas dues
+                       se règlent sur l'écran de la routine, pas ici. #}
+                    <ul class="fx-routine-card__items">
+                        {% for item in routine.dueToday %}
+                            <li class="fx-task-line">
+                                <button type="button" class="fx-check {{ item.ticked ? 'fx-check--done' }}"
+                                        data-action="live#action" data-live-action-param="tick"
+                                        data-live-routine-id-param="{{ routine.id }}"
+                                        data-live-item-id-param="{{ item.id }}"
+                                        aria-pressed="{{ item.ticked ? 'true' : 'false' }}"
+                                        aria-label="{{ 'routine.check'|trans }}">
+                                    <span class="fx-check__tick">✓</span>
+                                </button>
+                                <span class="fx-task-line__text {{ item.ticked ? 'fx-task-line__text--done' }}">{{ item.text }}</span>
+                                {# Quotidienne : rien à dire, c'est tous les jours. Le
+                                   répéter sur chaque ligne serait du bruit. #}
+                                {% if routine.cadence != 'daily' %}
+                                    <span class="fx-routine-line__when">{{ routine_schedule(routine.cadence, item.days, item.rank) }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="fx-routine-card__foot">
+                        <span class="fx-eyebrow">{{ 'routine.streak'|trans({ count: routine.streak }) }}</span>
+                        <span class="fx-meter fx-routine-card__meter">
+                            <span class="fx-meter__value" style="width: {{ routine.progress }}%"></span>
+                        </span>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

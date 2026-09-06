@@ -258,3 +258,105 @@
     font-size: var(--fx-size-xl);
     color: var(--fx-text-body);
 }
+
+/* --- Les routines du jour, sur l'accueil ----------------------------------
+   Une carte par routine, avec ses étapes cochables : c'est là qu'on les coche
+   le matin, en ouvrant l'application. */
+
+.fx-routine-card {
+    padding: var(--fx-space-6);
+    border: 1px solid var(--fx-border-faint);
+}
+
+.fx-routine-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--fx-space-4);
+    margin-bottom: var(--fx-space-5);
+}
+
+.fx-routine-card__name {
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-size-xl);
+    color: var(--fx-text-title);
+    text-decoration: none;
+}
+
+/* Ce qui reste est poussé à droite : d'une carte à l'autre, la colonne se
+   compare d'un coup d'œil. */
+.fx-routine-card__head .fx-routine__left {
+    margin-left: auto;
+}
+
+.fx-routine-card__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fx-routine-card__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-5);
+    margin-top: var(--fx-space-6);
+}
+
+.fx-routine-card__meter {
+    flex: 1;
+}
+
+/* --- Les trois rappels de l'accueil --------------------------------------
+   Une ligne chacun, sur la largeur : ce qui attend un geste, sans occuper la
+   place de ce qui se lit. */
+
+.fx-home__prompts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--fx-space-5);
+    margin: var(--fx-space-10) 0;
+}
+
+.fx-prompt {
+    display: flex;
+    align-items: baseline;
+    gap: var(--fx-space-5);
+    padding: var(--fx-space-6);
+    border: 1px solid var(--fx-border-faint);
+    background: transparent;
+    font-family: inherit;
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-body);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.fx-prompt:hover {
+    border-color: var(--fx-border-strong);
+}
+
+.fx-prompt--wide {
+    grid-column: 1 / -1;
+}
+
+.fx-prompt__spacer,
+.fx-prompt__detail {
+    flex: 1;
+    min-width: 0;
+}
+
+.fx-prompt__action {
+    flex: 0 0 auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-faint);
+}
+
+.fx-home__lead {
+    max-width: 46ch;
+    margin: var(--fx-space-5) 0 0;
+    font-size: var(--fx-size-xl);
+    line-height: var(--fx-leading-loose);
+    color: var(--fx-text-muted);
+}

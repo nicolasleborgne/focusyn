@@ -8,20 +8,17 @@ use App\Routine\Application\Query\RoutineQuery;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
- * Les routines sur l'écran des tâches, et sur l'accueil.
+ * Les routines sur l'écran des tâches, en regard des listes.
  *
  * Un composant plutôt qu'un bloc rendu par le contrôleur du tableau : celui-ci
  * appartient à Task, qui n'a pas le droit de connaître Routine.
  *
- * `only` distingue les deux usages — la liste entière sur l'écran des tâches,
- * ce qui reste à faire aujourd'hui sur l'accueil.
+ * L'accueil, lui, a son propre composant : là-bas les étapes se cochent, donc
+ * il y faut un Live Component, pas une liste.
  */
 #[AsTwigComponent(name: 'RoutineSection', template: 'components/RoutineSection.html.twig')]
 final class RoutineSection
 {
-    /** `all` ou `due` */
-    public string $only = 'all';
-
     public function __construct(
         private readonly RoutineQuery $routines,
     ) {
@@ -30,6 +27,6 @@ final class RoutineSection
     /** @return list<\App\Routine\Application\Query\RoutineView> */
     public function routines(): array
     {
-        return 'due' === $this->only ? $this->routines->dueToday() : $this->routines->all();
+        return $this->routines->all();
     }
 }

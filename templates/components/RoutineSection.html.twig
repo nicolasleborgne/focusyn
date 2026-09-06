@@ -1,17 +1,8 @@
-{% set routines = this.routines %}
-
-{# Sur l'accueil, une section vide ne dit rien : on ne la rend pas. Sur l'écran
-   des tâches, au contraire, l'absence de routine mérite d'être expliquée. #}
-{% if routines is not empty or this.only == 'all' %}
+{# L'absence de routine mérite d'être expliquée ici : c'est l'écran où l'on
+   vient les chercher. #}
 <section {{ attributes.defaults({ class: 'fx-home__section' }) }}>
-    {# Le titre est hors de la grille : dedans, il occuperait une case et se
-       rangerait à côté de la première carte au lieu de la surmonter. #}
-    {% if this.only == 'due' %}
-        <p class="fx-eyebrow fx-section-title">{{ 'routine.due_today'|trans }}</p>
-    {% endif %}
-
     <div class="fx-board">
-    {% for routine in routines %}
+    {% for routine in this.routines %}
         <a class="fx-board__card" href="{{ path('routine_show', { id: routine.id }) }}">
             <span class="fx-board__head">
                 <span class="fx-board__name">{{ routine.name }}</span>
@@ -45,4 +36,3 @@
     {% endfor %}
     </div>
 </section>
-{% endif %}

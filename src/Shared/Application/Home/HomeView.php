@@ -17,7 +17,8 @@ final readonly class HomeView
     public function __construct(
         public array $recentNotes,
         public array $nextTasks,
-        public int $monthlyWordCount,
+        /** Ce qu'il reste à cocher aujourd'hui, toutes routines confondues. */
+        public int $routinesToTick,
         public array $dormantObsessions,
     ) {
     }

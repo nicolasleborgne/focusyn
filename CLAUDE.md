@@ -56,6 +56,23 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Routine`, `Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
+**L'accueil montre les routines du jour, et on les y coche.** C'est ce que fait
+la maquette, et c'est ce qui donne son sens à la section : une routine du matin
+se coche le matin, en ouvrant l'application — devoir ouvrir chaque routine pour
+cela reviendrait à ne pas les montrer. D'où un Live Component (`RoutineToday`)
+et non une simple liste. Une routine terminée disparaît de l'accueil : la garder
+pour montrer qu'elle est faite occuperait la place de ce qui reste.
+
+**Le quatrième compteur de l'accueil est « routines à cocher »**, et non plus
+« mots ce mois » : la maquette a troqué l'un pour l'autre, et un décompte qu'on
+peut faire descendre vaut mieux qu'un total qui monte. `wordsWrittenSince()` a
+été retiré avec son port — du code mort se serait sinon accumulé derrière un
+écran qui ne l'affiche plus.
+
+**Sur une routine quotidienne, aucune étape n'affiche son calendrier** : il n'y
+a rien à dire, c'est tous les jours, et le répéter sur chaque ligne serait du
+bruit.
+
 **La revue du soir est le seul écran qui lit trois contextes à la fois** —
 tâches, routines, rappels. Elle vit donc dans `Shared` et n'en connaît aucun :
 chacun lui parle par son port, et elle ne manipule que des primitives. Reporter

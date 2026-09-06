@@ -20,6 +20,11 @@ final readonly class RoutineShellSummary implements RoutineSummaryProvider
     ) {
     }
 
+    public function remainingToday(): int
+    {
+        return $this->routines->remainingToday();
+    }
+
     public function routines(): array
     {
         return array_map(
