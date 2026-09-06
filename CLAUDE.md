@@ -56,6 +56,22 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Routine`, `Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
+**Ce qui rapproche deux notes est grossier, et doit le rester.**
+`NoteKeywords` retient les mots d'au moins cinq lettres hors liste de mots
+vides ; un mot partagé vaut un point, une **obsession commune en vaut quatre**
+— c'est le seul signal posé à la main, donc le plus sûr. Au-dessous de quatre
+points, on se tait : deux mots communs sont du bruit, et un rapprochement de
+trop ferait douter de tous les autres. Trois résultats au plus, sinon la
+remarque devient un écran de recherche, qui existe déjà et fait cela mieux. Le
+rapprochement se fait en mémoire sur les trois cents notes les plus récentes :
+la borne dit jusqu'où l'on va, plutôt que de laisser l'écran ralentir sans
+prévenir.
+
+**Une obsession est « dormante » après six semaines sans une note**, et la
+mesure est `updatedAt`. La maquette appelait dormante une obsession de *moins de
+deux notes* — un raccourci de prototype qui aurait signalé les obsessions
+neuves au lieu de celles qu'on délaisse, soit exactement l'inverse.
+
 **Une routine se repose, une liste s'épuise.** Tout tient dans la **période** :
 `Cadence::periodOf()` rend une étiquette (`2026-09-07`, `2026-W37`, `2026-09`),
 et deux cochages comptent pour la même période si et seulement si leurs

@@ -45,6 +45,8 @@ shell:
         list_hint: à cocher
 
 home:
+    dormant: Ce qui dort
+    dormant_since: '{count, plural, one {# semaine sans une note} other {# semaines sans une note}}'
     crumb: Focusyn — accueil
     title: Reprendre le fil
     stats: Chiffres du carnet
@@ -171,6 +173,8 @@ settings:
         sign_in_with: 'Continuer avec {provider}'
 
 notebook:
+    related: Recoupements
+    related_obsession: 'même obsession : {obsession}'
     untitled: Sans titre
     all: Tout
     empty: Aucune note pour l'instant.

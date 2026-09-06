@@ -14,6 +14,13 @@ use App\Shared\Application\Home\NoteTeaser;
  */
 interface NotebookSummaryProvider
 {
+    /**
+     * Les obsessions qu'on ne nourrit plus.
+     *
+     * @return list<\App\Shared\Application\Home\DormantObsession>
+     */
+    public function dormantObsessions(): array;
+
     public function noteCount(): int;
 
     /** @return list<ObsessionSummary> */

@@ -70,6 +70,28 @@
 
         {# Panneau porté par Assistant : Notebook l'appelle sans connaître le
            contexte, la clé, ni le fournisseur. #}
+        {# Ce que la note recoupe ailleurs. Sous l'éditeur et avant l'assistant :
+           c'est une remarque, pas une action, et elle n'a de sens qu'une fois
+           qu'on a fini de lire. #}
+        {% if related is not empty %}
+            <section class="fx-related">
+                <p class="fx-eyebrow fx-section-title">{{ 'notebook.related'|trans }}</p>
+
+                {% for other in related %}
+                    <a class="fx-related__row" href="{{ path('note_show', { id: other.id }) }}">
+                        <span class="fx-related__title">{{ other.title }}</span>
+                        <span class="fx-related__why">
+                            {%- if other.sharedObsession -%}
+                                {{ 'notebook.related_obsession'|trans({ obsession: other.sharedObsession }) }}
+                                {%- if other.sharedWords is not empty %} · {% endif -%}
+                            {%- endif -%}
+                            {{ other.sharedWords|join(' · ') }}
+                        </span>
+                    </a>
+                {% endfor %}
+            </section>
+        {% endif %}
+
         <twig:AssistantPanel :noteId="note.id" />
 
         <div class="fx-note__danger">

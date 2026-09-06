@@ -54,6 +54,20 @@
         {# Les routines du jour avant les tâches : elles se referment chaque
            soir, alors qu'une tâche attendra demain. La section disparaît quand
            tout est fait — une liste vide de choses faites n'apprend rien. #}
+        {# Ce qu'on délaisse : nommé, et cliquable pour y retourner. Une seule
+           ligne — c'est un rappel, pas un reproche. #}
+        {% if home.dormantObsessions is not empty %}
+            <section class="fx-home__section fx-dormant">
+                <p class="fx-eyebrow fx-section-title">{{ 'home.dormant'|trans }}</p>
+                {% for obsession in home.dormantObsessions %}
+                    <a class="fx-dormant__row" href="{{ path('obsession_show', { slug: obsession.slug }) }}">
+                        <span class="fx-dormant__name">{{ obsession.name }}</span>
+                        <span class="fx-dormant__since">{{ 'home.dormant_since'|trans({ count: obsession.weeksSinceLastNote }) }}</span>
+                    </a>
+                {% endfor %}
+            </section>
+        {% endif %}
+
         <twig:RoutineSection only="due" class="fx-home__routines" />
 
         <section class="fx-home__section">

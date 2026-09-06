@@ -54,4 +54,11 @@ interface NoteRepository
      * @return list<array{name: string, slug: string, count: int}>
      */
     public function obsessionCounts(): array;
+
+    /**
+     * La dernière fois que chaque obsession a été mentionnée.
+     *
+     * @return list<array{name: string, slug: string, lastMentionedAt: DateTimeImmutable}>
+     */
+    public function obsessionLastMentions(): array;
 }

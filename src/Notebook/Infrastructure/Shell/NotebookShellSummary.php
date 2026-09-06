@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Notebook\Infrastructure\Shell;
 
+use App\Notebook\Application\Query\DormantObsessionsQuery;
 use App\Notebook\Application\Query\NotebookQuery;
 use App\Notebook\Application\Query\NoteSummary;
 use App\Notebook\Application\Query\ObsessionSummary as NotebookObsession;
@@ -21,9 +22,15 @@ use Psr\Clock\ClockInterface;
 final readonly class NotebookShellSummary implements NotebookSummaryProvider
 {
     public function __construct(
+        private DormantObsessionsQuery $dormant,
         private NotebookQuery $notebook,
         private ClockInterface $clock,
     ) {
+    }
+
+    public function dormantObsessions(): array
+    {
+        return $this->dormant->all();
     }
 
     public function noteCount(): int

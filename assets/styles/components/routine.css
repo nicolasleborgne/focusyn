@@ -122,3 +122,61 @@
 .fx-board__tabs + [data-tabs-target] .fx-board {
     margin-top: 0;
 }
+
+/* --- Ce qui dort ---------------------------------------------------------
+   Une obsession qu'on ne nourrit plus. La ligne est sobre et sans ornement :
+   c'est un rappel, pas un reproche. */
+
+.fx-dormant__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--fx-space-6);
+    padding: var(--fx-space-4) 0;
+    border-bottom: 1px solid var(--fx-border-faint);
+    text-decoration: none;
+}
+
+.fx-dormant__name {
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-title-row);
+    color: var(--fx-text-title);
+}
+
+.fx-dormant__since {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-faint);
+    white-space: nowrap;
+}
+
+/* --- Recoupements --------------------------------------------------------- */
+
+.fx-related {
+    margin-top: var(--fx-space-12);
+}
+
+.fx-related__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--fx-space-6);
+    padding: var(--fx-space-4) 0;
+    border-bottom: 1px solid var(--fx-border-faint);
+    text-decoration: none;
+}
+
+.fx-related__title {
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-size-xl);
+    color: var(--fx-text-title);
+}
+
+/* Pourquoi ces deux notes se ressemblent : les mots partagés, en monospace,
+   parce que ce sont des données et non une phrase. */
+.fx-related__why {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-faint);
+    text-align: right;
+}

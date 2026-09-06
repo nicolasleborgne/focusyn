@@ -120,6 +120,31 @@ final readonly class DoctrineNoteRepository implements NoteRepository
             ->getSingleScalarResult();
     }
 
+    public function obsessionLastMentions(): array
+    {
+        /** @var list<array{name: mixed, slug: string, last: mixed}> $rows */
+        $rows = $this->entityManager
+            ->createQuery(
+                'SELECT o.name AS name, o.slug AS slug, MAX(n.updatedAt) AS last'
+                .' FROM '.NoteObsession::class.' o'
+                .' JOIN '.Note::class.' n WITH o.note = n'
+                .' GROUP BY o.slug, o.name'
+                .' ORDER BY last ASC',
+            )
+            ->getResult();
+
+        return array_map(
+            static fn (array $row): array => [
+                'name' => (string) $row['name'],
+                'slug' => $row['slug'],
+                // `MAX()` revient en chaîne du SGBD, jamais converti par le
+                // type Doctrine : c'est une fonction d'agrégat, pas une colonne.
+                'lastMentionedAt' => new DateTimeImmutable((string) $row['last']),
+            ],
+            $rows,
+        );
+    }
+
     public function obsessionCounts(): array
     {
         /** @var list<array{name: mixed, slug: string, count: int|string}> $rows */

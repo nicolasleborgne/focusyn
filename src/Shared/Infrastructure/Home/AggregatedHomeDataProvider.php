@@ -31,6 +31,7 @@ final readonly class AggregatedHomeDataProvider implements HomeDataProvider
             recentNotes: $recent,
             nextTasks: $this->tasks->nextTasks(self::NEXT_TASKS),
             monthlyWordCount: $this->notebook->wordsWrittenThisMonth(),
+            dormantObsessions: $this->notebook->dormantObsessions(),
         );
     }
 }

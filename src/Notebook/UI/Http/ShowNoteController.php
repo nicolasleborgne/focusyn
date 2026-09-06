@@ -6,6 +6,7 @@ namespace App\Notebook\UI\Http;
 
 use App\Notebook\Application\Query\MarkdownOutline;
 use App\Notebook\Application\Query\NotebookQuery;
+use App\Notebook\Application\Query\RelatedNotesQuery;
 use App\Notebook\Domain\Model\NoteBody;
 use App\Notebook\Domain\Model\NoteId;
 use App\Shared\Application\Shell\ShellSection;
@@ -19,6 +20,7 @@ final class ShowNoteController extends AbstractController
     public function __construct(
         private readonly NotebookQuery $notebook,
         private readonly MarkdownOutline $outline,
+        private readonly RelatedNotesQuery $related,
     ) {
     }
 
@@ -42,6 +44,7 @@ final class ShowNoteController extends AbstractController
             'note' => $note,
             'focusable' => true,
             'preview' => $this->outline->lines(NoteBody::fromString($note->body), withMarks: false),
+            'related' => $this->related->of(NoteId::fromString($id)),
         ]);
     }
 }

@@ -44,6 +44,8 @@ shell:
         list_hint: checklist
 
 home:
+    dormant: Gone quiet
+    dormant_since: '{count, plural, one {# week without a note} other {# weeks without a note}}'
     crumb: Focusyn — home
     title: Pick up where you left off
     stats: Notebook figures
@@ -170,6 +172,8 @@ settings:
         sign_in_with: 'Continue with {provider}'
 
 notebook:
+    related: Overlaps
+    related_obsession: 'same obsession: {obsession}'
     untitled: Untitled
     all: All
     empty: No notes yet.
