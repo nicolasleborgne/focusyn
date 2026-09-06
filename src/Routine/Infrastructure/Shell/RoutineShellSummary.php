@@ -27,6 +27,8 @@ final readonly class RoutineShellSummary implements RoutineSummaryProvider
                 $routine->id,
                 $routine->name,
                 $routine->remaining,
+                $routine->doneToday(),
+                \count($routine->dueToday),
             ),
             $this->routines->all(),
         );

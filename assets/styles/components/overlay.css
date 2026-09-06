@@ -47,6 +47,14 @@
 
 /* --- Boîte de dialogue -------------------------------------------------------- */
 
+/* `display: flex` l'emporte sur la règle native de `[hidden]` : sans cette
+   ligne, un dialogue fermé reste un voile plein écran qui avale tous les
+   clics de la page, sans rien montrer. Ici plutôt que sur chaque dialogue —
+   le prochain n'aura pas à y penser. */
+.fx-dialog[hidden] {
+    display: none;
+}
+
 .fx-dialog {
     position: fixed;
     inset: 0;

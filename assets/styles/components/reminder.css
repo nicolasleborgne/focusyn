@@ -6,10 +6,6 @@
  * ici. La pastille, elle, vit dans `chip.css` avec les autres.
  */
 
-.fx-remind[hidden] {
-    display: none;
-}
-
 /* La largeur de la maquette ; le reste vient de `fx-dialog`. */
 .fx-remind__panel {
     max-width: 380px;

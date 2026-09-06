@@ -56,6 +56,13 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Routine`, `Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
+**La revue du soir est le seul écran qui lit trois contextes à la fois** —
+tâches, routines, rappels. Elle vit donc dans `Shared` et n'en connaît aucun :
+chacun lui parle par son port, et elle ne manipule que des primitives. Reporter
+pose **un rappel par tâche**, sur son propre sujet : c'est ce qui permet d'en
+déplacer une ensuite sans défaire le report entier. Cinq tâches au plus — au-delà,
+« reporter à demain » cesse d'être une décision et devient un déménagement.
+
 **Une synthèse d'obsession se propose, elle ne s'enregistre pas.** « Ce qui se
 dégage » peut avoir été écrit à la main, et l'écraser sans demander ferait
 perdre le fruit d'une lecture qu'aucune machine ne refera. Le Live Component
@@ -625,6 +632,15 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   le carnet au départ. Ni l'un ni l'autre n'a de titre d'écran : le champ en
   tient lieu, comme dans la maquette. Un test qui identifie ces écrans doit donc
   s'ancrer sur l'invite du champ, pas sur un `<h1>`.
+- **`{{ attributes }}` d'un Live Component écrase `data-controller`.** Un
+  dialogue qui porterait son propre contrôleur Stimulus sur l'élément racine du
+  composant le perdrait au profit de `live`. L'enveloppe du dialogue appartient
+  donc à l'écran, le composant n'en rend que le panneau.
+- **Un dialogue fermé doit être masqué par une règle explicite.**
+  `.fx-dialog { display: flex }` l'emporte sur `[hidden]`, et un dialogue
+  « fermé » reste alors un voile plein écran qui avale tous les clics de la page
+  sans rien montrer. `.fx-dialog[hidden] { display: none }` est déclaré une fois
+  dans `overlay.css` ; chaque dialogue n'a plus à y penser.
 - **`.fx-board` est une grille**, pas un conteneur flex : un titre placé
   dedans occupe une case et se range *à côté* de la première carte au lieu de
   la surmonter. Le titre d'une section de cartes va au-dessus de la grille.

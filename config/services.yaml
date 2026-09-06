@@ -88,6 +88,9 @@ services:
     App\Shared\Application\Notebook\NoteWriter:
         alias: App\Notebook\Infrastructure\Inbox\HandlerNoteWriter
 
+    App\Shared\Application\Reminder\ReminderScheduler:
+        alias: App\Reminder\Infrastructure\Review\CommandReminderScheduler
+
     App\Shared\Application\Assistant\WritingAssistant:
         alias: App\Assistant\Infrastructure\Notebook\PortableWritingAssistant
 

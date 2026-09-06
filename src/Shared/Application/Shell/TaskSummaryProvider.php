@@ -16,6 +16,9 @@ interface TaskSummaryProvider
 {
     public function openTaskCount(): int;
 
+    /** Combien de tâches ont été cochées aujourd'hui, toutes listes confondues. */
+    public function completedToday(): int;
+
     /** @return list<TaskListSummary> */
     public function lists(): array;
 

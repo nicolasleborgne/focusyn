@@ -200,3 +200,61 @@
     font-size: var(--fx-size-md);
     color: var(--fx-text-faint);
 }
+
+/* --- Revue du soir -------------------------------------------------------- */
+
+.fx-home__review {
+    margin: var(--fx-space-8) 0 var(--fx-space-4);
+}
+
+.fx-review__panel {
+    width: min(480px, 100%);
+}
+
+.fx-review__counts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--fx-space-6);
+    margin: var(--fx-space-8) 0 var(--fx-space-10);
+}
+
+.fx-review__count {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-2);
+}
+
+/* Le chiffre en serif, comme les compteurs de l'accueil : c'est un résultat,
+   pas une donnée technique. */
+.fx-review__number {
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-title-dialog);
+    line-height: 1;
+    color: var(--fx-text-title);
+}
+
+.fx-review__label {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-faint);
+}
+
+.fx-review__carry {
+    margin: var(--fx-space-5) 0 var(--fx-space-8);
+    padding: 0;
+    list-style: none;
+}
+
+.fx-review__carry-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--fx-space-5);
+    padding: var(--fx-space-3) 0;
+    border-bottom: 1px solid var(--fx-border-faint);
+}
+
+.fx-review__carry-text {
+    font-size: var(--fx-size-xl);
+    color: var(--fx-text-body);
+}

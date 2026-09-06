@@ -10,6 +10,8 @@ final readonly class RoutineSummary
         public string $id,
         public string $name,
         public int $remaining,
+        public int $doneToday,
+        public int $dueToday,
     ) {
     }
 }

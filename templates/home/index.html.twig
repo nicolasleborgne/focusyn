@@ -54,6 +54,14 @@
         {# Les routines du jour avant les tâches : elles se referment chaque
            soir, alors qu'une tâche attendra demain. La section disparaît quand
            tout est fait — une liste vide de choses faites n'apprend rien. #}
+        {# La revue du soir : un bouton ici, le dialogue en fin de page — comme
+           celui des rappels, et pour la même raison. #}
+        <div class="fx-home__review">
+            <button type="button" class="fx-button fx-button--small" data-fx-dialog="review">
+                {{ 'review.open'|trans }}
+            </button>
+        </div>
+
         {# Ce qu'on délaisse : nommé, et cliquable pour y retourner. Une seule
            ligne — c'est un rappel, pas un reproche. #}
         {% if home.dormantObsessions is not empty %}
@@ -105,5 +113,12 @@
             </div>
         </section>
 
+    </div>
+
+    {# Le dialogue à la fin de la page, comme celui des rappels : l'écoute est
+       déléguée au document, et le bouton vit plus haut. #}
+    <div class="fx-dialog fx-review" data-controller="dialog" data-fx-dialog-name="review"
+         data-action="click->dialog#dismiss" hidden>
+        <twig:EveningReview />
     </div>
 {% endblock %}

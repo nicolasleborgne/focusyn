@@ -1,0 +1,52 @@
+{# Seulement le panneau : l'enveloppe du dialogue, avec son contrôleur Stimulus,
+   est posée par l'écran. `{{ attributes }}` d'un Live Component écrase
+   `data-controller`, et le composant y perdrait le sien. #}
+<div {{ attributes }} class="fx-dialog__panel fx-review__panel" role="dialog"
+     aria-modal="true" aria-labelledby="fx-review-title">
+    <div class="fx-remind__head">
+        <p class="fx-eyebrow" id="fx-review-title">{{ 'review.heading'|trans }}</p>
+        <button type="button" class="fx-remind__close" data-action="dialog#close"
+                aria-label="{{ 'review.close'|trans }}">×</button>
+    </div>
+
+    <div class="fx-review__counts">
+        <div class="fx-review__count">
+            <span class="fx-review__number">{{ this.completedTasks }}</span>
+            <span class="fx-review__label">{{ 'review.tasks_done'|trans }}</span>
+        </div>
+        <div class="fx-review__count">
+            <span class="fx-review__number">{{ this.routinesDone }}/{{ this.routinesDue }}</span>
+            <span class="fx-review__label">{{ 'review.routines'|trans }}</span>
+        </div>
+        <div class="fx-review__count">
+            <span class="fx-review__number">{{ this.openTasks }}</span>
+            <span class="fx-review__label">{{ 'review.still_open'|trans }}</span>
+        </div>
+    </div>
+
+    {% set carry = this.carry %}
+    {% if carry is not empty %}
+        <p class="fx-eyebrow fx-section-title">{{ 'review.to_carry'|trans }}</p>
+        <ul class="fx-review__carry">
+            {% for task in carry %}
+                <li class="fx-review__carry-item">
+                    <span class="fx-review__carry-text">{{ task.text }}</span>
+                    <span class="fx-meta">{{ task.listName }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {# Un rappel par tâche, sur son propre sujet : on peut n'en déplacer
+           qu'une ensuite sans défaire le report entier. #}
+        <button type="button" class="fx-button fx-button--small fx-button--primary"
+                data-action="live#action" data-live-action-param="deferAll">
+            {{ 'review.defer_all'|trans }}
+        </button>
+    {% else %}
+        <p class="fx-card__help">{{ 'review.nothing_left'|trans }}</p>
+    {% endif %}
+
+    {% if this.notice %}
+    <p class="fx-settings__notice" role="status">{{ this.notice|trans }}</p>
+    {% endif %}
+</div>

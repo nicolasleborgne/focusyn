@@ -618,3 +618,15 @@ routine:
         3: 3e
         4: 4e
         last: dernier
+
+review:
+    heading: Revue du soir
+    open: Revue du soir
+    close: Fermer la revue
+    tasks_done: tâches faites
+    routines: routines du jour
+    still_open: restent ouvertes
+    to_carry: À reporter
+    defer_all: Reporter à demain 9 h
+    deferred: Reporté à demain 9 h. Une échéance par tâche, déplaçable une à une.
+    nothing_left: 'Rien ne reste ouvert. La journée se ferme comme elle est.'

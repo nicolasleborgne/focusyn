@@ -610,3 +610,15 @@ routine:
         3: 3rd
         4: 4th
         last: last
+
+review:
+    heading: Evening review
+    open: Evening review
+    close: Close the review
+    tasks_done: tasks done
+    routines: routines today
+    still_open: still open
+    to_carry: To carry over
+    defer_all: Carry over to tomorrow 9am
+    deferred: Carried over to tomorrow 9am. One reminder per task, movable one by one.
+    nothing_left: 'Nothing is left open. The day closes as it is.'

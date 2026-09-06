@@ -48,6 +48,11 @@ final readonly class TaskBoardQuery
 
     private function item(TaskItem $item): TaskItemView
     {
-        return new TaskItemView($item->id()->toString(), $item->text()->toString(), $item->isDone());
+        return new TaskItemView(
+            $item->id()->toString(),
+            $item->text()->toString(),
+            $item->isDone(),
+            $item->completedAt(),
+        );
     }
 }

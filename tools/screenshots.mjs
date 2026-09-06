@@ -80,6 +80,15 @@ for (const viewport of VIEWPORTS) {
         process.stdout.write(`  note-${viewport.name}.png\n`);
     }
 
+    // La revue du soir : un dialogue, donc caché au chargement. Sans ce clic,
+    // aucune capture ne le montrerait jamais.
+    await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+    await page.click('[data-fx-dialog="review"]');
+    await page.waitForSelector('.fx-review__panel', { state: 'visible', timeout: 3000 }).catch(() => {});
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: `${OUT}/revue-${viewport.name}.png`, fullPage: true });
+    process.stdout.write(`  revue-${viewport.name}.png\n`);
+
     // Une routine ouverte : c'est là que se règlent les calendriers.
     await page.goto(`${BASE}/taches`, { waitUntil: 'networkidle' });
     // Les deux premières : l'une quotidienne, l'autre cadencée. Les pastilles
