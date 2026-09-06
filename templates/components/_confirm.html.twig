@@ -1,0 +1,31 @@
+{#
+   Formulaire d'action irréversible, retenu par une question.
+
+   Paramètres : `action` (URL), `token` (identifiant CSRF), `label` (bouton),
+   `title`, `body`, `confirm`.
+
+   Sans JavaScript, le bouton envoie directement : la confirmation est un
+   garde-fou, pas la sécurité de l'action.
+#}
+<div data-controller="confirm" class="fx-confirm">
+    <form method="post" action="{{ action }}" data-confirm-target="form">
+        <input type="hidden" name="_token" value="{{ csrf_token(token) }}">
+        <button type="submit" class="fx-button fx-button--danger fx-button--small"
+                data-action="confirm#ask">{{ label }}</button>
+    </form>
+
+    <div class="fx-dialog fx-confirm__dialog" data-confirm-target="dialog"
+         data-action="click->confirm#dismiss" hidden>
+        <div class="fx-dialog__panel" role="alertdialog" aria-modal="true" aria-labelledby="{{ token }}-title">
+            <p class="fx-dialog__title" id="{{ token }}-title">{{ title }}</p>
+            <p class="fx-card__help">{{ body }}</p>
+
+            <div class="fx-dialog__actions">
+                <button type="button" class="fx-button fx-button--small"
+                        data-confirm-cancel data-action="confirm#close">{{ 'common.cancel'|trans }}</button>
+                <button type="button" class="fx-button fx-button--danger fx-button--small"
+                        data-action="confirm#proceed">{{ confirm }}</button>
+            </div>
+        </div>
+    </div>
+</div>

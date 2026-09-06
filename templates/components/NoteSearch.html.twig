@@ -1,47 +1,63 @@
 {# Le débounce est côté client : sans lui, chaque frappe déclencherait une
-   requête, ce qui rendrait la frappe saccadée sur une connexion lente. #}
-<div {{ attributes }} class="fx-search">
-    <div class="fx-search__field">
-        <input type="search"
-               class="fx-field__control fx-field__control--bare fx-search__input"
-               placeholder="{{ 'notebook.search.placeholder'|trans }}"
-               aria-label="{{ 'notebook.search.placeholder'|trans }}"
-               autofocus
-               data-model="debounce(300)|query"
-               value="{{ query }}">
-    </div>
+   requête, ce qui rendrait la frappe saccadée sur une connexion lente.
 
-    {% set results = this.results %}
+   Il n'y a pas de titre d'écran : dans la maquette, le champ *est* le titre. #}
+<div {{ attributes }} class="fx-search">
+    <input type="text"
+           class="fx-search__input"
+           placeholder="{{ 'notebook.search.placeholder'|trans }}"
+           aria-label="{{ 'notebook.search.placeholder'|trans }}"
+           autofocus
+           data-model="debounce(300)|query"
+           value="{{ query }}">
+
+    {% set notes = this.results %}
+    {% set tasks = this.taskResults %}
 
     {% if this.hasSearched %}
-        <p class="fx-eyebrow fx-search__count">
-            {{ 'notebook.search.results'|trans({ count: results|length }) }}
+        <p class="fx-search__scope">
+            <span>{{ 'notebook.search.results'|trans({ count: notes|length + tasks|length }) }}</span>
+            <span>{{ 'notebook.search.scopes'|trans }}</span>
         </p>
 
-        {% for note in results %}
-            <a class="fx-note-row" href="{{ path('note_show', { id: note.id }) }}">
-                <span class="fx-note-row__main">
-                    <span class="fx-note-row__title">{{ note.title }}</span>
+        {% if tasks is not empty %}
+            <p class="fx-search__band">
+                <span class="fx-eyebrow">{{ 'shell.nav.tasks'|trans }}</span>
+                <span class="fx-search__rule"></span>
+                <span class="fx-search__tally">{{ 'task.count'|trans({ count: tasks|length }) }}</span>
+            </p>
+
+            {% for task in tasks %}
+                <a class="fx-hit fx-hit--task" href="{{ path('task_list_show', { id: task.listId }) }}">
+                    <span class="fx-check {{ task.done ? 'fx-check--done' }}" aria-hidden="true"><span class="fx-check__tick">✓</span></span>
+                    <span class="fx-hit__text {{ task.done ? 'fx-hit__text--done' }}">{{ task.text }}</span>
+                    <span class="fx-hit__when">{{ task.listName }}</span>
+                </a>
+            {% endfor %}
+        {% endif %}
+
+        {% if notes is not empty %}
+            <p class="fx-search__band">
+                <span class="fx-eyebrow">{{ 'notebook.notes'|trans }}</span>
+                <span class="fx-search__rule"></span>
+                <span class="fx-search__tally">{{ 'notebook.note_count'|trans({ count: notes|length }) }}</span>
+            </p>
+
+            {% for note in notes %}
+                <a class="fx-hit" href="{{ path('note_show', { id: note.id }) }}">
+                    <span class="fx-hit__head">
+                        <span class="fx-hit__title">{{ note.title }}</span>
+                        <span class="fx-hit__when">{{ note.updatedAt|fx_ago }}</span>
+                    </span>
                     {% if note.excerpt is not empty %}
-                        <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
+                        <span class="fx-hit__excerpt">{{ note.excerpt }}</span>
                     {% endif %}
-                    {% if note.obsessions is not empty %}
-                        <span class="fx-note-row__tags">
-                        {% for obsession in note.obsessions %}
-                            <span class="fx-tag">{{ obsession }}</span>
-                        {% endfor %}
-                        </span>
-                    {% endif %}
-                </span>
-                <span class="fx-note-row__aside">
-                    <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
-                    <span class="fx-note-row__meta">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
-                </span>
-            </a>
-        {% else %}
-            <p class="fx-card__help fx-search__empty">{{ 'notebook.search.nothing'|trans({ query: query }) }}</p>
-        {% endfor %}
-    {% else %}
-        <p class="fx-card__help fx-search__empty">{{ 'notebook.search.prompt'|trans }}</p>
+                </a>
+            {% endfor %}
+        {% endif %}
+
+        {% if notes is empty and tasks is empty %}
+            <p class="fx-search__empty">{{ 'notebook.search.nothing'|trans }}</p>
+        {% endif %}
     {% endif %}
 </div>

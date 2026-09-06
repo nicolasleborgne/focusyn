@@ -244,7 +244,7 @@ final class PersonalDataTest extends WebTestCase
 
         $listId = (string) $client->getRequest()->attributes->get('id');
 
-        $client->submit($client->getCrawler()->filter('.fx-note__title-form')->form(['name' => $name]));
+        $client->submit($client->getCrawler()->filter('.fx-list__title-form')->form(['name' => $name]));
         $client->followRedirect();
 
         return $listId;

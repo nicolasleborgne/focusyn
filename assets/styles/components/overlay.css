@@ -106,3 +106,11 @@
     width: 100%;
     max-width: 330px;
 }
+
+/*
+ * Confirmation d'une action irréversible : le dialogue de `fx-dialog` avec un
+ * bouton de retrait en premier. Il ne se rend que sur demande.
+ */
+.fx-confirm__dialog[hidden] {
+    display: none;
+}

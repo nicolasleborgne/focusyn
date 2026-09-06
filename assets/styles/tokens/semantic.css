@@ -59,8 +59,11 @@
     --fx-danger: var(--fx-accent-brick);
     --fx-danger-contrast: var(--fx-text-on-accent);
 
-    /* --- Focus clavier ------------------------------------------------------ */
-    --fx-focus-ring: 0 0 0 2px var(--fx-surface-app), 0 0 0 4px var(--fx-accent);
+    /* --- Focus clavier ------------------------------------------------------
+       Un trait fin, pas un halo. La maquette ne montre rien au focus ; un
+       double anneau de 4 px se lit comme un cadre noir posé sur la page. */
+    --fx-focus-ring: 1px solid var(--fx-accent);
+    --fx-focus-offset: 2px;
 
     /* --- Typographie appliquée ---------------------------------------------- */
     --fx-font-ui: var(--fx-family-sans);

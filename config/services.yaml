@@ -162,6 +162,9 @@ services:
     App\Shared\Application\Notebook\NoteSource:
         alias: App\Notebook\Infrastructure\Assistant\StoredNoteSource
 
+    App\Shared\Application\Search\TaskFinder:
+        alias: App\Task\Infrastructure\Search\TaskListFinder
+
 when@test:
     services:
         _defaults:

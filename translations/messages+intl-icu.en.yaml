@@ -1,3 +1,16 @@
+time:
+    now: just now
+    minutes: '{count, plural, one {# min ago} other {# min ago}}'
+    hours: '{count, plural, one {# h ago} other {# h ago}}'
+    yesterday: yesterday
+    days: '{count, plural, one {# d ago} other {# d ago}}'
+    last_week: last week
+    weeks: '{count, plural, one {# wk ago} other {# wk ago}}'
+    months: '{count, plural, one {# mo ago} other {# mo ago}}'
+
+common:
+    cancel: Cancel
+
 shell:
     brand: Focusyn
     version: v0.1
@@ -73,6 +86,9 @@ two_factor:
 settings:
     title: Settings
     account: Account
+    account_help: 'Sign-in identifier. Changing it will send a verification to the new address — not available yet.'
+    password_help: A reset link goes out to your address.
+    password_reset: Reset
     back: Back to settings
     accent:
         heading: Appearance
@@ -138,16 +154,21 @@ notebook:
     delete: Delete note
     deleted: Note deleted.
     obsessions_label: Note obsessions
-    obsessions_placeholder: Obsessions, comma separated
+    delete_confirm_title: 'Delete "{title}"?'
+    delete_confirm_body: The note and its contents go for good. The obsessions it carried remain if other notes mention them.
+    delete_confirm: Delete the note
+    obsessions_placeholder: + tag
     preview: Note preview
     title_label: Note title
     title_required: A note must have a title.
     reading_minutes: '{count, plural, one {# min read} other {# min read}}'
+    notes: Notes
+    note_count: '{count, plural, =0 {no notes} one {# note} other {# notes}}'
     search:
-        placeholder: Search notes…
-        prompt: Type to search note titles and bodies.
-        results: '{count, plural, =0 {No results} one {# result} other {# results}}'
-        nothing: 'Nothing matches “{query}”.'
+        placeholder: Search every note
+        scopes: notes · tasks · tags
+        results: '{count, plural, =0 {no results} one {# result} other {# results}}'
+        nothing: No results.
     editor:
         saved: Saved
         saving: Saving…
@@ -155,6 +176,8 @@ notebook:
         failed: Could not save — the connection seems to be down
 
 task:
+    completed_heading: Done
+    count: '{count, plural, =0 {no tasks} one {# task} other {# tasks}}'
     untitled_list: New list
     new_list: New list
     empty: No lists yet.
@@ -162,14 +185,17 @@ task:
     list_empty: This list is empty. Add a first task below.
     list_gone: This list no longer exists.
     list_deleted: List deleted.
+    delete_confirm_title: 'Delete "{name}"?'
+    delete_confirm_body: The list and its tasks go for good.
+    delete_confirm: Delete the list
     delete_list: Delete list
     name_label: List name
     name_required: A list must have a name.
-    add_placeholder: Add a task…
+    add_placeholder: Add a task — Enter
     check: Check task
     uncheck: Uncheck task
     remove: Remove task
-    open_count: '{count, plural, =0 {Nothing open} one {# open task} other {# open tasks}}'
+    open_count: '{count, plural, =0 {nothing open} one {# open} other {# open}}'
     completed: '{count, plural, one {# task done} other {# tasks done}}'
 
 password_reset:

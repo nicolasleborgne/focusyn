@@ -417,16 +417,74 @@
     color: var(--fx-text-disabled);
 }
 
-.fx-note__obsessions {
+/*
+ * La rangée sous le titre : étiquettes, saisie, rappel, puis les compteurs
+ * poussés à droite. Une seule ligne, un seul filet — c'est la maquette.
+ */
+.fx-note__bar {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: var(--fx-space-3);
     margin-top: var(--fx-space-6);
+    padding-bottom: var(--fx-space-11);
+    border-bottom: 1px solid var(--fx-border-faint);
 }
 
+.fx-note__counters {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-3);
+    margin-left: auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+    white-space: nowrap;
+}
+
+/* La saisie reste discrète tant qu'on ne s'en sert pas : une invite, pas un
+   champ. Elle ne prend que la place de son contenu. */
+.fx-note__obsessions {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+/*
+ * L'éditeur porte la classe `fx-prose` sur son contenu : les lignes de
+ * CodeMirror reçoivent les mêmes `fx-prose__line--*` que l'aperçu, et sont donc
+ * mises en forme par la même feuille. Une seule décision typographique, à un
+ * seul endroit — c'est ce qui rend les deux moitiés de l'écran identiques.
+ */
 .fx-note__editor {
     margin-top: var(--fx-space-12);
     min-height: 40vh;
+}
+
+/*
+ * Trois ajustements propres à l'éditeur, où une ligne source est une ligne à
+ * l'écran — ce qui n'est pas vrai de l'aperçu.
+ */
+
+/* Les lignes vides *sont* l'espacement : ajouter une marge sous chaque ligne
+   le compterait deux fois. Seules les marges hautes des titres restent. */
+.fx-note__editor .cm-line {
+    margin-bottom: 0;
+}
+
+/* Le retrait négatif de la puce sortirait le tiret hors du cadre éditable. */
+.fx-note__editor .cm-line.fx-prose__line--list {
+    text-indent: 0;
+    padding-left: 0;
+}
+
+/* Une barre horizontale reste une ligne de texte que l'on doit pouvoir
+   modifier : on ne la remplace pas par un filet sans curseur. */
+.fx-note__editor .cm-line.fx-prose__line--rule {
+    height: auto;
+    margin: 0;
+    border-top: 0;
+    color: var(--fx-text-disabled);
 }
 
 .fx-note__status {
@@ -756,7 +814,7 @@
 
 /* Étiquetage d'une note : un champ qui ne se voit pas tant qu'on n'y touche pas. */
 .fx-note__obsessions-input {
-    width: 100%;
+    width: 14ch;
     padding: var(--fx-space-2) 0;
     border: none;
     border-bottom: 1px solid transparent;
@@ -850,4 +908,245 @@
     max-width: 60ch;
     margin-top: var(--fx-space-6);
     line-height: var(--fx-leading-relaxed);
+}
+
+/*
+ * Recherche.
+ *
+ * Le champ tient lieu de titre : serif 34 px, souligné d'un filet, sans cadre.
+ * C'est la première chose que la maquette montre, et rien d'autre ne doit lui
+ * disputer la place.
+ */
+.fx-search__input {
+    width: 100%;
+    padding: 0 0 var(--fx-space-9);
+    border: none;
+    border-bottom: 1px solid var(--fx-border-default);
+    outline: none;
+    background: transparent;
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-title-screen);
+    font-weight: var(--fx-weight-regular);
+    color: var(--fx-text-title);
+    appearance: none;
+}
+
+.fx-search__input:focus {
+    border-bottom-color: var(--fx-accent);
+}
+
+.fx-search__input::placeholder {
+    color: var(--fx-text-tertiary);
+}
+
+.fx-search__scope {
+    display: flex;
+    gap: var(--fx-space-8);
+    margin: var(--fx-space-8) 0 0;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    letter-spacing: var(--fx-tracking-caps);
+    text-transform: uppercase;
+    color: var(--fx-text-faint);
+}
+
+/* Bandeau de section : intitulé, filet qui prend la place restante, décompte. */
+.fx-search__band {
+    display: flex;
+    align-items: baseline;
+    gap: var(--fx-space-5);
+    margin: var(--fx-space-16) 0 var(--fx-space-1);
+}
+
+.fx-search__band .fx-eyebrow {
+    flex: 0 0 auto;
+}
+
+.fx-search__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--fx-border-faint);
+}
+
+.fx-search__tally {
+    flex: 0 0 auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-hit {
+    display: block;
+    padding: var(--fx-space-8) var(--fx-space-6);
+    margin: 0 calc(-1 * var(--fx-space-6));
+    border-bottom: 1px solid var(--fx-border-faint);
+    text-decoration: none;
+    color: inherit;
+}
+
+.fx-hit:hover {
+    background: var(--fx-surface-hover);
+}
+
+.fx-hit__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--fx-space-6);
+}
+
+.fx-hit__title {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-title-row);
+    color: var(--fx-text-title);
+}
+
+.fx-hit__when {
+    flex: 0 0 auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-hit__excerpt {
+    display: block;
+    margin-top: var(--fx-space-2);
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-secondary);
+}
+
+/* Une tâche trouvée se lit comme une tâche : case, texte, liste d'origine. */
+.fx-hit--task {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fx-space-6);
+    padding: var(--fx-space-6);
+}
+
+.fx-hit__text {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--fx-size-base);
+    line-height: var(--fx-leading-normal);
+    color: var(--fx-text-body);
+}
+
+.fx-hit__text--done {
+    color: var(--fx-text-disabled);
+    text-decoration: line-through;
+    text-decoration-color: var(--fx-line-strike);
+}
+
+.fx-search__empty {
+    padding: var(--fx-space-20) 0;
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-faint);
+}
+
+/*
+ * Écran d'une liste.
+ *
+ * Retour en capitales, titre précédé de sa case, puis une seule ligne de méta
+ * où la jauge occupe la place restante — c'est la composition de la maquette.
+ */
+.fx-back {
+    display: inline-block;
+    margin-bottom: var(--fx-space-7);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    letter-spacing: var(--fx-tracking-caps);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--fx-text-disabled);
+}
+
+.fx-back:hover {
+    color: var(--fx-text-primary);
+}
+
+.fx-list__title-form {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-6);
+}
+
+.fx-list__mark {
+    flex: 0 0 15px;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--fx-border-contrast);
+    border-radius: var(--fx-radius-sm);
+}
+
+.fx-list__title {
+    flex: 1;
+    min-width: 0;
+}
+
+.fx-checklist__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-6);
+    margin: var(--fx-space-7) 0 var(--fx-space-13);
+}
+
+.fx-checklist__summary .fx-eyebrow {
+    flex: 0 0 auto;
+}
+
+.fx-checklist__meter {
+    flex: 1;
+}
+
+/* La ligne de saisie porte une case en pointillés : ce qu'on écrit là
+   deviendra une tâche. */
+.fx-check--ghost {
+    border: 1px dashed var(--fx-border-subtle);
+    background: transparent;
+    cursor: default;
+}
+
+.fx-task-line--draft {
+    padding-top: 13px;
+    padding-bottom: 13px;
+}
+
+.fx-task-line--draft .fx-checklist__add {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Une tâche faite n'a plus ni rappel ni retrait : elle est classée. */
+.fx-task-line--done {
+    border-bottom: 0;
+}
+
+/*
+ * Réglages : la ligne d'identité.
+ *
+ * Avatar, adresse soulignée, phrase d'explication — la seule rangée de l'écran
+ * dont le contenu de gauche n'est pas un simple libellé.
+ */
+.fx-settings__row--identity {
+    align-items: center;
+    gap: var(--fx-space-7);
+}
+
+.fx-settings__mail {
+    width: 100%;
+    padding: var(--fx-space-2) 0;
+    border: none;
+    border-bottom: 1px solid var(--fx-border-faint);
+    outline: none;
+    background: transparent;
+    font-family: var(--fx-font-ui);
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-primary);
+}
+
+.fx-settings__mail:read-only {
+    color: var(--fx-text-secondary);
+    cursor: default;
 }

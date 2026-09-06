@@ -63,12 +63,22 @@ final class SaveNoteBodyController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        $written = NoteBody::fromString($body);
+
         return new JsonResponse([
             'savedAt' => $updatedAt instanceof DateTimeImmutable ? $updatedAt->format(\DATE_ATOM) : null,
+            // Le décompte est renvoyé par le serveur plutôt que refait côté
+            // client : sans cela, l'en-tête d'une note qu'on vient d'écrire
+            // annonce toujours le nombre de mots qu'elle avait à l'ouverture.
+            'meta' => $this->renderView('notebook/_note_meta.html.twig', [
+                'words' => $written->wordCount(),
+                'minutes' => $written->readingMinutes(),
+                'updatedAt' => $updatedAt instanceof DateTimeImmutable ? $updatedAt : null,
+            ]),
             // L'aperçu est rendu ici plutôt que reconstruit côté client : un
             // second analyseur markdown finirait par diverger du premier.
             'preview' => $this->renderView('notebook/_prose.html.twig', [
-                'lines' => $this->outline->lines(NoteBody::fromString($body), withMarks: false),
+                'lines' => $this->outline->lines($written, withMarks: false),
                 'marks' => false,
             ]),
         ]);

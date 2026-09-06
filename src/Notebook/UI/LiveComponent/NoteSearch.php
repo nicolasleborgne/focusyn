@@ -6,6 +6,8 @@ namespace App\Notebook\UI\LiveComponent;
 
 use App\Notebook\Application\Query\NotebookQuery;
 use App\Notebook\Application\Query\NoteSummary;
+use App\Shared\Application\Search\TaskFinder;
+use App\Shared\Application\Search\TaskHit;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -27,6 +29,7 @@ final class NoteSearch
 
     public function __construct(
         private readonly NotebookQuery $notebook,
+        private readonly TaskFinder $tasks,
     ) {
     }
 
@@ -34,6 +37,17 @@ final class NoteSearch
     public function results(): array
     {
         return '' === trim($this->query) ? [] : $this->notebook->search($this->query);
+    }
+
+    /**
+     * L'écran annonce « notes · tâches · tags » : les tâches arrivent par un
+     * port partagé, Notebook n'ayant pas le droit de connaître le contexte Task.
+     *
+     * @return list<TaskHit>
+     */
+    public function taskResults(): array
+    {
+        return '' === trim($this->query) ? [] : $this->tasks->matching($this->query);
     }
 
     public function hasSearched(): bool

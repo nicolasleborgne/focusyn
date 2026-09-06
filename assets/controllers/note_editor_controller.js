@@ -1,9 +1,9 @@
 import { Controller } from '@hotwired/stimulus';
-import { EditorView, keymap, highlightActiveLine, drawSelection } from '@codemirror/view';
-import { EditorState } from '@codemirror/state';
+import { Decoration, EditorView, ViewPlugin, keymap, highlightActiveLine, drawSelection } from '@codemirror/view';
+import { EditorState, RangeSetBuilder } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
-import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { HighlightStyle, syntaxHighlighting, syntaxTree } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 
 /*
@@ -16,7 +16,86 @@ import { tags } from '@lezer/highlight';
  * charge du curseur, de l'annulation, de la sélection et du mobile.
  *
  * Les couleurs et les tailles viennent du design system : aucune valeur en dur.
+ * Mieux : chaque ligne reçoit la classe `fx-prose__line--*` que porte déjà
+ * l'aperçu, de sorte que les deux moitiés de l'écran sont mises en forme par la
+ * même feuille de style. C'est ce que fait la maquette, où l'éditeur et
+ * l'aperçu sont le même rendu à une différence près : les marques.
  */
+
+/*
+ * La nature d'une ligne est lue dans l'arbre syntaxique de CodeMirror, pas
+ * redevinée par une expression régulière : il n'y a toujours qu'un seul
+ * analyseur markdown côté client, celui de l'éditeur.
+ */
+const LINE_KINDS = {
+    ATXHeading1: 'h1',
+    SetextHeading1: 'h1',
+    ATXHeading2: 'h2',
+    SetextHeading2: 'h2',
+    ATXHeading3: 'h3',
+    Blockquote: 'quote',
+    ListItem: 'list',
+    BulletList: 'list',
+    OrderedList: 'list',
+    FencedCode: 'code',
+    CodeBlock: 'code',
+    HorizontalRule: 'rule',
+};
+
+const kindAt = (tree, position) => {
+    let node = tree.resolveInner(position, 1);
+
+    while (node) {
+        if (LINE_KINDS[node.name]) {
+            return LINE_KINDS[node.name];
+        }
+
+        node = node.parent;
+    }
+
+    return 'paragraph';
+};
+
+const proseLines = ViewPlugin.fromClass(
+    class {
+        constructor(view) {
+            this.decorations = this.build(view);
+        }
+
+        update(update) {
+            if (update.docChanged || update.viewportChanged) {
+                this.decorations = this.build(update.view);
+            }
+        }
+
+        build(view) {
+            const builder = new RangeSetBuilder();
+            const tree = syntaxTree(view.state);
+            let last = -1;
+
+            for (const { from, to } of view.visibleRanges) {
+                for (let position = from; position <= to; ) {
+                    const line = view.state.doc.lineAt(position);
+
+                    if (line.from > last) {
+                        const kind = line.length === 0 ? 'paragraph' : kindAt(tree, line.from);
+                        builder.add(
+                            line.from,
+                            line.from,
+                            Decoration.line({ class: `fx-prose__line fx-prose__line--${kind}` }),
+                        );
+                        last = line.from;
+                    }
+
+                    position = line.to + 1;
+                }
+            }
+
+            return builder.finish();
+        }
+    },
+    { decorations: (plugin) => plugin.decorations },
+);
 
 const prose = (token) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
 
@@ -24,10 +103,12 @@ const focusynHighlight = () =>
     HighlightStyle.define([
         // Les marques markdown (#, -, >, **) restent visibles mais s'effacent.
         { tag: tags.processingInstruction, color: prose('--fx-ink-100'), opacity: prose('--fx-markdown-mark-opacity') },
-        { tag: tags.heading1, fontSize: prose('--fx-prose-h1'), fontWeight: '600', lineHeight: '1.2', color: prose('--fx-text-title') },
-        { tag: tags.heading2, fontSize: prose('--fx-prose-h2'), fontWeight: '600', lineHeight: '1.25', color: prose('--fx-text-title') },
-        { tag: tags.heading3, fontSize: prose('--fx-prose-h3'), fontWeight: '650', lineHeight: '1.3', color: prose('--fx-text-title') },
-        { tag: tags.strong, fontWeight: '650', color: prose('--fx-text-title') },
+        // Les tailles de titre viennent de la classe de ligne, comme dans
+        // l'aperçu : ici, seulement ce qui est propre au fragment.
+        { tag: tags.heading1, color: prose('--fx-text-title') },
+        { tag: tags.heading2, color: prose('--fx-text-title') },
+        { tag: tags.heading3, color: prose('--fx-text-title') },
+        { tag: tags.strong, fontWeight: prose('--fx-weight-strong'), color: prose('--fx-text-title') },
         { tag: tags.emphasis, fontStyle: 'italic' },
         { tag: tags.quote, fontStyle: 'italic', color: prose('--fx-text-quote') },
         { tag: tags.monospace, fontFamily: prose('--fx-family-mono'), fontSize: '0.85em' },
@@ -39,7 +120,7 @@ const focusynHighlight = () =>
 const focusynTheme = () =>
     EditorView.theme({
         '&': {
-            fontFamily: prose('--fx-font-prose'),
+            fontFamily: 'inherit',
             fontSize: prose('--fx-prose-body'),
             color: prose('--fx-text-body'),
             backgroundColor: 'transparent',
@@ -54,7 +135,7 @@ const focusynTheme = () =>
     });
 
 export default class extends Controller {
-    static targets = ['host', 'status', 'preview'];
+    static targets = ['host', 'status', 'preview', 'meta'];
     static values = {
         body: String,
         saveUrl: String,
@@ -65,7 +146,11 @@ export default class extends Controller {
         failedLabel: String,
     };
 
-    static debounceMs = 900;
+    /*
+     * L'aperçu est rendu par le serveur : c'est ce délai qui décide s'il paraît
+     * vivant. Neuf cents millisecondes se voyaient ; quatre cents, non.
+     */
+    static debounceMs = 400;
 
     connect() {
         this.view = new EditorView({
@@ -79,6 +164,8 @@ export default class extends Controller {
                     EditorView.lineWrapping,
                     keymap.of([...defaultKeymap, ...historyKeymap]),
                     markdown(),
+                    proseLines,
+                    EditorView.contentAttributes.of({ class: 'fx-prose' }),
                     syntaxHighlighting(focusynHighlight()),
                     focusynTheme(),
                     EditorView.updateListener.of((update) => {
@@ -169,6 +256,12 @@ export default class extends Controller {
             // que partout ailleurs, il ne peut pas diverger de l'éditeur.
             if (this.hasPreviewTarget && typeof payload.preview === 'string') {
                 this.previewTarget.innerHTML = payload.preview;
+            }
+
+            // Le décompte vient du serveur lui aussi : le refaire ici donnerait
+            // deux façons de compter un mot, qui finiraient par diverger.
+            if (this.hasMetaTarget && typeof payload.meta === 'string') {
+                this.metaTarget.innerHTML = payload.meta;
             }
         } catch (error) {
             console.error('[focusyn] sauvegarde impossible', error);

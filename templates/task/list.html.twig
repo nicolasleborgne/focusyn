@@ -9,9 +9,14 @@
             <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
         {% endfor %}
 
-        <form method="post" action="{{ path('task_list_rename', { id: list.id }) }}" class="fx-note__title-form">
+        {# Retour vers le tableau, en capitales monospace : la maquette ne
+           s'appuie pas sur le fil d'Ariane pour revenir en arrière. #}
+        <a class="fx-back" href="{{ path('tasks') }}">← {{ 'shell.nav.tasks'|trans }}</a>
+
+        <form method="post" action="{{ path('task_list_rename', { id: list.id }) }}" class="fx-list__title-form">
             <input type="hidden" name="_token" value="{{ csrf_token('task-list-rename') }}">
-            <textarea class="fx-note__title" name="name" rows="1"
+            <span class="fx-list__mark" aria-hidden="true"></span>
+            <textarea class="fx-note__title fx-list__title" name="name" rows="1"
                       data-controller="autogrow"
                       data-action="keydown->autogrow#submit"
                       aria-label="{{ 'task.name_label'|trans }}"
@@ -20,10 +25,16 @@
 
         <twig:TaskChecklist :listId="list.id" />
 
-        <form method="post" action="{{ path('task_list_delete', { id: list.id }) }}" class="fx-note__danger">
-            <input type="hidden" name="_token" value="{{ csrf_token('task-list-delete') }}">
-            <button type="submit" class="fx-button fx-button--danger fx-button--small">{{ 'task.delete_list'|trans }}</button>
-        </form>
+        <div class="fx-note__danger">
+            {{ include('components/_confirm.html.twig', {
+                action: path('task_list_delete', { id: list.id }),
+                token: 'task-list-delete',
+                label: 'task.delete_list'|trans,
+                title: 'task.delete_confirm_title'|trans({ name: list.name }),
+                body: 'task.delete_confirm_body'|trans,
+                confirm: 'task.delete_confirm'|trans,
+            }) }}
+        </div>
     </div>
 
     <twig:ReminderDialog />

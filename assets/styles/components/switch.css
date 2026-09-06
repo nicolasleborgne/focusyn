@@ -48,7 +48,8 @@
 }
 
 .fx-switch__input:focus-visible + .fx-switch__track {
-    box-shadow: var(--fx-focus-ring);
+    outline: var(--fx-focus-ring);
+    outline-offset: var(--fx-focus-offset);
 }
 
 /* Variante compacte utilisée par la bascule « Deep focus » de l'en-tête. */

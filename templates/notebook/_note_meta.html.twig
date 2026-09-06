@@ -1,0 +1,13 @@
+{#
+   Ligne de méta d'une note : mots, temps de lecture, dernière écriture.
+
+   Rendue par le serveur, et re-rendue par lui à chaque sauvegarde : c'est le
+   même gabarit dans les deux cas, donc le même décompte.
+#}
+<span>{{ 'home.words'|trans({ count: words }) }}</span>
+<span>·</span>
+<span>{{ 'notebook.reading_minutes'|trans({ count: minutes }) }}</span>
+{%- if updatedAt %}
+    <span>·</span>
+    <span>{{ updatedAt|format_datetime(pattern: "d MMM 'à' HH:mm", locale: app.request.locale) }}</span>
+{% endif -%}

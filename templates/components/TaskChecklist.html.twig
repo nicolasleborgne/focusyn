@@ -4,15 +4,14 @@
     {% if list is null %}
         <p class="fx-card__help">{{ 'task.list_gone'|trans }}</p>
     {% else %}
-        <p class="fx-note__meta">
-            <span>{{ 'task.open_count'|trans({ count: list.openItems|length }) }}</span>
-            <span>·</span>
-            <span>{{ list.progress }} %</span>
+        {# Décompte, puis la jauge qui prend toute la place restante : une seule
+           ligne, comme dans la maquette. #}
+        <p class="fx-checklist__summary">
+            <span class="fx-eyebrow">{{ 'task.open_count'|trans({ count: list.openItems|length }) }} · {{ list.progress }} %</span>
+            <span class="fx-meter fx-checklist__meter">
+                <span class="fx-meter__value" style="width: {{ list.progress }}%"></span>
+            </span>
         </p>
-
-        <div class="fx-meter fx-checklist__meter">
-            <span class="fx-meter__value" style="width: {{ list.progress }}%"></span>
-        </div>
 
         <ul class="fx-checklist__items">
             {% for item in list.openItems %}
@@ -31,22 +30,31 @@
                             aria-label="{{ 'task.remove'|trans }}">×</button>
                 </li>
             {% endfor %}
+
+            {# La saisie est une ligne de plus, précédée d'une case en pointillés :
+               ce qu'on écrit là deviendra une tâche. #}
+            <li class="fx-task-line fx-task-line--draft">
+                <span class="fx-check fx-check--ghost" aria-hidden="true"></span>
+                <form data-action="live#action:prevent" data-live-action-param="add" class="fx-checklist__add">
+                    <input type="text"
+                           class="fx-field__control fx-field__control--bare"
+                           placeholder="{{ 'task.add_placeholder'|trans }}"
+                           aria-label="{{ 'task.add_placeholder'|trans }}"
+                           data-model="draft"
+                           value="{{ draft }}">
+                </form>
+            </li>
         </ul>
 
-        <form data-action="live#action:prevent" data-live-action-param="add" class="fx-checklist__add">
-            <input type="text"
-                   class="fx-field__control fx-field__control--bare"
-                   placeholder="{{ 'task.add_placeholder'|trans }}"
-                   aria-label="{{ 'task.add_placeholder'|trans }}"
-                   data-model="draft"
-                   value="{{ draft }}">
-        </form>
-
         {% if list.hasCompleted %}
-            <p class="fx-eyebrow fx-checklist__done-title">{{ 'task.completed'|trans({ count: list.completedItems|length }) }}</p>
+            <p class="fx-search__band fx-checklist__done-title">
+                <span class="fx-eyebrow">{{ 'task.completed_heading'|trans }}</span>
+                <span class="fx-search__rule"></span>
+            </p>
+
             <ul class="fx-checklist__items">
                 {% for item in list.completedItems %}
-                    <li class="fx-task-line">
+                    <li class="fx-task-line fx-task-line--done">
                         <button type="button" class="fx-check fx-check--done"
                                 data-action="live#action" data-live-action-param="toggle"
                                 data-live-task-id-param="{{ item.id }}"
@@ -54,17 +62,9 @@
                             <span class="fx-check__tick">✓</span>
                         </button>
                         <span class="fx-task-line__text fx-task-line__text--done">{{ item.text }}</span>
-                        <button type="button" class="fx-checklist__remove"
-                                data-action="live#action" data-live-action-param="remove"
-                                data-live-task-id-param="{{ item.id }}"
-                                aria-label="{{ 'task.remove'|trans }}">×</button>
                     </li>
                 {% endfor %}
             </ul>
-        {% endif %}
-
-        {% if list.isEmpty %}
-            <p class="fx-card__help fx-checklist__empty">{{ 'task.list_empty'|trans }}</p>
         {% endif %}
     {% endif %}
 </div>

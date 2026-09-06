@@ -15,20 +15,32 @@
         {% endfor %}
 
         {# ---------------------------------------------------------------- #}
+        {# Compte : identité, mot de passe, second facteur. La maquette range
+           les trois sous un seul intitulé — ce sont les clés de la porte. #}
         <section class="fx-settings__section">
             <p class="fx-eyebrow">{{ 'settings.account'|trans }}</p>
 
-            <div class="fx-settings__row">
+            <div class="fx-settings__row fx-settings__row--identity">
+                <span class="fx-avatar fx-avatar--large" aria-hidden="true">{{ account.email|first|upper }}</span>
                 <div class="fx-settings__label">
-                    <span class="fx-card__title">{{ 'auth.email'|trans }}</span>
-                    <span class="fx-card__help">{{ account.email }}</span>
+                    {# Lecture seule pour l'instant : rendre le champ modifiable
+                       sans envoyer la vérification promise serait mentir. #}
+                    <input class="fx-settings__mail" type="email" value="{{ account.email }}" readonly
+                           aria-label="{{ 'auth.email'|trans }}">
+                    <span class="fx-card__help">{{ 'settings.account_help'|trans }}</span>
                 </div>
             </div>
-        </section>
 
-        {# ---------------------------------------------------------------- #}
-        <section class="fx-settings__section">
-            <p class="fx-eyebrow">{{ 'settings.two_factor.heading'|trans }}</p>
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'auth.password'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.password_help'|trans }}</span>
+                </div>
+
+                <a class="fx-button fx-button--small" href="{{ path('password_request') }}">
+                    {{ 'settings.password_reset'|trans }}
+                </a>
+            </div>
 
             <div class="fx-settings__row">
                 <div class="fx-settings__label">

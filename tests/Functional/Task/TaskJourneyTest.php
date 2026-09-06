@@ -45,7 +45,9 @@ final class TaskJourneyTest extends WebTestCase
 
         self::assertRouteSame('task_list_show');
         self::assertSame('Nouvelle liste', trim($crawler->filter('.fx-note__title')->text()));
-        self::assertStringContainsString('Cette liste est vide', $crawler->text());
+        // Une liste vide ne dit rien : elle montre la ligne de saisie, qui
+        // invite déjà. C'est la maquette.
+        self::assertCount(1, $crawler->filter('.fx-task-line--draft'));
     }
 
     public function testAddingATaskThroughTheComponentPersistsIt(): void
@@ -78,7 +80,9 @@ final class TaskJourneyTest extends WebTestCase
         $taskId = $this->firstTaskId($component->render()->toString());
         $rendered = $component->call('toggle', ['taskId' => $taskId])->render()->toString();
 
-        self::assertStringContainsString('1 tâche faite', $rendered);
+        // La maquette n'annonce pas un décompte mais une section : « Faites ».
+        self::assertStringContainsString('Faites', $rendered);
+        self::assertStringContainsString('fx-task-line--done', $rendered);
         self::assertStringContainsString('100 %', $rendered);
     }
 
@@ -95,7 +99,7 @@ final class TaskJourneyTest extends WebTestCase
         $component->call('toggle', ['taskId' => $taskId]);
         $rendered = $component->call('toggle', ['taskId' => $taskId])->render()->toString();
 
-        self::assertStringContainsString('1 tâche ouverte', $rendered);
+        self::assertStringContainsString('1 ouverte', $rendered);
         self::assertStringContainsString('0 %', $rendered);
     }
 
@@ -123,7 +127,9 @@ final class TaskJourneyTest extends WebTestCase
         $component = $this->createLiveComponent('TaskChecklist', ['listId' => $listId], $client)->actingAs($account);
         $rendered = $component->set('draft', '   ')->call('add')->render()->toString();
 
-        self::assertStringContainsString('Cette liste est vide', $rendered);
+        // Il ne reste que la ligne de saisie : rien n'a été ajouté.
+        self::assertSame(1, substr_count($rendered, 'class="fx-task-line'));
+        self::assertStringContainsString('fx-task-line--draft', $rendered);
     }
 
     public function testTheSidebarCountsOpenTasks(): void
@@ -151,7 +157,7 @@ final class TaskJourneyTest extends WebTestCase
         $listId = $this->openList($client, 'Cette semaine');
 
         $crawler = $client->request('GET', '/taches/'.$listId);
-        $client->submit($crawler->filter('.fx-note__danger')->form());
+        $client->submit($crawler->filter('.fx-note__danger form')->form());
         $crawler = $client->followRedirect();
 
         self::assertStringContainsString('Liste supprimée', $crawler->text());
@@ -179,7 +185,7 @@ final class TaskJourneyTest extends WebTestCase
 
         $listId = (string) $client->getRequest()->attributes->get('id');
 
-        $client->submit($client->getCrawler()->filter('.fx-note__title-form')->form(['name' => $name]));
+        $client->submit($client->getCrawler()->filter('.fx-list__title-form')->form(['name' => $name]));
         $client->followRedirect();
 
         return $listId;

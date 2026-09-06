@@ -4,8 +4,8 @@
 {% set crumb = 'shell.nav.search'|trans %}
 
 {% block page %}
+    {# Pas de titre d'écran : dans la maquette, le champ *est* le titre. #}
     <div class="fx-app__content fx-app__content--search">
-        <h1 class="fx-heading">{{ 'shell.nav.search'|trans }}</h1>
         <twig:NoteSearch :query="query" />
     </div>
 {% endblock %}

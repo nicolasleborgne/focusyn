@@ -93,7 +93,7 @@ final class ShellNavigationTest extends WebTestCase
         $this->logIn($client);
 
         // Plus aucun écran d'attente : les cinq destinations sont construites.
-        foreach (['/' => 'Reprendre le fil', '/bibliotheque' => 'Bibliothèque', '/recherche' => 'Recherche', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
+        foreach (['/' => 'Reprendre le fil', '/bibliotheque' => 'Bibliothèque', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
             $crawler = $client->request('GET', $uri);
 
             self::assertResponseIsSuccessful(\sprintf('%s doit répondre.', $uri));
@@ -103,5 +103,15 @@ final class ShellNavigationTest extends WebTestCase
                 \sprintf('%s doit afficher son propre titre.', $uri),
             );
         }
+
+        // La recherche n'a pas de titre : le champ en tient lieu, et c'est son
+        // invite qui annonce l'écran.
+        $crawler = $client->request('GET', '/recherche');
+
+        self::assertResponseIsSuccessful();
+        self::assertSame(
+            'Chercher dans toutes les notes',
+            $crawler->filter('.fx-search__input')->attr('placeholder'),
+        );
     }
 }

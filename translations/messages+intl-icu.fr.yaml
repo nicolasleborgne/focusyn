@@ -1,3 +1,16 @@
+time:
+    now: à l'instant
+    minutes: 'il y a {count, plural, one {# min} other {# min}}'
+    hours: 'il y a {count, plural, one {# h} other {# h}}'
+    yesterday: hier
+    days: 'il y a {count, plural, one {# j} other {# j}}'
+    last_week: la semaine dernière
+    weeks: 'il y a {count, plural, one {# sem.} other {# sem.}}'
+    months: 'il y a {count, plural, one {# mois} other {# mois}}'
+
+common:
+    cancel: Annuler
+
 # Catalogue de référence : la copie française de la maquette fait foi.
 shell:
     brand: Focusyn
@@ -74,6 +87,9 @@ two_factor:
 settings:
     title: Réglages
     account: Compte
+    account_help: 'Identifiant de connexion. Le modifier enverra une vérification sur la nouvelle adresse — pas encore disponible.'
+    password_help: Un lien de réinitialisation part sur votre adresse.
+    password_reset: Réinitialiser
     back: Revenir aux réglages
     accent:
         heading: Apparence
@@ -139,16 +155,21 @@ notebook:
     delete: Supprimer la note
     deleted: Note supprimée.
     obsessions_label: Obsessions de la note
-    obsessions_placeholder: Obsessions, séparées par des virgules
+    delete_confirm_title: 'Supprimer « {title} » ?'
+    delete_confirm_body: La note et son contenu partent définitivement. Les obsessions qu'elle portait restent si d'autres notes les mentionnent.
+    delete_confirm: Supprimer la note
+    obsessions_placeholder: + tag
     preview: Aperçu de la note
     title_label: Titre de la note
     title_required: Une note doit avoir un titre.
     reading_minutes: '{count, plural, one {# min de lecture} other {# min de lecture}}'
+    notes: Notes
+    note_count: '{count, plural, =0 {aucune note} one {# note} other {# notes}}'
     search:
-        placeholder: Chercher dans les notes…
-        prompt: Tapez pour chercher dans les titres et le corps des notes.
-        results: '{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}'
-        nothing: 'Rien ne correspond à « {query} ».'
+        placeholder: Chercher dans toutes les notes
+        scopes: notes · tâches · tags
+        results: '{count, plural, =0 {aucun résultat} one {# résultat} other {# résultats}}'
+        nothing: Aucun résultat.
     editor:
         saved: Enregistré
         saving: Enregistrement…
@@ -156,6 +177,8 @@ notebook:
         failed: Enregistrement impossible — la connexion semble coupée
 
 task:
+    completed_heading: Faites
+    count: '{count, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}'
     untitled_list: Nouvelle liste
     new_list: Nouvelle liste
     empty: Aucune liste pour l'instant.
@@ -163,14 +186,17 @@ task:
     list_empty: Cette liste est vide. Ajoutez une première tâche ci-dessous.
     list_gone: Cette liste n'existe plus.
     list_deleted: Liste supprimée.
+    delete_confirm_title: 'Supprimer « {name} » ?'
+    delete_confirm_body: La liste et ses tâches partent définitivement.
+    delete_confirm: Supprimer la liste
     delete_list: Supprimer la liste
     name_label: Nom de la liste
     name_required: Une liste doit avoir un nom.
-    add_placeholder: Ajouter une tâche…
+    add_placeholder: Ajouter une tâche — Entrée
     check: Cocher la tâche
     uncheck: Décocher la tâche
     remove: Retirer la tâche
-    open_count: '{count, plural, =0 {Rien d''ouvert} one {# tâche ouverte} other {# tâches ouvertes}}'
+    open_count: '{count, plural, =0 {rien d''ouvert} one {# ouverte} other {# ouvertes}}'
     completed: '{count, plural, one {# tâche faite} other {# tâches faites}}'
 
 password_reset:

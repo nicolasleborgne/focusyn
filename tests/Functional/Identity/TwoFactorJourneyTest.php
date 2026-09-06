@@ -32,7 +32,9 @@ final class TwoFactorJourneyTest extends WebTestCase
         $crawler = $client->request('GET', '/reglages');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Activer', $crawler->filter('.fx-settings__section')->eq(1)->text());
+        // Le second facteur est rangé sous « Compte », avec le mot de passe :
+        // ce sont les clés de la même porte.
+        self::assertStringContainsString('Activer', $crawler->filter('.fx-settings__section')->first()->text());
     }
 
     public function testEnrolmentOffersBothAQrCodeAndAManualKey(): void

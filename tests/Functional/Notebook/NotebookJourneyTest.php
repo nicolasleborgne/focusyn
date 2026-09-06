@@ -96,7 +96,7 @@ final class NotebookJourneyTest extends WebTestCase
         $crawler = $client->request('GET', '/recherche?query=éclairage');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Deux sommeils', $crawler->filter('.fx-note-row__title')->text());
+        self::assertStringContainsString('Deux sommeils', $crawler->filter('.fx-hit__title')->text());
     }
 
     public function testSearchShowsNothingUntilSomethingIsTyped(): void
@@ -107,8 +107,11 @@ final class NotebookJourneyTest extends WebTestCase
 
         $crawler = $client->request('GET', '/recherche');
 
-        self::assertCount(0, $crawler->filter('.fx-note-row'));
-        self::assertStringContainsString('Tapez pour chercher', $crawler->filter('.fx-search__empty')->text());
+        // Écran nu : le champ tient lieu de titre, et rien d'autre ne s'affiche
+        // tant qu'on n'a pas tapé.
+        self::assertCount(0, $crawler->filter('.fx-hit'));
+        self::assertCount(0, $crawler->filter('.fx-search__scope'));
+        self::assertCount(1, $crawler->filter('.fx-search__input'));
     }
 
     public function testDeletingRemovesTheNoteFromTheLibrary(): void
@@ -118,7 +121,7 @@ final class NotebookJourneyTest extends WebTestCase
         $noteId = $this->writeNote($client, 'Deux sommeils');
 
         $crawler = $client->request('GET', '/notes/'.$noteId);
-        $client->submit($crawler->filter('.fx-note__danger')->form());
+        $client->submit($crawler->filter('.fx-note__danger form')->form());
         $crawler = $client->followRedirect();
 
         self::assertStringContainsString('Note supprimée', $crawler->text());

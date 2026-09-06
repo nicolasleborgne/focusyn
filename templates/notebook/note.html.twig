@@ -23,36 +23,37 @@
                       onchange="this.form.requestSubmit()">{{ note.title }}</textarea>
         </form>
 
-        <p class="fx-note__meta">
-            <span>{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
-            <span>·</span>
-            <span>{{ 'notebook.reading_minutes'|trans({ count: note.readingMinutes }) }}</span>
-            <span>·</span>
-            <span>{{ note.updatedAt|format_datetime(pattern: "d MMM 'à' HH:mm", locale: app.request.locale) }}</span>
+        {# Une seule rangée sous le titre, comme dans la maquette : les
+           étiquettes, la saisie d'une nouvelle, la puce de rappel, puis les
+           compteurs poussés à droite. #}
+        <div class="fx-note__bar">
+            {% for obsession in note.obsessions %}
+                <a class="fx-tag" href="{{ path('obsession_show', { slug: obsession|slug|lower }) }}">{{ obsession }}</a>
+            {% endfor %}
+
+            {# Saisie libre, séparée par des virgules : il n'y a pas de liste à
+               choisir, une obsession naît de la première note qui la mentionne. #}
+            <form method="post" action="{{ path('note_obsessions', { id: note.id }) }}" class="fx-note__obsessions">
+                <input type="hidden" name="_token" value="{{ csrf_token('note-obsessions') }}">
+                <input class="fx-note__obsessions-input" type="text" name="obsessions"
+                       value="{{ note.obsessions|join(', ') }}"
+                       placeholder="{{ 'notebook.obsessions_placeholder'|trans }}"
+                       aria-label="{{ 'notebook.obsessions_label'|trans }}"
+                       onchange="this.form.requestSubmit()">
+            </form>
+
             {# Puce portée par Reminder : Notebook l'affiche sans connaître le
                contexte qui la remplit. #}
             <twig:ReminderChip subject="note:{{ note.id }}" label="{{ note.title }}" />
-        </p>
 
-        {# Étiquetage : saisie libre, séparée par des virgules. Il n'y a pas de
-           liste à choisir — une obsession naît de la première note qui la
-           mentionne. #}
-        <form method="post" action="{{ path('note_obsessions', { id: note.id }) }}" class="fx-note__obsessions">
-            <input type="hidden" name="_token" value="{{ csrf_token('note-obsessions') }}">
-            <input class="fx-note__obsessions-input" type="text" name="obsessions"
-                   value="{{ note.obsessions|join(', ') }}"
-                   placeholder="{{ 'notebook.obsessions_placeholder'|trans }}"
-                   aria-label="{{ 'notebook.obsessions_label'|trans }}"
-                   onchange="this.form.requestSubmit()">
-        </form>
-
-        {% if note.obsessions is not empty %}
-            <div class="fx-note__tags">
-                {% for obsession in note.obsessions %}
-                    <a class="fx-tag" href="{{ path('obsession_show', { slug: obsession|slug|lower }) }}">{{ obsession }}</a>
-                {% endfor %}
-            </div>
-        {% endif %}
+            <span class="fx-note__counters" data-note-editor-target="meta">
+                {{- include('notebook/_note_meta.html.twig', {
+                    words: note.wordCount,
+                    minutes: note.readingMinutes,
+                    updatedAt: note.updatedAt,
+                }) -}}
+            </span>
+        </div>
 
         <div class="fx-note__editor"
              data-controller="note-editor"
@@ -71,10 +72,16 @@
            contexte, la clé, ni le fournisseur. #}
         <twig:AssistantPanel :noteId="note.id" />
 
-        <form method="post" action="{{ path('note_delete', { id: note.id }) }}" class="fx-note__danger">
-            <input type="hidden" name="_token" value="{{ csrf_token('note-delete') }}">
-            <button type="submit" class="fx-button fx-button--danger fx-button--small">{{ 'notebook.delete'|trans }}</button>
-        </form>
+        <div class="fx-note__danger">
+            {{ include('components/_confirm.html.twig', {
+                action: path('note_delete', { id: note.id }),
+                token: 'note-delete',
+                label: 'notebook.delete'|trans,
+                title: 'notebook.delete_confirm_title'|trans({ title: note.title }),
+                body: 'notebook.delete_confirm_body'|trans,
+                confirm: 'notebook.delete_confirm'|trans,
+            }) }}
+        </div>
     </div>
         </div>
 

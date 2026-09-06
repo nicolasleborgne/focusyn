@@ -31,10 +31,11 @@
     color: var(--fx-text-body);
 }
 
+/* Le champ actif teinte sa bordure : ni liseré interne, ni anneau autour. */
 .fx-field__control:focus,
 .fx-field__control:focus-visible {
     border-color: var(--fx-accent);
-    box-shadow: inset 0 0 0 1px var(--fx-accent);
+    outline: none;
 }
 
 .fx-field__control::placeholder {

@@ -54,10 +54,17 @@ button {
     background-clip: content-box;
 }
 
-/* Anneau de focus unifié : visible au clavier, discret à la souris. */
+/*
+ * Repère de focus, au clavier seulement.
+ *
+ * Un `outline` fin plutôt qu'une ombre portée : il suit le rayon de l'élément,
+ * ne déplace rien, et ne se lit pas comme un cadre. Les champs de formulaire
+ * s'en passent — ils teintent leur bordure (voir `field.css`), ce qui est
+ * l'équivalent le plus proche de la maquette, qui ne montre rien du tout.
+ */
 :focus-visible {
-    outline: none;
-    box-shadow: var(--fx-focus-ring);
+    outline: var(--fx-focus-ring);
+    outline-offset: var(--fx-focus-offset);
     border-radius: var(--fx-radius-sm);
 }
 
