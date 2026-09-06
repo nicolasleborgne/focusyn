@@ -116,6 +116,20 @@
 
         {# ---------------------------------------------------------------- #}
         <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'team.heading'|trans }}</p>
+
+            <div class="fx-settings__row">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.team.label'|trans }}</span>
+                    <span class="fx-card__help">{{ 'settings.team.help'|trans }}</span>
+                </div>
+
+                <a class="fx-button fx-button--small" href="{{ path('team') }}">{{ 'settings.team.open'|trans }}</a>
+            </div>
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
             <p class="fx-eyebrow">{{ 'settings.accent.heading'|trans }}</p>
 
             <div class="fx-settings__row">

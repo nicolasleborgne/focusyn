@@ -44,6 +44,9 @@ doctrine:
             reminder_subject: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderSubjectType
             reminder_label: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderLabelType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
+            invitation_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\InvitationIdType
+            invited_email: App\Organization\Infrastructure\Persistence\Doctrine\Type\InvitedEmailType
+            invitation_token: App\Organization\Infrastructure\Persistence\Doctrine\Type\InvitationTokenType
             membership_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MembershipIdType
             member_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MemberIdType
 

@@ -89,6 +89,10 @@ settings:
     account_help: 'Sign-in identifier. Changing it will send a verification to the new address — not available yet.'
     password_help: A reset link goes out to your address.
     password_reset: Reset
+    team:
+        label: Spaces and members
+        help: Open a team, invite someone, switch space.
+        open: View the team
     sessions:
         current: This device · current session
         last_seen: 'Last seen {when}'
@@ -403,3 +407,52 @@ assistant:
         unreadable: The provider's answer could not be read.
         empty: The model answered nothing.
         unknown_provider: That provider is not known.
+
+team:
+    heading: Team
+    spaces: Spaces
+    personal: Your notebook. It is neither shared nor invited to.
+    shared: Shared space.
+    here: Here
+    enter: Enter
+    create: Open
+    new_placeholder: Name of a new team
+    created: Team opened. You are in it.
+    name: Team name
+    rename: Rename
+    renamed: Name saved.
+    name_refused: That name was not accepted.
+    members: '{count, plural, one {# member} other {# members}}'
+    you: (you)
+    joined: 'Joined {when}'
+    remove: Remove from the team
+    member_saved: Role saved.
+    member_refused: That change was not accepted.
+    last_owner: A team always keeps an owner. Hand it over before you leave.
+    role:
+        owner: Owner
+        admin: Administrator
+        member: Member
+    invitations: Invitations
+    invite_help: >-
+        The invitation goes to that address and lasts seven days. The link only
+        lets in the account holding the invited address: forwarding it gives
+        nobody access.
+    invite_placeholder: Address to invite
+    invite_as:
+        admin: Invite as administrator
+        member: Invite as member
+    invited: Invitation sent.
+    already_invited: That address already has a pending invitation.
+    invite_refused: That invitation could not be sent.
+    invitation_expires: 'Expires — sent {when}'
+    invitation_expired: Expired
+    invitation_revoked: Invitation cancelled.
+    cancel: Cancel
+    joined_notice: You have joined the team.
+    email:
+        subject: 'You are invited to join {organization} on Focusyn'
+        intro: 'You have been offered a seat in the {organization} space.'
+        action: Join the team
+        validity: This link is valid for seven days.
+        ignore: 'If this invitation surprises you, ignore this message: nothing will happen.'

@@ -90,6 +90,10 @@ settings:
     account_help: 'Identifiant de connexion. Le modifier enverra une vérification sur la nouvelle adresse — pas encore disponible.'
     password_help: Un lien de réinitialisation part sur votre adresse.
     password_reset: Réinitialiser
+    team:
+        label: Espaces et membres
+        help: Ouvrir une équipe, inviter quelqu'un, changer d'espace.
+        open: Voir l'équipe
     sessions:
         current: Cet appareil · session en cours
         last_seen: 'Dernier accès {when}'
@@ -410,3 +414,52 @@ assistant:
         unreadable: La réponse du fournisseur n'a pas pu être lue.
         empty: Le modèle n'a rien répondu.
         unknown_provider: Ce fournisseur n'est pas connu.
+
+team:
+    heading: Équipe
+    spaces: Espaces
+    personal: Votre carnet. Il ne s'invite pas et ne se partage pas.
+    shared: Espace partagé.
+    here: Ici
+    enter: Entrer
+    create: Ouvrir
+    new_placeholder: Nom d'une nouvelle équipe
+    created: Équipe ouverte. Vous y êtes.
+    name: Nom de l'équipe
+    rename: Renommer
+    renamed: Nom enregistré.
+    name_refused: Ce nom n'a pas été accepté.
+    members: '{count, plural, one {# membre} other {# membres}}'
+    you: (vous)
+    joined: 'A rejoint {when}'
+    remove: Retirer de l'équipe
+    member_saved: Rôle enregistré.
+    member_refused: Ce changement n'a pas été accepté.
+    last_owner: Une équipe garde toujours un propriétaire. Transmettez-le avant de partir.
+    role:
+        owner: Propriétaire
+        admin: Administrateur
+        member: Membre
+    invitations: Invitations
+    invite_help: >-
+        L'invitation part sur cette adresse et vaut sept jours. Le lien ne fait
+        entrer que le compte qui porte l'adresse invitée : le transférer ne
+        donne accès à personne.
+    invite_placeholder: Adresse à inviter
+    invite_as:
+        admin: Inviter comme administrateur
+        member: Inviter comme membre
+    invited: Invitation envoyée.
+    already_invited: Cette adresse a déjà une invitation en cours.
+    invite_refused: Cette invitation n'a pas pu être envoyée.
+    invitation_expires: 'Expire — envoyée {when}'
+    invitation_expired: Expirée
+    invitation_revoked: Invitation annulée.
+    cancel: Annuler
+    joined_notice: Vous avez rejoint l'équipe.
+    email:
+        subject: 'Vous êtes invité à rejoindre {organization} sur Focusyn'
+        intro: 'On vous propose une place dans l''espace {organization}.'
+        action: Rejoindre l'équipe
+        validity: Ce lien est valable sept jours.
+        ignore: 'Si cette invitation vous surprend, ignorez ce message : rien ne se passera.'

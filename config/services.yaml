@@ -185,6 +185,22 @@ services:
         arguments:
             $sessions: '@session.handler.pdo'
 
+    App\Organization\Domain\Repository\InvitationRepository:
+        alias: App\Organization\Infrastructure\Persistence\Doctrine\DoctrineInvitationRepository
+        public: true
+
+    App\Organization\Application\Port\InvitationTokenGenerator:
+        alias: App\Organization\Infrastructure\Invitation\RandomInvitationTokenGenerator
+
+    App\Organization\Application\Port\InvitationLink:
+        alias: App\Organization\Infrastructure\Invitation\RoutedInvitationLink
+
+    App\Organization\Application\Port\InvitationMailer:
+        alias: App\Organization\Infrastructure\Mail\SymfonyInvitationMailer
+
+    App\Organization\Application\Port\PreferredOrganization:
+        alias: App\Organization\Infrastructure\Tenant\MembershipCurrentTenant
+
 when@test:
     services:
         _defaults:

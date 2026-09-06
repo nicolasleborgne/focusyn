@@ -167,6 +167,23 @@ l'exception métier, pas une exception de transport.
 `event.bus` (un fait acquis, zéro à N gestionnaires). Les dépôts publient les
 événements d'un agrégat **après** le flush.
 
+**Équipes.** Une organisation d'équipe s'ouvre par n'importe qui, qui en devient
+propriétaire ; l'espace personnel créé à l'inscription ne s'invite ni ne se
+partage. Les rôles passent par `OrganizationVoter` (`MANAGE_MEMBERS`,
+`ADMINISTER`) et non par un rôle global : ce qu'on a le droit de faire dépend de
+l'organisation courante, et la même personne peut y être propriétaire ici et
+simple membre ailleurs. Le voteur se teste directement — forcer la route dans un
+test fonctionnel se heurterait d'abord au jeton CSRF, ce qui ne prouverait rien
+de l'autorisation.
+
+**Une invitation n'est pas cloisonnée**, comme `CalendarFeed` : celui qui
+accepte n'est pas encore membre, et le filtre — armé sur *son* organisation
+courante — masquerait l'invitation qu'il vient de recevoir. Ce qui protège est
+double : le jeton, et **l'adresse**. `Invitation::acceptedBy()` refuse un compte
+dont l'adresse n'est pas celle qui a été invitée, de sorte qu'un lien transféré
+ne fait entrer personne. On n'invite jamais comme propriétaire — celui-ci se
+transmet, sans quoi la règle « au moins un propriétaire » n'aurait plus d'effet.
+
 **Sécurité.** L'agrégat `User` n'implémente ni `UserInterface` ni les interfaces
 du bundle de double authentification : l'adaptateur `SecurityUser` le fait à sa
 place. Les habilitations fines dépendront de l'organisation courante et

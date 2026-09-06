@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Organization\Infrastructure\Tenant;
 
+use App\Organization\Application\Port\PreferredOrganization;
 use App\Organization\Domain\Model\MemberId;
 use App\Organization\Domain\Repository\OrganizationRepository;
 use App\Shared\Application\Account\CurrentAccount;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Sans cette revérification, une session survivant à un retrait d'équipe
  * continuerait de donner accès.
  */
-final class MembershipCurrentTenant implements CurrentTenant
+final class MembershipCurrentTenant implements CurrentTenant, PreferredOrganization
 {
     public const string SESSION_KEY = 'organization.current';
 
@@ -49,6 +50,19 @@ final class MembershipCurrentTenant implements CurrentTenant
     public function id(): TenantId
     {
         return $this->idOrNull() ?? throw NoCurrentTenant::create();
+    }
+
+    /**
+     * Le choix est mémorisé, jamais cru sur parole : `resolve()` revérifie
+     * l'appartenance à chaque requête.
+     */
+    public function remember(string $organizationId): void
+    {
+        $this->requests->getSession()->set(self::SESSION_KEY, $organizationId);
+
+        // La requête en cours a peut-être déjà résolu l'ancienne organisation.
+        $this->attempted = false;
+        $this->resolved = null;
     }
 
     private function resolve(): ?TenantId

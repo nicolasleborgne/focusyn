@@ -1334,3 +1334,38 @@
 .fx-board__meter {
     margin-top: var(--fx-space-1);
 }
+
+/*
+ * Équipe : la même grammaire que les réglages — une rangée, un libellé à
+ * gauche, l'action à droite — plus quelques champs qui partagent leur ligne.
+ */
+.fx-team__field {
+    flex: 1 1 220px;
+    width: auto;
+    min-width: 0;
+}
+
+.fx-team__create,
+.fx-team__invite {
+    margin-top: var(--fx-space-8);
+}
+
+.fx-team__note {
+    max-width: 58ch;
+    margin-top: var(--fx-space-6);
+    line-height: var(--fx-leading-relaxed);
+}
+
+.fx-team__remove {
+    padding: 0 var(--fx-space-2);
+    border: 0;
+    background: none;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-disabled);
+    cursor: pointer;
+}
+
+.fx-team__remove:hover {
+    color: var(--fx-danger);
+}

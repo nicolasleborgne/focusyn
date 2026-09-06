@@ -1,0 +1,147 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ 'team.heading'|trans }} — Focusyn{% endblock %}
+{% set crumb = 'team.heading'|trans %}
+
+{% block page %}
+    <div class="fx-app__content fx-app__content--settings">
+        <h1 class="fx-heading">{{ 'team.heading'|trans }}</h1>
+
+        {% for message in app.flashes('success') %}
+            <p class="fx-settings__notice" role="status">{{ message|trans }}</p>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
+        {% endfor %}
+
+        {# ---------------------------------------------------------------- #}
+        <section class="fx-settings__section">
+            <p class="fx-eyebrow">{{ 'team.spaces'|trans }}</p>
+
+            {% for space in team.spaces %}
+                <div class="fx-settings__row">
+                    <div class="fx-settings__label">
+                        <span class="fx-card__title">{{ space.name }}</span>
+                        <span class="fx-card__help">
+                            {{ (space.personal ? 'team.personal' : 'team.shared')|trans }}
+                        </span>
+                    </div>
+
+                    {% if space.current %}
+                        <span class="fx-eyebrow">{{ 'team.here'|trans }}</span>
+                    {% else %}
+                        <form method="post" action="{{ path('team_switch') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('team-switch') }}">
+                            <input type="hidden" name="organizationId" value="{{ space.id }}">
+                            <button type="submit" class="fx-button fx-button--small">{{ 'team.enter'|trans }}</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <form method="post" action="{{ path('team_create') }}" class="fx-field__row fx-team__create">
+                <input type="hidden" name="_token" value="{{ csrf_token('team-create') }}">
+                <input type="text" name="name" class="fx-field__control fx-team__field" required
+                       placeholder="{{ 'team.new_placeholder'|trans }}"
+                       aria-label="{{ 'team.new_placeholder'|trans }}">
+                <button type="submit" class="fx-button fx-button--small">{{ 'team.create'|trans }}</button>
+            </form>
+        </section>
+
+        {# ---------------------------------------------------------------- #}
+        {# L'espace personnel n'a ni membres ni invitations : c'est le carnet
+           de son propriétaire, pas une équipe. #}
+        {% if not team.personal %}
+            {% if is_granted(constant('App\\Organization\\UI\\Security\\OrganizationVoter::ADMINISTER')) %}
+                <section class="fx-settings__section">
+                    <p class="fx-eyebrow">{{ 'team.name'|trans }}</p>
+
+                    <form method="post" action="{{ path('team_rename') }}" class="fx-field__row">
+                        <input type="hidden" name="_token" value="{{ csrf_token('team-rename') }}">
+                        <input type="text" name="name" class="fx-field__control fx-team__field" required
+                               value="{{ team.name }}" aria-label="{{ 'team.name'|trans }}">
+                        <button type="submit" class="fx-button fx-button--small">{{ 'team.rename'|trans }}</button>
+                    </form>
+                </section>
+            {% endif %}
+
+            <section class="fx-settings__section">
+                <p class="fx-eyebrow">{{ 'team.members'|trans({ count: team.members|length }) }}</p>
+
+                {% for member in team.members %}
+                    <div class="fx-settings__row">
+                        <div class="fx-settings__label">
+                            <span class="fx-card__title">
+                                {{ member.email }}{% if member.itsYou %} <span class="fx-card__help">{{ 'team.you'|trans }}</span>{% endif %}
+                            </span>
+                            <span class="fx-card__help">{{ 'team.joined'|trans({ when: member.joinedAt|fx_ago }) }}</span>
+                        </div>
+
+                        {% if is_granted(constant('App\\Organization\\UI\\Security\\OrganizationVoter::MANAGE_MEMBERS')) %}
+                            <form method="post" action="{{ path('team_member') }}" class="fx-field__row">
+                                <input type="hidden" name="_token" value="{{ csrf_token('team-member') }}">
+                                <input type="hidden" name="memberId" value="{{ member.id }}">
+
+                                {% for role in ['owner', 'admin', 'member'] %}
+                                    <button type="submit" name="role" value="{{ role }}"
+                                            class="fx-pill {{ member.role.value == role ? 'fx-pill--selected' }}">
+                                        {{ ('team.role.' ~ role)|trans }}
+                                    </button>
+                                {% endfor %}
+
+                                {% if not member.itsYou %}
+                                    <button type="submit" name="remove" value="1"
+                                            class="fx-team__remove" aria-label="{{ 'team.remove'|trans }}">×</button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <span class="fx-eyebrow">{{ ('team.role.' ~ member.role.value)|trans }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </section>
+
+            {% if is_granted(constant('App\\Organization\\UI\\Security\\OrganizationVoter::MANAGE_MEMBERS')) %}
+                <section class="fx-settings__section">
+                    <p class="fx-eyebrow">{{ 'team.invitations'|trans }}</p>
+
+                    <p class="fx-card__help fx-team__note">{{ 'team.invite_help'|trans }}</p>
+
+                    <form method="post" action="{{ path('team_invite') }}" class="fx-field__row fx-team__invite">
+                        <input type="hidden" name="_token" value="{{ csrf_token('team-invite') }}">
+                        <input type="email" name="email" class="fx-field__control fx-team__field" required
+                               placeholder="{{ 'team.invite_placeholder'|trans }}"
+                               aria-label="{{ 'team.invite_placeholder'|trans }}">
+                        {% for role in roles %}
+                            <button type="submit" name="role" value="{{ role.value }}" class="fx-button fx-button--small">
+                                {{ ('team.invite_as.' ~ role.value)|trans }}
+                            </button>
+                        {% endfor %}
+                    </form>
+
+                    {% for invitation in team.invitations %}
+                        <div class="fx-settings__row">
+                            <div class="fx-settings__label">
+                                <span class="fx-card__title">{{ invitation.email }}</span>
+                                <span class="fx-card__help">
+                                    {{ ('team.role.' ~ invitation.role.value)|trans }} ·
+                                    {%- if invitation.expired %}
+                                        {{ 'team.invitation_expired'|trans }}
+                                    {%- else %}
+                                        {{ 'team.invitation_expires'|trans({ when: invitation.expiresAt|fx_ago }) }}
+                                    {%- endif %}
+                                </span>
+                            </div>
+
+                            <form method="post" action="{{ path('team_invitation_revoke') }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('team-invitation-revoke') }}">
+                                <input type="hidden" name="invitationId" value="{{ invitation.id }}">
+                                <button type="submit" class="fx-button fx-button--small">{{ 'team.cancel'|trans }}</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
