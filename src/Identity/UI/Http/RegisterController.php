@@ -40,6 +40,10 @@ final class RegisterController extends AbstractController
         }
 
         $data = new RegistrationData();
+
+        // Pré-remplissage seulement : l'adresse vient de l'écran d'invitation,
+        // elle n'ouvre rien par elle-même et sera vérifiée comme les autres.
+        $data->email = $request->query->getString('email') ?: null;
         $form = $this->createForm(RegistrationForm::class, $data);
         $form->handleRequest($request);
 

@@ -194,6 +194,25 @@ second facteur, fournisseur externe. Toute connexion programmée doit donc
 **nommer** l'authentificateur (`$security->login($user, 'form_login')`), sinon
 Symfony refuse de choisir.
 
+**L'adresse de connexion se change en deux temps** : la nouvelle attend d'être
+confirmée depuis sa propre boîte aux lettres (`User::pendingEmail()`), sans quoi
+une faute de frappe fermerait le compte à son propriétaire. Deux courriels
+partent — le lien vers la nouvelle adresse, **un avertissement vers l'ancienne**,
+qui est la seule alerte du propriétaire légitime si sa session a été dérobée.
+Le lien est signé et porte l'empreinte de la demande en cours : se raviser ou
+annuler le rend caduc. Et comme **l'identifiant de connexion *est* l'adresse**,
+le contrôleur rouvre la session après le changement — sinon confirmer son
+adresse déconnecterait à la requête suivante.
+
+**Une invitation se découvre avant d'avoir un compte.** `/invitations/{token}`
+est publique : sans session, l'écran dit de quoi il retourne et met le jeton de
+côté (`PendingInvitation`), qu'un écouteur reprend à la connexion — y compris
+celle qui suit une inscription, `Security::login()` émettant bien
+`InteractiveLoginEvent`. Le jeton est **retiré** de la session en le lisant :
+sans cela il rejouerait à chaque connexion suivante. Le lien « créer le compte »
+emporte l'adresse invitée en paramètre, pour pré-remplir seulement — elle
+n'ouvre rien par elle-même, l'agrégat la vérifie.
+
 **Sessions.** Elles vivent en base (`session.handler.pdo`, table `sessions`),
 pas dans des fichiers : c'est ce qui rend la révocation réelle — fermer une
 session depuis un autre appareil doit la fermer, pas seulement l'ôter d'une
@@ -398,6 +417,13 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   syntaxe (étape `syntaxe`) et php-cs-fixer impose les parenthèses via
   `new_expression_parentheses`, qui neutralise la règle inverse de
   `@PHP84Migration`.
+- **`Crawler::form()` sur un `<form>` n'envoie aucune valeur de bouton** : pour
+  qu'un `<button name="cancel">` compte, il faut sélectionner le bouton
+  (`filterXPath('//button[@name="cancel"]')->form()`), pas le formulaire.
+- **`assertEmailCount()` prend un nom de transport en second argument**, pas un
+  message d'explication — et lit le profil de la *dernière* requête : mesurer
+  après un `followRedirect()` compte les courriels de la redirection, c'est-à-dire
+  aucun.
 - **La table `sessions` doit exister avant la première requête** : le
   gestionnaire PDO ne la crée pas tout seul en production. Elle est posée par
   la migration `Version20260906092152`, pas par `createTable()`, pour qu'elle

@@ -86,7 +86,7 @@ two_factor:
 settings:
     title: Settings
     account: Account
-    account_help: 'Sign-in identifier. Changing it will send a verification to the new address — not available yet.'
+    account_help: Sign-in identifier. Changing it needs a confirmation from the new address.
     password_help: A reset link goes out to your address.
     password_reset: Reset
     team:
@@ -433,6 +433,14 @@ team:
         owner: Owner
         admin: Administrator
         member: Member
+    invitation:
+        title: Invitation
+        lead: 'You are invited to join {organization}.'
+        for: 'The invitation is for {email}, as {role}. Sign in with that address or create its account.'
+        register: Create the account
+        sign_in: I already have an account
+        gone_title: This invitation no longer holds.
+        gone_lead: It expired, it was cancelled, or the link was damaged. Ask for a new one.
     invitations: Invitations
     invite_help: >-
         The invitation goes to that address and lasts seven days. The link only
@@ -456,3 +464,29 @@ team:
         action: Join the team
         validity: This link is valid for seven days.
         ignore: 'If this invitation surprises you, ignore this message: nothing will happen.'
+
+email_change:
+    submit: Change
+    cancel: Cancel the request
+    pending: 'Waiting for confirmation at {email}. Nothing changes until the link is followed.'
+    requested: A confirmation link is on its way to the new address.
+    cancelled: Request cancelled.
+    taken: That address already belongs to another account.
+    refused: That address was not accepted.
+    done: Address changed. It is now your sign-in identifier.
+    expired_title: This link no longer holds.
+    expired_lead: >-
+        It expired, the request was cancelled, or the address was taken in the
+        meantime. Start again from the settings.
+    back: Back to settings
+    confirm:
+        subject: Confirm your new Focusyn address
+        intro: You asked to use this address to sign in to Focusyn.
+        action: Confirm this address
+        validity: This link is valid for twenty-four hours.
+        ignore: 'If you did not ask for this, ignore this message: nothing will change.'
+    warn:
+        subject: A new address was requested on your account
+        intro: 'Someone has just asked to replace your sign-in address with {email}.'
+        nothing_yet: 'Nothing has changed yet: the change only happens if the link sent to that address is followed.'
+        if_not_you: If this was not you, change your password right away and close your open sessions.

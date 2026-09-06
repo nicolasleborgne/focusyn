@@ -53,6 +53,13 @@ security:
         - { path: '^/(connexion|login)/(google|github)', roles: PUBLIC_ACCESS }
         - { path: '^/(mot-de-passe-oublie|forgotten-password)$', roles: PUBLIC_ACCESS }
         - { path: '^/mot-de-passe/', roles: PUBLIC_ACCESS }
+        # Le lien de confirmation d'adresse arrive par courriel : rien ne dit
+        # qu'on est connecté sur l'appareil qui l'ouvre. C'est la signature du
+        # lien qui fait foi.
+        - { path: '^/adresse/', roles: PUBLIC_ACCESS }
+        # Une invitation se découvre avant d'avoir un compte : l'écran dit de
+        # quoi il retourne, puis renvoie vers la connexion ou l'inscription.
+        - { path: '^/invitations/', roles: PUBLIC_ACCESS }
         # Le flux d'agenda : un calendrier ne se connecte pas, il récupère une
         # adresse. C'est le jeton, long et renouvelable, qui fait foi.
         - { path: '^/(calendrier|calendar)/[A-Za-z0-9_-]{43}\.ics$', roles: PUBLIC_ACCESS }

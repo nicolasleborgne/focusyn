@@ -18,6 +18,9 @@
         </id>
 
         <field name="email" type="email_address" column="email" unique="true"/>
+        <!-- L'adresse demandée, tant qu'elle n'est pas confirmée. Pas d'unicité :
+             deux personnes peuvent demander la même, une seule la confirmera. -->
+        <field name="pendingEmail" type="email_address" column="pending_email" nullable="true"/>
         <field name="password" type="hashed_password" column="password_hash"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at"/>
 

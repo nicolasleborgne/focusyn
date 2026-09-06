@@ -201,6 +201,15 @@ services:
     App\Organization\Application\Port\PreferredOrganization:
         alias: App\Organization\Infrastructure\Tenant\MembershipCurrentTenant
 
+    App\Identity\Application\Port\EmailChangeLink:
+        alias: App\Identity\Infrastructure\Security\SignedEmailChangeLink
+
+    App\Identity\Application\Port\EmailChangeMailer:
+        alias: App\Identity\Infrastructure\Mail\SymfonyEmailChangeMailer
+
+    App\Organization\Application\Port\PendingInvitation:
+        alias: App\Organization\Infrastructure\Invitation\SessionPendingInvitation
+
 when@test:
     services:
         _defaults:

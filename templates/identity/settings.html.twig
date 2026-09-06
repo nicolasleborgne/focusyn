@@ -23,11 +23,29 @@
             <div class="fx-settings__row fx-settings__row--identity">
                 <span class="fx-avatar fx-avatar--large" aria-hidden="true">{{ account.email|first|upper }}</span>
                 <div class="fx-settings__label">
-                    {# Lecture seule pour l'instant : rendre le champ modifiable
-                       sans envoyer la vérification promise serait mentir. #}
-                    <input class="fx-settings__mail" type="email" value="{{ account.email }}" readonly
-                           aria-label="{{ 'auth.email'|trans }}">
-                    <span class="fx-card__help">{{ 'settings.account_help'|trans }}</span>
+                    {# Rien ne change à l'envoi : la nouvelle adresse attend
+                       d'être confirmée depuis sa propre boîte aux lettres. #}
+                    <form method="post" action="{{ path('email_change_request') }}" class="fx-field__row">
+                        <input type="hidden" name="_token" value="{{ csrf_token('email-change') }}">
+                        <input class="fx-settings__mail" type="email" name="email" required
+                               value="{{ account.pendingEmail ?? account.email }}"
+                               aria-label="{{ 'auth.email'|trans }}">
+                        <button type="submit" class="fx-button fx-button--small">{{ 'email_change.submit'|trans }}</button>
+                    </form>
+
+                    {% if account.pendingEmail %}
+                        <span class="fx-card__help fx-settings__pending">
+                            {{ 'email_change.pending'|trans({ email: account.pendingEmail }) }}
+                        </span>
+                        <form method="post" action="{{ path('email_change_request') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('email-change') }}">
+                            <button type="submit" name="cancel" value="1" class="fx-settings__cancel">
+                                {{ 'email_change.cancel'|trans }}
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="fx-card__help">{{ 'settings.account_help'|trans }}</span>
+                    {% endif %}
                 </div>
             </div>
 

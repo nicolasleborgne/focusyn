@@ -1150,8 +1150,11 @@
     gap: var(--fx-space-7);
 }
 
+/* Dans une rangée, un champ à 100 % pousserait son bouton à la ligne. */
 .fx-settings__mail {
-    width: 100%;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
     padding: var(--fx-space-2) 0;
     border: none;
     border-bottom: 1px solid var(--fx-border-faint);
@@ -1368,4 +1371,32 @@
 
 .fx-team__remove:hover {
     color: var(--fx-danger);
+}
+
+/* L'adresse en attente et son retrait, sous le champ. */
+.fx-settings__pending {
+    margin-top: var(--fx-space-3);
+}
+
+.fx-settings__cancel {
+    margin-top: var(--fx-space-2);
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--fx-font-ui);
+    font-size: var(--fx-size-xs);
+    color: var(--fx-text-disabled);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--fx-border-subtle);
+    text-underline-offset: 3px;
+}
+
+.fx-settings__cancel:hover {
+    color: var(--fx-text-primary);
+}
+
+/* Le second chemin d'une invitation : présent, mais moins appuyé. */
+.fx-invitation__alternative {
+    margin-top: var(--fx-space-4);
 }

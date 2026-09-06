@@ -27,6 +27,7 @@ final readonly class AccountSettingsQuery
 
         return new AccountSettings(
             email: $user->email()->toString(),
+            pendingEmail: $user->pendingEmail()?->toString(),
             twoFactorEnabled: $user->hasTwoFactorEnabled(),
             remainingBackupCodes: \count($user->backupCodes()),
             linkedProviders: array_map(

@@ -13,6 +13,7 @@ use App\Shared\Domain\AggregateRoot;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 
 /**
  * Un compte Focusyn.
@@ -22,6 +23,7 @@ use Doctrine\Common\Collections\Collection;
  */
 final class User extends AggregateRoot
 {
+    private ?EmailAddress $pendingEmail = null;
     private ?TotpSecret $totpSecret = null;
 
     /**
@@ -92,6 +94,45 @@ final class User extends AggregateRoot
         }
 
         $this->email = $email;
+        $this->pendingEmail = null;
+    }
+
+    /**
+     * L'adresse qui attend d'être confirmée, s'il y en a une.
+     *
+     * Une adresse de connexion ne se change pas sur parole : une faute de
+     * frappe fermerait le compte à son propriétaire. Elle attend donc d'être
+     * confirmée depuis la boîte aux lettres correspondante.
+     */
+    public function pendingEmail(): ?EmailAddress
+    {
+        return $this->pendingEmail;
+    }
+
+    public function requestEmailChange(EmailAddress $email): void
+    {
+        if ($this->email->equals($email)) {
+            throw new InvalidArgumentException('C\'est déjà votre adresse.');
+        }
+
+        // Se raviser remplace la demande précédente : c'est la dernière qui
+        // vaut, et le lien émis pour l'ancienne cesse d'ouvrir quoi que ce soit.
+        $this->pendingEmail = $email;
+    }
+
+    public function confirmEmailChange(EmailAddress $email): void
+    {
+        if (null === $this->pendingEmail || !$this->pendingEmail->equals($email)) {
+            throw new InvalidArgumentException('Aucun changement d\'adresse n\'attend cette confirmation.');
+        }
+
+        $this->email = $email;
+        $this->pendingEmail = null;
+    }
+
+    public function cancelEmailChange(): void
+    {
+        $this->pendingEmail = null;
     }
 
     // ---- affichage ---------------------------------------------------------

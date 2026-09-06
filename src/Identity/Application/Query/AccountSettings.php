@@ -18,6 +18,7 @@ final readonly class AccountSettings
      */
     public function __construct(
         public string $email,
+        public ?string $pendingEmail,
         public bool $twoFactorEnabled,
         public int $remainingBackupCodes,
         public array $linkedProviders,

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'email_change.expired_title'|trans }} — Focusyn{% endblock %}
+
+{% block body %}
+    {% embed 'identity/_auth_frame.html.twig' %}
+        {% block auth %}
+            <h1 class="fx-heading fx-heading--dialog">{{ 'email_change.expired_title'|trans }}</h1>
+            <p class="fx-auth__lead">{{ 'email_change.expired_lead'|trans }}</p>
+            <a class="fx-button fx-button--primary fx-button--block" href="{{ path('settings') }}">
+                {{ 'email_change.back'|trans }}
+            </a>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

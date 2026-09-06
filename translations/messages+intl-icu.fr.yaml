@@ -87,7 +87,7 @@ two_factor:
 settings:
     title: Réglages
     account: Compte
-    account_help: 'Identifiant de connexion. Le modifier enverra une vérification sur la nouvelle adresse — pas encore disponible.'
+    account_help: Identifiant de connexion. Le changer demande une confirmation depuis la nouvelle adresse.
     password_help: Un lien de réinitialisation part sur votre adresse.
     password_reset: Réinitialiser
     team:
@@ -440,6 +440,14 @@ team:
         owner: Propriétaire
         admin: Administrateur
         member: Membre
+    invitation:
+        title: Invitation
+        lead: 'On vous invite à rejoindre {organization}.'
+        for: 'L''invitation est faite à {email}, comme {role}. Connectez-vous avec cette adresse ou créez-en le compte.'
+        register: Créer le compte
+        sign_in: J'ai déjà un compte
+        gone_title: Cette invitation ne vaut plus.
+        gone_lead: Elle a expiré, elle a été annulée, ou le lien a été abîmé. Demandez-en une nouvelle.
     invitations: Invitations
     invite_help: >-
         L'invitation part sur cette adresse et vaut sept jours. Le lien ne fait
@@ -463,3 +471,29 @@ team:
         action: Rejoindre l'équipe
         validity: Ce lien est valable sept jours.
         ignore: 'Si cette invitation vous surprend, ignorez ce message : rien ne se passera.'
+
+email_change:
+    submit: Changer
+    cancel: Annuler la demande
+    pending: 'En attente de confirmation sur {email}. Rien ne change tant que le lien n''est pas suivi.'
+    requested: Un lien de confirmation part sur la nouvelle adresse.
+    cancelled: Demande annulée.
+    taken: Cette adresse est déjà celle d'un autre compte.
+    refused: Cette adresse n'a pas été acceptée.
+    done: Adresse changée. C'est désormais votre identifiant de connexion.
+    expired_title: Ce lien ne vaut plus.
+    expired_lead: >-
+        Il a expiré, la demande a été annulée, ou l'adresse a été prise
+        entre-temps. Recommencez depuis les réglages.
+    back: Revenir aux réglages
+    confirm:
+        subject: Confirmez votre nouvelle adresse Focusyn
+        intro: Vous avez demandé à utiliser cette adresse pour vous connecter à Focusyn.
+        action: Confirmer cette adresse
+        validity: Ce lien est valable vingt-quatre heures.
+        ignore: 'Si vous n''êtes pas à l''origine de cette demande, ignorez ce message : rien ne changera.'
+    warn:
+        subject: Une nouvelle adresse a été demandée sur votre compte
+        intro: 'Quelqu''un vient de demander à remplacer votre adresse de connexion par {email}.'
+        nothing_yet: 'Rien n''a changé pour l''instant : le changement n''aura lieu que si le lien envoyé à cette adresse est suivi.'
+        if_not_you: Si ce n'est pas vous, changez votre mot de passe sans attendre et fermez les sessions ouvertes.

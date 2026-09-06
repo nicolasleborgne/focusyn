@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'team.invitation.title'|trans }} — Focusyn{% endblock %}
+
+{% block body %}
+    {% embed 'identity/_auth_frame.html.twig' %}
+        {% block auth %}
+            {% if invitation is null or not invitation.stillValid %}
+                <h1 class="fx-heading fx-heading--dialog">{{ 'team.invitation.gone_title'|trans }}</h1>
+                <p class="fx-auth__lead">{{ 'team.invitation.gone_lead'|trans }}</p>
+                <a class="fx-button fx-button--block" href="{{ path('login') }}">{{ 'auth.sign_in'|trans }}</a>
+            {% else %}
+                <h1 class="fx-heading fx-heading--dialog">
+                    {{ 'team.invitation.lead'|trans({ organization: invitation.organizationName }) }}
+                </h1>
+                <p class="fx-auth__lead">
+                    {{ 'team.invitation.for'|trans({
+                        email: invitation.email,
+                        role: ('team.role.' ~ invitation.role.value)|trans,
+                    }) }}
+                </p>
+
+                {# Les deux chemins mènent au même endroit : le jeton attend en
+                   session et sera repris juste après. #}
+                <a class="fx-button fx-button--primary fx-button--block"
+                   href="{{ path('register', { email: invitation.email }) }}">
+                    {{ 'team.invitation.register'|trans }}
+                </a>
+                <a class="fx-button fx-button--block fx-invitation__alternative" href="{{ path('login') }}">
+                    {{ 'team.invitation.sign_in'|trans }}
+                </a>
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
