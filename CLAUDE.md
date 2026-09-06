@@ -56,6 +56,13 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Routine`, `Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
+**Une synthèse d'obsession se propose, elle ne s'enregistre pas.** « Ce qui se
+dégage » peut avoir été écrit à la main, et l'écraser sans demander ferait
+perdre le fruit d'une lecture qu'aucune machine ne refera. Le Live Component
+tient la proposition ; « garder » seul appelle `DescribeObsession`. Les puces
+et numéros que le modèle remet malgré la consigne sont retirés — l'écran
+numérote déjà.
+
 **Ce qui rapproche deux notes est grossier, et doit le rester.**
 `NoteKeywords` retient les mots d'au moins cinq lettres hors liste de mots
 vides ; un mot partagé vaut un point, une **obsession commune en vaut quatre**
@@ -156,9 +163,20 @@ de bout en bout est impossible — personne n'est là pour saisir un mot de pass
 quand le serveur appelle le modèle. La déclaration de l'écran des réglages le
 dit ainsi, et ne doit pas être adoucie.
 
-**Le consentement se vérifie avant tout le reste.** Dans `AskAssistantHandler`,
-`ConsentGate` passe avant la lecture des réglages : sans consentement, rien
-n'est lu, rien n'est déchiffré, et l'on ne révèle même pas qu'une clé existe.
+**Le consentement se vérifie avant tout le reste**, et l'ordre n'est écrit
+qu'à un seul endroit : `Assistant\Application\Completion`. Consentement,
+puis palier, puis réglages, puis clé — sans consentement rien n'est lu, rien
+n'est déchiffré, et l'on ne révèle même pas qu'une clé existe. Chaque appelant
+qui referait cette séquence pour son compte finirait par en intervertir deux
+lignes, un jour, sans que rien ne le signale.
+
+**La matière est passée close** (`\Closure(): string`), jamais déjà lue :
+`Completion` ne l'ouvre qu'une fois les vérifications passées. C'est ce qui
+fait tenir « sans consentement, rien n'est lu » même quand l'appelant, lui,
+ignore l'ordre des vérifications. Le port partagé `WritingAssistant` a la même
+signature, pour la même raison — et traduit `AssistantRefused` en
+`AssistantUnavailable`, un contexte appelant n'ayant pas à dépendre des
+exceptions d'Assistant.
 
 **Changer de fournisseur efface la clé et le modèle.** Une clé Anthropic n'ouvre
 rien chez OpenAI et « claude-haiku » n'y existe pas : les garder ne ferait

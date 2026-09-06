@@ -249,6 +249,11 @@ password_reset:
         ignore: 'If you did not make this request, ignore this message: nothing has changed.'
 
 obsession:
+    synthesis_write: Have the synthesis written
+    synthesis_keep: Keep
+    synthesis_discard: Discard
+    synthesis_origin: Written by the assistant from your notes. Nothing is saved until you keep it.
+    synthesis_empty: The assistant found nothing to draw from these notes.
     crumb: Obsession
     eyebrow: '{count, plural, =0 {Obsession · no notes} one {Obsession · # note} other {Obsession · # notes}}'
     what_emerges: What emerges

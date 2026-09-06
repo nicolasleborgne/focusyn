@@ -20,8 +20,10 @@
             <p class="fx-obsession-page__blurb">{{ obsession.blurb }}</p>
         {% endif %}
 
+        <p class="fx-eyebrow fx-section-title fx-obsession-page__section">{{ 'obsession.what_emerges'|trans }}</p>
+        <twig:ObsessionSynthesis slug="{{ obsession.slug }}" />
+
         {% if obsession.points is not empty %}
-            <p class="fx-eyebrow fx-section-title fx-obsession-page__section">{{ 'obsession.what_emerges'|trans }}</p>
             <ol class="fx-points">
                 {% for point in obsession.points %}
                     <li class="fx-points__item">

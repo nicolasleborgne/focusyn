@@ -180,3 +180,23 @@
     color: var(--fx-text-faint);
     text-align: right;
 }
+
+/* --- Ce qui se dégage, proposé -------------------------------------------
+   La proposition de l'assistant se distingue de ce qui est enregistré : un
+   filet à gauche, comme une citation. On lit d'abord, on garde ensuite. */
+
+.fx-synthesis {
+    margin: var(--fx-space-6) 0 var(--fx-space-10);
+}
+
+.fx-synthesis__proposal {
+    margin-top: var(--fx-space-6);
+    padding-left: var(--fx-space-6);
+    border-left: 2px solid var(--fx-accent-soft);
+}
+
+.fx-synthesis__origin {
+    margin: var(--fx-space-4) 0 var(--fx-space-5);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-faint);
+}

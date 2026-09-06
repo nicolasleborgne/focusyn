@@ -88,6 +88,9 @@ services:
     App\Shared\Application\Notebook\NoteWriter:
         alias: App\Notebook\Infrastructure\Inbox\HandlerNoteWriter
 
+    App\Shared\Application\Assistant\WritingAssistant:
+        alias: App\Assistant\Infrastructure\Notebook\PortableWritingAssistant
+
     App\Shared\Application\Notebook\ObsessionDirectory:
         alias: App\Notebook\Infrastructure\Routine\NoteObsessionDirectory
 

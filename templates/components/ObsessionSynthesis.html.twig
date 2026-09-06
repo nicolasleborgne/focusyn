@@ -1,0 +1,40 @@
+<div {{ attributes }} class="fx-synthesis">
+    {# Le bouton porte le geste, pas la promesse : « faire écrire » dit qui
+       écrit, ce que « générer » laisserait dans le vague. #}
+    <button type="button" class="fx-button fx-button--small"
+            data-action="live#action" data-live-action-param="write">
+        {{ 'obsession.synthesis_write'|trans }}
+    </button>
+
+    {% if this.error %}
+        <p class="fx-auth__error" role="alert">{{ this.error|trans }}</p>
+    {% endif %}
+
+    {% if this.proposal is not empty %}
+        <div class="fx-synthesis__proposal">
+            <ol class="fx-points">
+                {% for line in this.proposal %}
+                    <li class="fx-points__item">
+                        <span class="fx-points__number">{{ '%02d'|format(loop.index) }}</span>
+                        <span class="fx-points__text">{{ line }}</span>
+                    </li>
+                {% endfor %}
+            </ol>
+
+            <p class="fx-synthesis__origin">{{ 'obsession.synthesis_origin'|trans }}</p>
+
+            {# Rien n'est enregistré tant qu'on n'a pas gardé : ce qui est écrit
+               à la main ne s'écrase pas tout seul. #}
+            <div class="fx-field__row">
+                <button type="button" class="fx-button fx-button--small fx-button--primary"
+                        data-action="live#action" data-live-action-param="keep">
+                    {{ 'obsession.synthesis_keep'|trans }}
+                </button>
+                <button type="button" class="fx-button fx-button--small fx-button--quiet"
+                        data-action="live#action" data-live-action-param="discard">
+                    {{ 'obsession.synthesis_discard'|trans }}
+                </button>
+            </div>
+        </div>
+    {% endif %}
+</div>
