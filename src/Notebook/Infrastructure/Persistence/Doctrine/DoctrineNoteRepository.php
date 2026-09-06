@@ -82,11 +82,17 @@ final readonly class DoctrineNoteRepository implements NoteRepository
             return [];
         }
 
+        // L'écran annonce « notes · tâches · tags » : les obsessions font donc
+        // partie de la recherche. Une jointure à gauche, sinon une note sans
+        // étiquette disparaîtrait des résultats.
         /** @var list<Note> $notes */
         $notes = $this->entityManager
             ->createQuery(
-                'SELECT n FROM '.Note::class.' n'
-                .' WHERE LOWER(n.title) LIKE :needle OR LOWER(n.body) LIKE :needle'
+                'SELECT DISTINCT n FROM '.Note::class.' n'
+                .' LEFT JOIN n.obsessions o'
+                .' WHERE LOWER(n.title) LIKE :needle'
+                .' OR LOWER(n.body) LIKE :needle'
+                .' OR LOWER(o.name) LIKE :needle'
                 .' ORDER BY n.updatedAt DESC',
             )
             ->setParameter('needle', '%'.mb_strtolower($needle).'%')

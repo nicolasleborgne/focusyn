@@ -4,58 +4,13 @@
 {% set crumb = 'shell.nav.library'|trans %}
 
 {% block page %}
+    {# Pas de titre d'écran : le champ de filtre ouvre la page, comme dans la
+       maquette. Le fil d'Ariane dit déjà où l'on est. #}
     <div class="fx-app__content fx-app__content--library">
-        <h1 class="fx-heading">{{ 'shell.nav.library'|trans }}</h1>
-
         {% for message in app.flashes('success') %}
             <p class="fx-settings__notice" role="status">{{ message|trans }}</p>
         {% endfor %}
 
-        {% if obsessions is not empty %}
-            <div class="fx-library__filters">
-                <a class="fx-chip {{ currentObsession is empty ? 'fx-chip--selected' }}" href="{{ path('library') }}">
-                    {{ 'notebook.all'|trans }}
-                </a>
-                {% for obsession in obsessions %}
-                    <a class="fx-chip {{ currentObsession == obsession.slug ? 'fx-chip--selected' }}"
-                       href="{{ path('obsession_show', { slug: obsession.slug }) }}">
-                        {{ obsession.name }}
-                        <span class="fx-chip__count">{{ obsession.noteCount }}</span>
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <div class="fx-library__notes">
-            {% for note in notes %}
-                <a class="fx-note-row" href="{{ path('note_show', { id: note.id }) }}">
-                    <span class="fx-note-row__main">
-                        <span class="fx-note-row__title">{{ note.title }}</span>
-                        {% if note.excerpt is not empty %}
-                            <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
-                        {% endif %}
-                        {% if note.obsessions is not empty %}
-                            <span class="fx-note-row__tags">
-                                {% for obsession in note.obsessions %}
-                                    <span class="fx-tag">{{ obsession }}</span>
-                                {% endfor %}
-                            </span>
-                        {% endif %}
-                    </span>
-                    <span class="fx-note-row__aside">
-                        <span class="fx-note-row__meta">{{ note.updatedAt|format_date(pattern: 'd MMM', locale: app.request.locale) }}</span>
-                        <span class="fx-note-row__meta">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
-                    </span>
-                </a>
-            {% else %}
-                <div class="fx-library__empty">
-                    <p class="fx-card__help">{{ 'notebook.empty'|trans }}</p>
-                    <form method="post" action="{{ path('note_write') }}">
-                        <input type="hidden" name="_token" value="{{ csrf_token('note-write') }}">
-                        <button type="submit" class="fx-button fx-button--primary">{{ 'notebook.write_first'|trans }}</button>
-                    </form>
-                </div>
-            {% endfor %}
-        </div>
+        <twig:NoteLibrary :obsession="currentObsession" />
     </div>
 {% endblock %}

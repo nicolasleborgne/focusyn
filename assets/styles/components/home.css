@@ -1150,3 +1150,171 @@
     color: var(--fx-text-secondary);
     cursor: default;
 }
+
+/*
+ * Ce que CodeMirror n'emprunte pas à une classe : curseur, sélection, ligne
+ * active. Décrit ici plutôt que recopié en JavaScript, pour que le changement
+ * d'accent s'y applique comme partout ailleurs.
+ */
+.fx-note__editor .cm-content {
+    caret-color: var(--fx-accent);
+}
+
+.fx-note__editor .cm-cursor {
+    border-left: 2px solid var(--fx-accent);
+}
+
+.fx-note__editor .cm-selectionBackground,
+.fx-note__editor .cm-content ::selection {
+    background: var(--fx-surface-selection);
+}
+
+/* L'adresse d'un lien reste lisible mais s'efface derrière son intitulé. */
+.fx-prose__url {
+    color: var(--fx-text-disabled);
+}
+
+/*
+ * Bibliothèque : le champ de filtre ouvre l'écran.
+ *
+ * Barre oblique en préfixe, décompte à droite : il réduit une liste déjà là,
+ * il ne va rien chercher ailleurs — c'est ce qui le distingue de la recherche.
+ */
+.fx-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-5);
+    padding: var(--fx-space-5) var(--fx-space-7);
+    border: 1px solid var(--fx-border-default);
+    margin-bottom: var(--fx-space-10);
+}
+
+.fx-filter__prefix {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-disabled);
+}
+
+.fx-filter__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--fx-font-ui);
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-primary);
+}
+
+.fx-filter__input::placeholder {
+    color: var(--fx-text-disabled);
+}
+
+.fx-filter__count {
+    flex: 0 0 auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-note-row__meta--faint {
+    color: var(--fx-text-tertiary);
+}
+
+.fx-library__nothing {
+    padding: var(--fx-space-20) 0;
+    text-align: center;
+    font-size: var(--fx-size-base);
+    color: var(--fx-text-faint);
+}
+
+/*
+ * Tableau des tâches : une carte est un aperçu de liste.
+ *
+ * Case, nom, ratio ; les trois premières tâches dans l'ordre où elles ont été
+ * écrites, cochées comprises ; la jauge en bas. Une liste doit se reconnaître
+ * sans être ouverte.
+ */
+.fx-board__header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--fx-space-6);
+    margin-bottom: var(--fx-space-13);
+}
+
+.fx-board__spacer {
+    flex: 1;
+}
+
+.fx-board__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-5);
+    padding: var(--fx-space-8);
+    border: 1px solid var(--fx-border-faint);
+    text-decoration: none;
+    color: inherit;
+}
+
+.fx-board__card:hover {
+    border-color: var(--fx-border-subtle);
+    background: var(--fx-surface-hover);
+}
+
+.fx-board__head {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+}
+
+.fx-board__mark {
+    flex: 0 0 13px;
+    width: 13px;
+    height: 13px;
+    border: 1px solid var(--fx-border-contrast);
+    border-radius: var(--fx-radius-sm);
+}
+
+.fx-board__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--fx-size-base);
+    font-weight: var(--fx-weight-medium);
+    color: var(--fx-text-primary);
+}
+
+.fx-board__ratio {
+    flex: 0 0 auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-board__peek {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-2);
+}
+
+.fx-board__peek-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--fx-size-md);
+    line-height: var(--fx-leading-snug);
+    color: var(--fx-text-tertiary);
+}
+
+.fx-board__peek-item--done {
+    color: var(--fx-text-disabled);
+    text-decoration: line-through;
+    text-decoration-color: var(--fx-line-strike);
+}
+
+.fx-board__meter {
+    margin-top: var(--fx-space-1);
+}

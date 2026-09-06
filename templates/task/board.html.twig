@@ -5,8 +5,12 @@
 
 {% block page %}
     <div class="fx-app__content fx-app__content--board">
+        {# Titre, décompte en capitales, puis le bouton poussé à droite : la
+           rangée d'en-tête de la maquette. #}
         <div class="fx-board__header">
             <h1 class="fx-heading">{{ 'shell.nav.tasks'|trans }}</h1>
+            <span class="fx-eyebrow">{{ 'task.board_summary'|trans({ open: openCount, lists: lists|length }) }}</span>
+            <span class="fx-board__spacer"></span>
             <form method="post" action="{{ path('task_list_open') }}">
                 <input type="hidden" name="_token" value="{{ csrf_token('task-list-open') }}">
                 <button type="submit" class="fx-button fx-button--small">{{ 'task.new_list'|trans }}</button>
@@ -24,21 +28,24 @@
         {% else %}
             <div class="fx-board">
                 {% for list in lists %}
-                    <a class="fx-card fx-board__card" href="{{ path('task_list_show', { id: list.id }) }}">
-                        <div class="fx-card__header">
-                            <span class="fx-card__title">{{ list.name }}</span>
-                            <span class="fx-note-row__meta">{{ list.completedItems|length }}/{{ (list.openItems|length) + (list.completedItems|length) }}</span>
-                        </div>
+                    {# La carte montre le début de la liste, pas ce qu'il en
+                       reste : une tâche cochée y garde sa place, barrée. #}
+                    <a class="fx-board__card" href="{{ path('task_list_show', { id: list.id }) }}">
+                        <span class="fx-board__head">
+                            <span class="fx-board__mark" aria-hidden="true"></span>
+                            <span class="fx-board__name">{{ list.name }}</span>
+                            <span class="fx-board__ratio">{{ list.completedItems|length }}/{{ list.items|length }}</span>
+                        </span>
 
-                        <div class="fx-meter"><span class="fx-meter__value" style="width: {{ list.progress }}%"></span></div>
-
-                        <ul class="fx-board__peek">
-                            {% for item in list.openItems|slice(0, 3) %}
-                                <li class="fx-board__peek-item">{{ item.text }}</li>
-                            {% else %}
-                                <li class="fx-board__peek-item fx-board__peek-item--done">{{ 'task.all_done'|trans }}</li>
+                        <span class="fx-board__peek">
+                            {% for item in list.peek %}
+                                <span class="fx-board__peek-item {{ item.done ? 'fx-board__peek-item--done' }}">{{ item.text }}</span>
                             {% endfor %}
-                        </ul>
+                        </span>
+
+                        <span class="fx-meter fx-board__meter">
+                            <span class="fx-meter__value" style="width: {{ list.progress }}%"></span>
+                        </span>
                     </a>
                 {% endfor %}
             </div>

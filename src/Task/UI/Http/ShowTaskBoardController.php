@@ -27,6 +27,7 @@ final class ShowTaskBoardController extends AbstractController
         return $this->render('task/board.html.twig', [
             'section' => ShellSection::Tasks,
             'lists' => $this->board->board(),
+            'openCount' => $this->board->openTaskCount(),
         ]);
     }
 }

@@ -14,13 +14,12 @@
     {% set notes = this.results %}
     {% set tasks = this.taskResults %}
 
-    {% if this.hasSearched %}
-        <p class="fx-search__scope">
-            <span>{{ 'notebook.search.results'|trans({ count: notes|length + tasks|length }) }}</span>
-            <span>{{ 'notebook.search.scopes'|trans }}</span>
-        </p>
+    <p class="fx-search__scope">
+        <span>{{ 'notebook.search.results'|trans({ count: notes|length + tasks|length }) }}</span>
+        <span>{{ 'notebook.search.scopes'|trans }}</span>
+    </p>
 
-        {% if tasks is not empty %}
+    {% if tasks is not empty %}
             <p class="fx-search__band">
                 <span class="fx-eyebrow">{{ 'shell.nav.tasks'|trans }}</span>
                 <span class="fx-search__rule"></span>
@@ -36,7 +35,7 @@
             {% endfor %}
         {% endif %}
 
-        {% if notes is not empty %}
+    {% if notes is not empty %}
             <p class="fx-search__band">
                 <span class="fx-eyebrow">{{ 'notebook.notes'|trans }}</span>
                 <span class="fx-search__rule"></span>
@@ -56,8 +55,7 @@
             {% endfor %}
         {% endif %}
 
-        {% if notes is empty and tasks is empty %}
-            <p class="fx-search__empty">{{ 'notebook.search.nothing'|trans }}</p>
-        {% endif %}
+    {% if notes is empty and tasks is empty %}
+        <p class="fx-search__empty">{{ 'notebook.search.nothing'|trans }}</p>
     {% endif %}
 </div>

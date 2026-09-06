@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Notebook\UI\Http;
 
-use App\Notebook\Application\Query\NotebookQuery;
 use App\Shared\Application\Shell\ShellSection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,11 +12,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ShowLibraryController extends AbstractController
 {
-    public function __construct(
-        private readonly NotebookQuery $notebook,
-    ) {
-    }
-
     #[Route(
         path: ['fr' => '/bibliotheque', 'en' => '/library'],
         name: 'library',
@@ -25,15 +19,11 @@ final class ShowLibraryController extends AbstractController
     )]
     public function __invoke(Request $request): Response
     {
-        $obsession = $request->query->getString('obsession');
-
+        // Le contenu est porté par un Live Component : filtrer réduit une
+        // liste déjà affichée, sans recharger l'écran.
         return $this->render('notebook/library.html.twig', [
             'section' => ShellSection::Library,
-            'notes' => '' === $obsession
-                ? $this->notebook->recent()
-                : $this->notebook->taggedWith($obsession),
-            'obsessions' => $this->notebook->obsessions(),
-            'currentObsession' => $obsession,
+            'currentObsession' => $request->query->getString('obsession'),
         ]);
     }
 }

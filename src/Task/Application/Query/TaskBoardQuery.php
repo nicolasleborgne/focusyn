@@ -39,6 +39,7 @@ final readonly class TaskBoardQuery
         return new TaskListView(
             id: $list->id()->toString(),
             name: $list->name()->toString(),
+            items: array_map($this->item(...), $list->items()),
             openItems: array_map($this->item(...), $list->openItems()),
             completedItems: array_map($this->item(...), $list->completedItems()),
             progress: $list->progress(),

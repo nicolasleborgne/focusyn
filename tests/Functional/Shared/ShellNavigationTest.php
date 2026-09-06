@@ -93,7 +93,7 @@ final class ShellNavigationTest extends WebTestCase
         $this->logIn($client);
 
         // Plus aucun écran d'attente : les cinq destinations sont construites.
-        foreach (['/' => 'Reprendre le fil', '/bibliotheque' => 'Bibliothèque', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
+        foreach (['/' => 'Reprendre le fil', '/taches' => 'Tâches', '/reglages' => 'Réglages'] as $uri => $heading) {
             $crawler = $client->request('GET', $uri);
 
             self::assertResponseIsSuccessful(\sprintf('%s doit répondre.', $uri));
@@ -104,14 +104,16 @@ final class ShellNavigationTest extends WebTestCase
             );
         }
 
-        // La recherche n'a pas de titre : le champ en tient lieu, et c'est son
-        // invite qui annonce l'écran.
-        $crawler = $client->request('GET', '/recherche');
+        // Ni la recherche ni la bibliothèque n'ont de titre : leur champ en
+        // tient lieu, et c'est son invite qui annonce l'écran.
+        foreach ([
+            '/recherche' => ['.fx-search__input', 'Chercher partout'],
+            '/bibliotheque' => ['.fx-filter__input', 'Filtrer la bibliothèque…'],
+        ] as $uri => [$selector, $placeholder]) {
+            $crawler = $client->request('GET', $uri);
 
-        self::assertResponseIsSuccessful();
-        self::assertSame(
-            'Chercher dans toutes les notes',
-            $crawler->filter('.fx-search__input')->attr('placeholder'),
-        );
+            self::assertResponseIsSuccessful(\sprintf('%s doit répondre.', $uri));
+            self::assertSame($placeholder, $crawler->filter($selector)->attr('placeholder'), $uri);
+        }
     }
 }

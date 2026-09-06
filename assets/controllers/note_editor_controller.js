@@ -63,7 +63,17 @@ const proseLines = ViewPlugin.fromClass(
         }
 
         update(update) {
-            if (update.docChanged || update.viewportChanged) {
+            /*
+             * L'arbre syntaxique se construit par morceaux, après la frappe :
+             * ne se fier qu'à `docChanged` laisserait une ligne fraîchement
+             * transformée en titre gardée pour un paragraphe jusqu'à la frappe
+             * suivante. On repasse aussi quand l'analyse a avancé.
+             */
+            if (
+                update.docChanged
+                || update.viewportChanged
+                || syntaxTree(update.startState) !== syntaxTree(update.state)
+            ) {
                 this.decorations = this.build(update.view);
             }
         }
@@ -97,40 +107,40 @@ const proseLines = ViewPlugin.fromClass(
     { decorations: (plugin) => plugin.decorations },
 );
 
-const prose = (token) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-
+/*
+ * Coloration : des **classes**, pas des valeurs.
+ *
+ * Chaque fragment reçoit la classe que porte déjà l'aperçu, si bien que la
+ * feuille de style décide seule. C'est ce qui manquait : les marques markdown
+ * (`#`, `>`, `-`, `**`) sont en monospace dans la maquette et dans l'aperçu, et
+ * restaient en serif dans l'éditeur.
+ *
+ * Second bénéfice : les réglages d'affichage — opacité des marques, prose en
+ * serif ou non — s'appliquent désormais à l'éditeur sans qu'il ait à les lire,
+ * alors qu'une valeur recopiée en JavaScript était figée à l'ouverture.
+ */
 const focusynHighlight = () =>
     HighlightStyle.define([
-        // Les marques markdown (#, -, >, **) restent visibles mais s'effacent.
-        { tag: tags.processingInstruction, color: prose('--fx-ink-100'), opacity: prose('--fx-markdown-mark-opacity') },
-        // Les tailles de titre viennent de la classe de ligne, comme dans
-        // l'aperçu : ici, seulement ce qui est propre au fragment.
-        { tag: tags.heading1, color: prose('--fx-text-title') },
-        { tag: tags.heading2, color: prose('--fx-text-title') },
-        { tag: tags.heading3, color: prose('--fx-text-title') },
-        { tag: tags.strong, fontWeight: prose('--fx-weight-strong'), color: prose('--fx-text-title') },
-        { tag: tags.emphasis, fontStyle: 'italic' },
-        { tag: tags.quote, fontStyle: 'italic', color: prose('--fx-text-quote') },
-        { tag: tags.monospace, fontFamily: prose('--fx-family-mono'), fontSize: '0.85em' },
-        { tag: tags.link, textDecoration: 'underline', textUnderlineOffset: '3px' },
-        { tag: tags.url, color: prose('--fx-text-disabled') },
-        { tag: tags.contentSeparator, color: prose('--fx-text-disabled') },
+        { tag: tags.processingInstruction, class: 'fx-prose__mark' },
+        { tag: tags.strong, class: 'fx-prose__strong' },
+        { tag: tags.emphasis, class: 'fx-prose__emphasis' },
+        { tag: tags.monospace, class: 'fx-prose__code' },
+        { tag: tags.link, class: 'fx-prose__link' },
+        { tag: tags.url, class: 'fx-prose__url' },
     ]);
 
+/*
+ * Le thème ne garde que ce que CodeMirror ne sait pas prendre d'une feuille de
+ * style : le reste vit dans `components/home.css`, avec les autres décisions
+ * visuelles.
+ */
 const focusynTheme = () =>
     EditorView.theme({
-        '&': {
-            fontFamily: 'inherit',
-            fontSize: prose('--fx-prose-body'),
-            color: prose('--fx-text-body'),
-            backgroundColor: 'transparent',
-        },
+        '&': { fontFamily: 'inherit', fontSize: 'inherit', backgroundColor: 'transparent' },
         '&.cm-focused': { outline: 'none' },
-        '.cm-content': { padding: '0', lineHeight: prose('--fx-leading-prose'), caretColor: prose('--fx-accent') },
+        '.cm-content': { padding: '0' },
         '.cm-line': { padding: '0' },
         '.cm-activeLine': { backgroundColor: 'transparent' },
-        '.cm-cursor': { borderLeftColor: prose('--fx-accent'), borderLeftWidth: '2px' },
-        '.cm-selectionBackground, ::selection': { backgroundColor: prose('--fx-surface-selection') },
         '.cm-scroller': { fontFamily: 'inherit', lineHeight: 'inherit' },
     });
 

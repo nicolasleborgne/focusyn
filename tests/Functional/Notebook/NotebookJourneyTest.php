@@ -20,7 +20,7 @@ final class NotebookJourneyTest extends WebTestCase
     use LogsIn;
     use ResetDatabase;
 
-    public function testAnEmptyLibraryInvitesToWrite(): void
+    public function testAnEmptyLibraryStillOffersItsFilter(): void
     {
         $client = self::createClient();
         $this->logIn($client);
@@ -28,7 +28,10 @@ final class NotebookJourneyTest extends WebTestCase
         $crawler = $client->request('GET', '/bibliotheque');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Aucune note', $crawler->filter('.fx-library__empty')->text());
+        // Le champ de filtre ouvre l'écran, vide ou non, et le décompte le dit.
+        self::assertCount(1, $crawler->filter('.fx-filter__input'));
+        self::assertStringContainsString('aucune note', $crawler->filter('.fx-filter__count')->text());
+        self::assertStringContainsString('Rien ici', $crawler->filter('.fx-library__nothing')->text());
     }
 
     public function testWritingANoteOpensTheEditorOnIt(): void
@@ -99,7 +102,7 @@ final class NotebookJourneyTest extends WebTestCase
         self::assertStringContainsString('Deux sommeils', $crawler->filter('.fx-hit__title')->text());
     }
 
-    public function testSearchShowsNothingUntilSomethingIsTyped(): void
+    public function testSearchListsEverythingBeforeAnythingIsTyped(): void
     {
         $client = self::createClient();
         $this->logIn($client);
@@ -107,11 +110,10 @@ final class NotebookJourneyTest extends WebTestCase
 
         $crawler = $client->request('GET', '/recherche');
 
-        // Écran nu : le champ tient lieu de titre, et rien d'autre ne s'affiche
-        // tant qu'on n'a pas tapé.
-        self::assertCount(0, $crawler->filter('.fx-hit'));
-        self::assertCount(0, $crawler->filter('.fx-search__scope'));
-        self::assertCount(1, $crawler->filter('.fx-search__input'));
+        // Le carnet est déroulé d'emblée : le champ resserre une liste déjà
+        // là, il ne l'invoque pas.
+        self::assertCount(1, $crawler->filter('.fx-hit'));
+        self::assertStringContainsString('Deux sommeils', $crawler->filter('.fx-hit__title')->text());
     }
 
     public function testDeletingRemovesTheNoteFromTheLibrary(): void

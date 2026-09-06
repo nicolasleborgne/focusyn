@@ -224,6 +224,20 @@ validation explicite dans `SaveNoteBodyController`.
 Les couleurs et tailles de l'éditeur sont lues depuis les variables CSS du
 design system : aucune valeur en dur dans le JavaScript.
 
+**L'éditeur et l'aperçu sont le même rendu.** C'est le parti pris de la
+maquette : chaque ligne de CodeMirror reçoit la classe `fx-prose__line--*` que
+porte l'aperçu, et chaque fragment la classe `fx-prose__mark|strong|emphasis…`.
+La feuille de style décide seule — **rien n'est recopié en JavaScript**. Les
+marques markdown sont en monospace des deux côtés ; les avoir laissées en serif
+dans l'éditeur était le défaut le plus visible du projet. Conséquence heureuse :
+l'opacité des marques et le choix serif/sans s'appliquent à l'éditeur sans qu'il
+les lise, alors qu'une valeur lue à l'ouverture restait figée.
+
+La nature d'une ligne vient de l'arbre syntaxique de CodeMirror, jamais d'une
+expression régulière — et la décoration se recalcule aussi quand *l'analyse
+avance*, pas seulement quand le texte change : sans cela une ligne devenue titre
+attendait la frappe suivante pour le devenir à l'écran.
+
 **Le panneau d'aperçu est rendu par le serveur**, jamais reconstruit côté
 client : `MarkdownOutline` découpe le corps en lignes, et le point d'entrée de
 sauvegarde renvoie l'aperçu déjà rendu, que le contrôleur Stimulus substitue.
@@ -365,6 +379,11 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   `$client->disableReboot()` avant de le muter.
 - **Le rendu Twig échappe les apostrophes** (`n&#039;est`) : une assertion de
   test ne doit pas s'ancrer sur un fragment qui en contient.
+- **Deux champs, deux verbes** : la bibliothèque *filtre* une liste déjà
+  affichée (`NoteLibrary`), la recherche *cherche* — et déroule elle aussi tout
+  le carnet au départ. Ni l'un ni l'autre n'a de titre d'écran : le champ en
+  tient lieu, comme dans la maquette. Un test qui identifie ces écrans doit donc
+  s'ancrer sur l'invite du champ, pas sur un `<h1>`.
 - **Un `<a class="fx-button">` doit rester non souligné** : `base/typography.css`
   souligne tous les liens, ce qui est juste pour la prose et faux pour une
   commande. `.fx-button` neutralise la règle ; un nouveau composant-lien devra

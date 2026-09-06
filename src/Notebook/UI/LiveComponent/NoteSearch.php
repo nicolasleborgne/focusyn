@@ -33,10 +33,19 @@ final class NoteSearch
     ) {
     }
 
-    /** @return list<NoteSummary> */
+    /**
+     * Tout est listé au départ ; taper réduit.
+     *
+     * Un écran de recherche vide qui ne montre rien n'apprend rien : la
+     * maquette y déroule le carnet entier, et le champ le resserre.
+     *
+     * @return list<NoteSummary>
+     */
     public function results(): array
     {
-        return '' === trim($this->query) ? [] : $this->notebook->search($this->query);
+        return '' === trim($this->query)
+            ? $this->notebook->recent()
+            : $this->notebook->search($this->query);
     }
 
     /**
@@ -48,10 +57,5 @@ final class NoteSearch
     public function taskResults(): array
     {
         return '' === trim($this->query) ? [] : $this->tasks->matching($this->query);
-    }
-
-    public function hasSearched(): bool
-    {
-        return '' !== trim($this->query);
     }
 }

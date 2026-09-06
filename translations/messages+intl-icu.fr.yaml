@@ -149,7 +149,7 @@ settings:
 
 notebook:
     untitled: Sans titre
-    all: Toutes
+    all: Tout
     empty: Aucune note pour l'instant.
     write_first: Écrire la première
     delete: Supprimer la note
@@ -163,10 +163,12 @@ notebook:
     title_label: Titre de la note
     title_required: Une note doit avoir un titre.
     reading_minutes: '{count, plural, one {# min de lecture} other {# min de lecture}}'
+    filter: Filtrer la bibliothèque…
+    nothing_here: Rien ici. Essayez un autre mot.
     notes: Notes
     note_count: '{count, plural, =0 {aucune note} one {# note} other {# notes}}'
     search:
-        placeholder: Chercher dans toutes les notes
+        placeholder: Chercher partout
         scopes: notes · tâches · tags
         results: '{count, plural, =0 {aucun résultat} one {# résultat} other {# résultats}}'
         nothing: Aucun résultat.
@@ -178,6 +180,7 @@ notebook:
 
 task:
     completed_heading: Faites
+    board_summary: '{open, plural, =0 {rien d''ouvert} one {# ouverte} other {# ouvertes}} · {lists, plural, one {# liste} other {# listes}}'
     count: '{count, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}'
     untitled_list: Nouvelle liste
     new_list: Nouvelle liste

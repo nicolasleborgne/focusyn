@@ -162,10 +162,12 @@ notebook:
     title_label: Note title
     title_required: A note must have a title.
     reading_minutes: '{count, plural, one {# min read} other {# min read}}'
+    filter: Filter the library…
+    nothing_here: Nothing here. Try another word.
     notes: Notes
     note_count: '{count, plural, =0 {no notes} one {# note} other {# notes}}'
     search:
-        placeholder: Search every note
+        placeholder: Search everywhere
         scopes: notes · tasks · tags
         results: '{count, plural, =0 {no results} one {# result} other {# results}}'
         nothing: No results.
@@ -177,6 +179,7 @@ notebook:
 
 task:
     completed_heading: Done
+    board_summary: '{open, plural, =0 {nothing open} one {# open} other {# open}} · {lists, plural, one {# list} other {# lists}}'
     count: '{count, plural, =0 {no tasks} one {# task} other {# tasks}}'
     untitled_list: New list
     new_list: New list

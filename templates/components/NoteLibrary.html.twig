@@ -1,0 +1,53 @@
+{% set notes = this.notes %}
+
+<div {{ attributes }} class="fx-library">
+    {# Le champ réduit une liste déjà affichée : d'où la barre oblique en
+       préfixe, et le décompte à droite qui suit la frappe. #}
+    <div class="fx-filter">
+        <span class="fx-filter__prefix" aria-hidden="true">/</span>
+        <input type="text" class="fx-filter__input"
+               placeholder="{{ 'notebook.filter'|trans }}"
+               aria-label="{{ 'notebook.filter'|trans }}"
+               data-model="debounce(200)|query"
+               value="{{ query }}">
+        <span class="fx-filter__count">{{ 'notebook.note_count'|trans({ count: notes|length }) }}</span>
+    </div>
+
+    <div class="fx-library__filters">
+        <button type="button" class="fx-chip {{ obsession is empty ? 'fx-chip--selected' }}"
+                data-action="live#action" data-live-action-param="$set"
+                data-live-obsession-param="">{{ 'notebook.all'|trans }}</button>
+
+        {% for tag in this.obsessions %}
+            <button type="button" class="fx-chip {{ obsession == tag.slug ? 'fx-chip--selected' }}"
+                    data-action="live#action" data-live-action-param="$set"
+                    data-live-obsession-param="{{ tag.slug }}">{{ tag.name }}</button>
+        {% endfor %}
+    </div>
+
+    <div class="fx-library__notes">
+        {% for note in notes %}
+            <a class="fx-note-row" href="{{ path('note_show', { id: note.id }) }}">
+                <span class="fx-note-row__main">
+                    <span class="fx-note-row__title">{{ note.title }}</span>
+                    {% if note.excerpt is not empty %}
+                        <span class="fx-note-row__excerpt">{{ note.excerpt }}</span>
+                    {% endif %}
+                    {% if note.obsessions is not empty %}
+                        <span class="fx-note-row__tags">
+                            {% for obsession in note.obsessions %}
+                                <span class="fx-tag">{{ obsession }}</span>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                </span>
+                <span class="fx-note-row__aside">
+                    <span class="fx-note-row__meta">{{ note.updatedAt|fx_ago }}</span>
+                    <span class="fx-note-row__meta fx-note-row__meta--faint">{{ 'home.words'|trans({ count: note.wordCount }) }}</span>
+                </span>
+            </a>
+        {% else %}
+            <p class="fx-library__nothing">{{ 'notebook.nothing_here'|trans }}</p>
+        {% endfor %}
+    </div>
+</div>
