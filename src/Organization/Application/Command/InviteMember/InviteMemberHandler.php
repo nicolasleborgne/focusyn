@@ -17,6 +17,8 @@ use App\Organization\Domain\Model\OrganizationRole;
 use App\Organization\Domain\Repository\InvitationRepository;
 use App\Organization\Domain\Repository\OrganizationRepository;
 use App\Shared\Application\Account\CurrentAccount;
+use App\Shared\Application\Billing\Entitlements;
+use App\Shared\Application\Billing\PlanLimitReached;
 use App\Shared\Application\Tenant\CurrentTenant;
 use InvalidArgumentException;
 use Psr\Clock\ClockInterface;
@@ -33,12 +35,17 @@ final readonly class InviteMemberHandler
         private InvitationLink $links,
         private CurrentTenant $tenant,
         private CurrentAccount $account,
+        private Entitlements $entitlements,
         private ClockInterface $clock,
     ) {
     }
 
     public function __invoke(InviteMember $command): void
     {
+        if (!$this->entitlements->allowsTeams()) {
+            throw PlanLimitReached::teams();
+        }
+
         $organizationId = OrganizationId::fromString($this->tenant->id()->toString());
         $organization = $this->organizations->ofId($organizationId)
             ?? throw new InvalidArgumentException('Organisation introuvable.');

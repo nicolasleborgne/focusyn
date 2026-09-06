@@ -11,6 +11,7 @@ use App\Assistant\Application\Provider\ProviderRegistry;
 use App\Assistant\Domain\Model\OwnerId;
 use App\Assistant\Domain\Repository\AssistantSettingsRepository;
 use App\Shared\Application\Account\CurrentAccount;
+use App\Shared\Application\Billing\Entitlements;
 use App\Shared\Application\Notebook\NoteSource;
 use App\Shared\Application\Privacy\ConsentGate;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -38,6 +39,7 @@ final readonly class AskAssistantHandler
         private NoteSource $notes,
         private ConsentGate $consent,
         private CurrentAccount $account,
+        private Entitlements $entitlements,
     ) {
     }
 
@@ -47,6 +49,12 @@ final readonly class AskAssistantHandler
 
         if (!$this->consent->allows('assistant', $accountId)) {
             throw new AssistantRefused('assistant.error.no_consent');
+        }
+
+        // Après le consentement, avant la clé : l'ordre importe peu ici, mais
+        // rien ne doit être déchiffré pour une organisation qui n'y a pas droit.
+        if (!$this->entitlements->allowsAssistant()) {
+            throw new AssistantRefused('billing.limit.assistant');
         }
 
         $settings = $this->settings->ofOwner(OwnerId::fromString($accountId));

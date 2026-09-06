@@ -60,6 +60,9 @@ security:
         # Une invitation se découvre avant d'avoir un compte : l'écran dit de
         # quoi il retourne, puis renvoie vers la connexion ou l'inscription.
         - { path: '^/invitations/', roles: PUBLIC_ACCESS }
+        # Le prestataire de paiement n'a pas de session : c'est la signature de
+        # sa requête qui l'authentifie, vérifiée dans le contrôleur.
+        - { path: '^/webhooks/stripe$', roles: PUBLIC_ACCESS }
         # Le flux d'agenda : un calendrier ne se connecte pas, il récupère une
         # adresse. C'est le jeton, long et renouvelable, qui fait foi.
         - { path: '^/(calendrier|calendar)/[A-Za-z0-9_-]{43}\.ics$', roles: PUBLIC_ACCESS }

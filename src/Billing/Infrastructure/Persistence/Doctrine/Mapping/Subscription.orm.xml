@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!--
+        Pas de cloisonnement Doctrine : les droits sont interrogés à chaque
+        requête, y compris là où l'organisation courante n'est pas encore
+        établie, et par un webhook qui n'a pas de session du tout. La colonne
+        organization_id est donc une donnée, pas un discriminant de filtre.
+    -->
+    <entity name="App\Billing\Domain\Model\Subscription" table="subscriptions">
+        <id name="id" type="subscription_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="organizationId" type="tenant_id" column="organization_id" unique="true"/>
+        <field name="plan" type="string" column="plan" length="20"
+               enum-type="App\Billing\Domain\Model\Plan"/>
+        <field name="status" type="string" column="status" length="20"
+               enum-type="App\Billing\Domain\Model\SubscriptionStatus"/>
+        <field name="trialEndsAt" type="datetime_immutable" column="trial_ends_at"/>
+        <field name="periodEndsAt" type="datetime_immutable" column="period_ends_at" nullable="true"/>
+        <field name="seats" type="integer" column="seats"/>
+        <field name="customerReference" type="string" column="customer_reference" length="80" nullable="true"/>
+        <field name="subscriptionReference" type="string" column="subscription_reference" length="80" nullable="true" unique="true"/>
+    </entity>
+</doctrine-mapping>

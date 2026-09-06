@@ -7,6 +7,12 @@ time:
     last_week: la semaine dernière
     weeks: 'il y a {count, plural, one {# sem.} other {# sem.}}'
     months: 'il y a {count, plural, one {# mois} other {# mois}}'
+    past: passée
+    tomorrow: demain
+    in_minutes: 'dans {count, plural, one {# min} other {# min}}'
+    in_hours: 'dans {count, plural, one {# h} other {# h}}'
+    in_days: 'dans {count, plural, one {# jour} other {# jours}}'
+    in_months: 'dans {count, plural, one {# mois} other {# mois}}'
 
 common:
     cancel: Annuler
@@ -90,6 +96,8 @@ settings:
     account_help: Identifiant de connexion. Le changer demande une confirmation depuis la nouvelle adresse.
     password_help: Un lien de réinitialisation part sur votre adresse.
     password_reset: Réinitialiser
+    billing_help: Palier, essai, carte et factures.
+    billing_open: Voir l'abonnement
     team:
         label: Espaces et membres
         help: Ouvrir une équipe, inviter quelqu'un, changer d'espace.
@@ -497,3 +505,34 @@ email_change:
         intro: 'Quelqu''un vient de demander à remplacer votre adresse de connexion par {email}.'
         nothing_yet: 'Rien n''a changé pour l''instant : le changement n''aura lieu que si le lien envoyé à cette adresse est suivi.'
         if_not_you: Si ce n'est pas vous, changez votre mot de passe sans attendre et fermez les sessions ouvertes.
+
+billing:
+    heading: Abonnement
+    current: Palier en cours
+    plans: Changer de palier
+    choose: Choisir
+    current_plan: En cours
+    manage: Carte et factures
+    seats: '· {count, plural, one {# place} other {# places}}'
+    trial_until: 'Essai en cours, {when}. Aucune carte demandée.'
+    renews: 'Renouvellement {when}.'
+    cancelled_until: 'Résilié. Ce qui est payé court jusqu''à son terme, {when}.'
+    past_due: >-
+        Un prélèvement a échoué. Rien n'est perdu : le carnet reste lisible et
+        exportable, et les fonctions payantes se rouvriront dès la
+        régularisation.
+    not_configured: Le paiement n'est pas configuré sur cette instance. L'essai puis le palier gratuit fonctionnent normalement.
+    unavailable: Le prestataire de paiement n'a pas répondu. Réessayez dans un instant.
+    notes_used: '{used} notes sur {allowance}'
+    notes_help: Au-delà, l'écriture s'arrête. Rien n'est effacé, tout reste lisible et exportable.
+    plan:
+        free: Gratuit
+        free_help: Cinquante notes, sans assistant ni équipe.
+        personal: Personnel
+        personal_help: Notes sans limite, assistant d'écriture, équipes. Prix fixe.
+        team: Équipe
+        team_help: Le personnel, facturé par membre.
+    limit:
+        notes: Le palier gratuit s'arrête à cinquante notes. Rien n'est perdu — passez à un palier supérieur pour continuer d'écrire.
+        assistant: L'assistant d'écriture demande un abonnement.
+        teams: Ouvrir une équipe ou inviter quelqu'un demande un abonnement.

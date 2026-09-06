@@ -1400,3 +1400,14 @@
 .fx-invitation__alternative {
     margin-top: var(--fx-space-4);
 }
+
+/* Abonnement : la jauge du plafond, et la note d'indisponibilité. */
+.fx-billing__meter {
+    flex: 0 0 140px;
+}
+
+.fx-billing__note {
+    max-width: 58ch;
+    margin-top: var(--fx-space-6);
+    line-height: var(--fx-leading-relaxed);
+}

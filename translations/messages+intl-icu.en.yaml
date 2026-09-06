@@ -7,6 +7,12 @@ time:
     last_week: last week
     weeks: '{count, plural, one {# wk ago} other {# wk ago}}'
     months: '{count, plural, one {# mo ago} other {# mo ago}}'
+    past: past
+    tomorrow: tomorrow
+    in_minutes: 'in {count, plural, one {# min} other {# min}}'
+    in_hours: 'in {count, plural, one {# h} other {# h}}'
+    in_days: 'in {count, plural, one {# day} other {# days}}'
+    in_months: 'in {count, plural, one {# month} other {# months}}'
 
 common:
     cancel: Cancel
@@ -89,6 +95,8 @@ settings:
     account_help: Sign-in identifier. Changing it needs a confirmation from the new address.
     password_help: A reset link goes out to your address.
     password_reset: Reset
+    billing_help: Plan, trial, card and invoices.
+    billing_open: View the subscription
     team:
         label: Spaces and members
         help: Open a team, invite someone, switch space.
@@ -490,3 +498,33 @@ email_change:
         intro: 'Someone has just asked to replace your sign-in address with {email}.'
         nothing_yet: 'Nothing has changed yet: the change only happens if the link sent to that address is followed.'
         if_not_you: If this was not you, change your password right away and close your open sessions.
+
+billing:
+    heading: Subscription
+    current: Current plan
+    plans: Change plan
+    choose: Choose
+    current_plan: Current
+    manage: Card and invoices
+    seats: '· {count, plural, one {# seat} other {# seats}}'
+    trial_until: 'Trial running, {when}. No card asked for.'
+    renews: 'Renews {when}.'
+    cancelled_until: 'Cancelled. What is paid runs to its term, {when}.'
+    past_due: >-
+        A payment failed. Nothing is lost: the notebook stays readable and
+        exportable, and paid features reopen as soon as it is settled.
+    not_configured: Payment is not configured on this instance. The trial and the free plan work as usual.
+    unavailable: The payment provider did not answer. Try again shortly.
+    notes_used: '{used} notes out of {allowance}'
+    notes_help: Past that, writing stops. Nothing is erased; everything stays readable and exportable.
+    plan:
+        free: Free
+        free_help: Fifty notes, no assistant, no teams.
+        personal: Personal
+        personal_help: Unlimited notes, writing assistant, teams. Flat price.
+        team: Team
+        team_help: The personal plan, billed per member.
+    limit:
+        notes: The free plan stops at fifty notes. Nothing is lost — move up a plan to keep writing.
+        assistant: The writing assistant needs a subscription.
+        teams: Opening a team or inviting someone needs a subscription.

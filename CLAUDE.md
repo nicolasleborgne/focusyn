@@ -167,6 +167,25 @@ l'exception métier, pas une exception de transport.
 `event.bus` (un fait acquis, zéro à N gestionnaires). Les dépôts publient les
 événements d'un agrégat **après** le flush.
 
+**Abonnement.** Un par organisation, y compris l'espace personnel : c'est
+l'organisation qui délimite ce qu'on voit, donc ce qui se facture. Trois
+paliers — gratuit (cinquante notes, ni assistant ni équipe), personnel à prix
+fixe, équipe au membre. Toute organisation naît avec quatorze jours d'essai sur
+le palier personnel, sans carte.
+
+**Tout tient dans `Subscription::entitledPlan($now)`** : essai fini, paiement
+échoué, période dépassée donnent la même réponse — le gratuit. **Jamais rien de
+moins.** Un plafond arrête l'écriture ; il ne rend jamais un carnet illisible ni
+inexportable. Les autres contextes interrogent le port partagé `Entitlements`,
+et `PlanLimitReached` est traduit en message par `PlanLimitListener` plutôt que
+rattrapé dans chaque contrôleur.
+
+**Le prestataire fait foi sur l'état commercial** : prorata, relances, cartes
+expirées. On ne recalcule rien, on enregistre ce que le webhook signé raconte —
+et l'on répond 200 même à un événement qu'on ignore, sans quoi Stripe le
+réessaierait indéfiniment. Le paiement non configuré n'empêche rien : l'essai
+puis le gratuit fonctionnent, et l'écran cache ses boutons.
+
 **Équipes.** Une organisation d'équipe s'ouvre par n'importe qui, qui en devient
 propriétaire ; l'espace personnel créé à l'inscription ne s'invite ni ne se
 partage. Les rôles passent par `OrganizationVoter` (`MANAGE_MEMBERS`,

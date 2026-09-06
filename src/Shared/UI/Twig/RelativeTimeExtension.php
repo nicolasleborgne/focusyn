@@ -30,7 +30,10 @@ final class RelativeTimeExtension extends AbstractExtension
 
     public function getFilters(): array
     {
-        return [new TwigFilter('fx_ago', $this->ago(...))];
+        return [
+            new TwigFilter('fx_ago', $this->ago(...)),
+            new TwigFilter('fx_until', $this->until(...)),
+        ];
     }
 
     public function ago(DateTimeImmutable $moment): string
@@ -49,6 +52,32 @@ final class RelativeTimeExtension extends AbstractExtension
             $days < 14 => $this->say('time.last_week'),
             $days < 60 => $this->say('time.weeks', intdiv($days, 7)),
             default => $this->say('time.months', max(1, intdiv($days, 30))),
+        };
+    }
+
+    /**
+     * L'autre sens : « dans 12 jours », « demain ».
+     *
+     * Une échéance passée n'est pas rendue au futur — elle est dite passée,
+     * ce qui est plus utile que « dans -3 jours ».
+     */
+    public function until(DateTimeImmutable $moment): string
+    {
+        $seconds = $moment->getTimestamp() - $this->clock->now()->getTimestamp();
+
+        if ($seconds <= 0) {
+            return $this->say('time.past');
+        }
+
+        $hours = intdiv($seconds, 3600);
+        $days = intdiv($hours, 24);
+
+        return match (true) {
+            $hours < 1 => $this->say('time.in_minutes', max(1, intdiv($seconds, 60))),
+            $days < 1 => $this->say('time.in_hours', $hours),
+            1 === $days => $this->say('time.tomorrow'),
+            $days < 31 => $this->say('time.in_days', $days),
+            default => $this->say('time.in_months', max(1, intdiv($days, 30))),
         };
     }
 

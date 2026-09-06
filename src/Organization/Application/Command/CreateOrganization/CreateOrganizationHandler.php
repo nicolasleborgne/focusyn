@@ -11,6 +11,8 @@ use App\Organization\Domain\Model\Organization;
 use App\Organization\Domain\Model\OrganizationId;
 use App\Organization\Domain\Repository\OrganizationRepository;
 use App\Shared\Application\Account\CurrentAccount;
+use App\Shared\Application\Billing\Entitlements;
+use App\Shared\Application\Billing\PlanLimitReached;
 use InvalidArgumentException;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -28,12 +30,17 @@ final readonly class CreateOrganizationHandler
         private OrganizationRepository $organizations,
         private SlugGenerator $slugs,
         private CurrentAccount $account,
+        private Entitlements $entitlements,
         private ClockInterface $clock,
     ) {
     }
 
     public function __invoke(CreateOrganization $command): OrganizationId
     {
+        if (!$this->entitlements->allowsTeams()) {
+            throw PlanLimitReached::teams();
+        }
+
         $name = trim($command->name);
 
         if ('' === $name) {

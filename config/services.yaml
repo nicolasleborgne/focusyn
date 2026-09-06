@@ -210,6 +210,33 @@ services:
     App\Organization\Application\Port\PendingInvitation:
         alias: App\Organization\Infrastructure\Invitation\SessionPendingInvitation
 
+    App\Billing\Domain\Repository\SubscriptionRepository:
+        alias: App\Billing\Infrastructure\Persistence\Doctrine\DoctrineSubscriptionRepository
+        public: true
+
+    App\Shared\Application\Billing\Entitlements:
+        alias: App\Billing\Application\Query\CurrentEntitlements
+
+    App\Billing\Application\Port\PaymentProvider:
+        alias: App\Billing\Infrastructure\Payment\StripePaymentProvider
+
+    App\Billing\Infrastructure\Payment\StripePaymentProvider:
+        arguments:
+            $secretKey: '%env(STRIPE_SECRET_KEY)%'
+            $personalPrice: '%env(STRIPE_PRICE_PERSONAL)%'
+            $teamPrice: '%env(STRIPE_PRICE_TEAM)%'
+
+    App\Billing\UI\Http\StripeWebhookController:
+        arguments:
+            $webhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
+        tags: ['controller.service_arguments']
+
+    App\Shared\Application\Notebook\NoteTally:
+        alias: App\Notebook\Infrastructure\Billing\StoredNoteTally
+
+    App\Shared\Application\Team\TeamSize:
+        alias: App\Organization\Infrastructure\Billing\MembershipTeamSize
+
 when@test:
     services:
         _defaults:

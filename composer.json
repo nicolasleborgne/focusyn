@@ -20,6 +20,7 @@
         "scheb/2fa-backup-code": "^8.6",
         "scheb/2fa-bundle": "^8.6",
         "scheb/2fa-totp": "^8.6",
+        "stripe/stripe-php": "^21.3",
         "symfony/asset": "7.4.*",
         "symfony/asset-mapper": "7.4.*",
         "symfony/clock": "7.4.*",
