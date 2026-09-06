@@ -9,15 +9,32 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
- * Section « Agenda » de l'écran des réglages, portée par Reminder.
+ * Section « Rappels » de l'écran des réglages, portée par Reminder :
+ * notifications poussées et flux d'agenda.
  */
-#[AsTwigComponent(name: 'CalendarFeedSection', template: 'components/CalendarFeedSection.html.twig')]
-final class CalendarFeedSection
+#[AsTwigComponent(name: 'ReminderSection', template: 'components/ReminderSection.html.twig')]
+final class ReminderSection
 {
     public function __construct(
         private readonly CalendarFeedQuery $feed,
         private readonly UrlGeneratorInterface $urls,
+        private readonly string $vapidPublicKey,
     ) {
+    }
+
+    /**
+     * Sans clés VAPID, la ligne « notifications » n'est pas rendue du tout :
+     * proposer un interrupteur qui ne peut rien faire serait pire que de ne
+     * rien proposer.
+     */
+    public function pushAvailable(): bool
+    {
+        return '' !== $this->vapidPublicKey;
+    }
+
+    public function vapidPublicKey(): string
+    {
+        return $this->vapidPublicKey;
     }
 
     /**

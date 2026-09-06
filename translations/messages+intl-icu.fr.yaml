@@ -268,7 +268,8 @@ reminder:
     ics: Ajouter au calendrier (.ics)
     drop: Supprimer le rappel
     help: >-
-        Vous recevrez un courriel à l'heure dite. Le fichier .ics dépose
+        Vous serez prévenu à l'heure dite, par courriel et — si vous les avez
+        activées — par notification système. Le fichier .ics, lui, dépose
         l'événement dans votre agenda, qui prend alors le relais.
     shortcut:
         tonight: Ce soir 20 h
@@ -278,8 +279,18 @@ reminder:
     saved: Rappel enregistré.
     dropped: Rappel supprimé.
     invalid: Ce moment n'a pas été compris.
+    settings:
+        heading: Rappels
+    push:
+        label: Notifications système
+        on: Cet appareil reçoit les rappels, même Focusyn fermé.
+        off: Cet appareil ne reçoit rien pour l'instant. Les rappels partent quand même par courriel.
+        denied: Les notifications sont bloquées pour ce site. Cela se rouvre dans les réglages du navigateur.
+        unsupported: Ce navigateur ne sait pas recevoir de notifications poussées.
+        error: L'abonnement n'a pas pu être enregistré. Réessayez.
+        enable: Activer sur cet appareil
+        disable: Désactiver ici
     feed:
-        heading: Agenda
         label: Flux iCal
         help: >-
             Abonnez votre agenda à cette adresse : vos rappels y apparaissent et

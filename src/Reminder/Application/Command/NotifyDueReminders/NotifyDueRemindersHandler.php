@@ -44,7 +44,8 @@ final readonly class NotifyDueRemindersHandler
         $sent = 0;
 
         foreach ($this->reminders->dueEverywhere($now, self::BATCH) as $reminder) {
-            $email = $this->accounts->emailOf($reminder->recipientId()->toString());
+            $accountId = $reminder->recipientId()->toString();
+            $email = $this->accounts->emailOf($accountId);
 
             if (null === $email) {
                 // Le compte a disparu : le rappel n'a plus de destinataire. On
@@ -53,7 +54,7 @@ final readonly class NotifyDueRemindersHandler
                     'reminder' => $reminder->id()->toString(),
                 ]);
             } else {
-                $this->notifier->notify(self::view($reminder), $email, $this->defaultLocale);
+                $this->notifier->notify(self::view($reminder), $accountId, $email, $this->defaultLocale);
                 ++$sent;
             }
 

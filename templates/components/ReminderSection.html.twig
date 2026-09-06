@@ -1,0 +1,50 @@
+{% set url = this.url %}
+
+<section class="fx-settings__section" {{ attributes }}>
+    <p class="fx-eyebrow">{{ 'reminder.settings.heading'|trans }}</p>
+
+    {% if this.pushAvailable %}
+        <div class="fx-settings__row" data-controller="push"
+             data-push-public-key-value="{{ this.vapidPublicKey }}"
+             data-push-url-value="{{ path('reminder_device') }}"
+             data-push-token-value="{{ csrf_token('reminder-device') }}">
+            <div class="fx-settings__label">
+                <span class="fx-card__title">{{ 'reminder.push.label'|trans }}</span>
+                {# Un seul emplacement de message, dont les états sont portés en
+                   attributs : le contrôleur ne fabrique aucun texte. #}
+                <span class="fx-card__help" data-push-target="status"
+                      data-on="{{ 'reminder.push.on'|trans }}"
+                      data-off="{{ 'reminder.push.off'|trans }}"
+                      data-denied="{{ 'reminder.push.denied'|trans }}"
+                      data-unsupported="{{ 'reminder.push.unsupported'|trans }}"
+                      data-error="{{ 'reminder.push.error'|trans }}"></span>
+            </div>
+
+            <button type="button" class="fx-button fx-button--small"
+                    data-push-target="button" data-action="push#toggle"
+                    data-on="{{ 'reminder.push.enable'|trans }}"
+                    data-off="{{ 'reminder.push.disable'|trans }}" hidden></button>
+        </div>
+    {% endif %}
+
+    <div class="fx-settings__row">
+        <div class="fx-settings__label">
+            <span class="fx-card__title">{{ 'reminder.feed.label'|trans }}</span>
+            <span class="fx-card__help">{{ (url ? 'reminder.feed.help' : 'reminder.feed.absent')|trans }}</span>
+        </div>
+
+        <form method="post" action="{{ path('calendar_feed_rotate') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('calendar-feed-rotate') }}">
+            <button type="submit" class="fx-button fx-button--small">
+                {{ (url ? 'reminder.feed.rotate' : 'reminder.feed.open')|trans }}
+            </button>
+        </form>
+    </div>
+
+    {% if url %}
+        {# L'adresse est un secret : elle se recopie, elle ne se partage pas. #}
+        <input class="fx-field__control fx-feed__url" type="text" readonly value="{{ url }}"
+               aria-label="{{ 'reminder.feed.label'|trans }}" onfocus="this.select()">
+        <p class="fx-card__help fx-feed__warning">{{ 'reminder.feed.secret'|trans }}</p>
+    {% endif %}
+</section>

@@ -15,5 +15,5 @@ use App\Reminder\Application\Query\ReminderView;
  */
 interface ReminderNotifier
 {
-    public function notify(ReminderView $reminder, string $email, string $locale): void;
+    public function notify(ReminderView $reminder, string $accountId, string $email, string $locale): void;
 }

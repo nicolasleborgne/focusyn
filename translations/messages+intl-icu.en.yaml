@@ -265,8 +265,9 @@ reminder:
     ics: Add to calendar (.ics)
     drop: Remove reminder
     help: >-
-        You will get an email at the appointed time. The .ics file drops the
-        event into your calendar, which then takes over.
+        You will be told at the appointed time, by email and — if you turned
+        them on — by system notification. The .ics file drops the event into
+        your calendar, which then takes over.
     shortcut:
         tonight: Tonight 8 pm
         tomorrow: Tomorrow 9 am
@@ -275,8 +276,18 @@ reminder:
     saved: Reminder saved.
     dropped: Reminder removed.
     invalid: That moment was not understood.
+    settings:
+        heading: Reminders
+    push:
+        label: System notifications
+        on: This device receives reminders, even with Focusyn closed.
+        off: This device receives nothing yet. Reminders still go out by email.
+        denied: Notifications are blocked for this site. Your browser settings can reopen them.
+        unsupported: This browser cannot receive push notifications.
+        error: The subscription could not be saved. Try again.
+        enable: Enable on this device
+        disable: Disable here
     feed:
-        heading: Calendar
         label: iCal feed
         help: >-
             Subscribe your calendar to this address: your reminders show up

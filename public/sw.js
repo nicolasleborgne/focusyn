@@ -96,3 +96,57 @@ self.addEventListener('fetch', (event) => {
         );
     }
 });
+
+/*
+ * Notifications poussées.
+ *
+ * La charge arrive chiffrée avec les clés de cet appareil : le service de
+ * notification l'a transportée sans pouvoir la lire. Si elle manque ou n'est
+ * pas du JSON, on affiche quand même quelque chose — une notification vide vaut
+ * mieux qu'un rappel perdu.
+ */
+self.addEventListener('push', (event) => {
+    let payload = {};
+
+    try {
+        payload = event.data ? event.data.json() : {};
+    } catch (error) {
+        payload = {};
+    }
+
+    event.waitUntil(
+        self.registration.showNotification(payload.title || 'Focusyn', {
+            body: payload.body || '',
+            // Le même rappel poussé deux fois remplace la première notification
+            // au lieu de s'empiler.
+            tag: payload.tag || 'focusyn-reminder',
+            icon: '/icons/icon-192.png',
+            badge: '/icons/icon-192.png',
+            data: { url: payload.url || '/' },
+        }),
+    );
+});
+
+/*
+ * Un clic ramène dans l'onglet déjà ouvert plutôt que d'en ouvrir un de plus.
+ */
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    const target = new URL(event.notification.data?.url || '/', self.location.origin);
+
+    event.waitUntil(
+        (async () => {
+            const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+
+            for (const client of clients) {
+                if (new URL(client.url).origin === target.origin && 'focus' in client) {
+                    await client.focus();
+                    return client.navigate ? client.navigate(target.href) : undefined;
+                }
+            }
+
+            return self.clients.openWindow(target.href);
+        })(),
+    );
+});

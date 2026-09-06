@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!-- Pas de organization_id : un abonnement suit la personne, comme ses
+         choix de confidentialité. Un navigateur ne se dédouble pas selon
+         l'organisation dans laquelle on travaille. -->
+    <entity name="App\Reminder\Domain\Model\PushSubscription" table="push_subscriptions">
+        <id name="id" type="push_subscription_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="subscriberId" type="recipient_id" column="subscriber_id"/>
+        <field name="endpoint" type="push_endpoint" column="endpoint" unique="true"/>
+        <field name="keys" type="push_keys" column="keys"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at"/>
+        <field name="lastSeenAt" type="datetime_immutable" column="last_seen_at"/>
+
+        <indexes>
+            <index name="idx_push_subscriptions_subscriber" columns="subscriber_id"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

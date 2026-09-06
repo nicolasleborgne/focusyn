@@ -30,6 +30,9 @@ doctrine:
             task_item_id: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskItemIdType
             task_list_name: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskListNameType
             task_text: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskTextType
+            push_subscription_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\PushSubscriptionIdType
+            push_endpoint: App\Reminder\Infrastructure\Persistence\Doctrine\Type\PushEndpointType
+            push_keys: App\Reminder\Infrastructure\Persistence\Doctrine\Type\PushKeysType
             calendar_feed_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\CalendarFeedIdType
             feed_token: App\Reminder\Infrastructure\Persistence\Doctrine\Type\FeedTokenType
             recipient_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\RecipientIdType

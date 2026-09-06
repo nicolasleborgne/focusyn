@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Reminder\Infrastructure\Mail;
 
-use App\Reminder\Application\Port\ReminderNotifier;
+use App\Reminder\Application\Port\ReminderChannel;
 use App\Reminder\Application\Query\ReminderView;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final readonly class MailerReminderNotifier implements ReminderNotifier
+final readonly class MailerReminderNotifier implements ReminderChannel
 {
     public function __construct(
         private MailerInterface $mailer,
@@ -19,7 +19,7 @@ final readonly class MailerReminderNotifier implements ReminderNotifier
     ) {
     }
 
-    public function notify(ReminderView $reminder, string $email, string $locale): void
+    public function deliver(ReminderView $reminder, string $accountId, string $email, string $locale): bool
     {
         $this->mailer->send(
             (new TemplatedEmail())
@@ -34,5 +34,7 @@ final readonly class MailerReminderNotifier implements ReminderNotifier
                 ->htmlTemplate('emails/reminder.html.twig')
                 ->context(['reminder' => $reminder]),
         );
+
+        return true;
     }
 }

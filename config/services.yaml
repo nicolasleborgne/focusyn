@@ -118,7 +118,7 @@ services:
         alias: App\Identity\Infrastructure\Security\UserDirectory
 
     App\Reminder\Application\Port\ReminderNotifier:
-        alias: App\Reminder\Infrastructure\Mail\MailerReminderNotifier
+        alias: App\Reminder\Application\Notification\NotifyEveryChannel
 
     App\Reminder\Application\Command\NotifyDueReminders\NotifyDueRemindersHandler:
         arguments:
@@ -130,3 +130,17 @@ services:
 
     App\Reminder\Application\Port\FeedTokenGenerator:
         alias: App\Reminder\Infrastructure\Feed\RandomFeedTokenGenerator
+
+    App\Reminder\Domain\Repository\PushSubscriptionRepository:
+        alias: App\Reminder\Infrastructure\Persistence\Doctrine\DoctrinePushSubscriptionRepository
+        public: true
+
+    App\Reminder\Infrastructure\Push\WebPushChannel:
+        arguments:
+            $publicKey: '%env(VAPID_PUBLIC_KEY)%'
+            $privateKey: '%env(VAPID_PRIVATE_KEY)%'
+            $subject: '%env(VAPID_SUBJECT)%'
+
+    App\Reminder\UI\TwigComponent\ReminderSection:
+        arguments:
+            $vapidPublicKey: '%env(VAPID_PUBLIC_KEY)%'

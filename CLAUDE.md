@@ -61,6 +61,18 @@ chaîne (`note:<uuid>`, `task:<uuid>`), son destinataire un identifiant résolu 
 l'envoi par le port `AccountDirectory`. Un sujet ne porte qu'un rappel : reposer
 une échéance déplace celle qui existe, plutôt que d'en empiler une seconde.
 
+**Un abonnement poussé suit la personne, pas l'organisation** : `PushSubscription`
+n'a pas d'`organization_id`, comme `PrivacyChoices`. Un navigateur ne se
+dédouble pas selon l'organisation dans laquelle on travaille. Le point de
+réception fait l'identité de l'appareil — un navigateur qui renouvelle ses clés
+garde la même adresse, et doit être mis à jour plutôt que dupliqué, sinon chaque
+rappel partirait en double.
+
+**Un canal de notification muet n'est pas une erreur.** `NotifyEveryChannel`
+appelle tous les canaux tagués ; sans clés VAPID ou sans appareil abonné, le
+canal poussé renonce et retourne `false`. Une exception à cet endroit
+empêcherait le courriel de partir, alors que c'est justement lui le filet.
+
 **`CalendarFeed` est le seul agrégat délibérément non cloisonné.** Un agenda ne
 se connecte pas : il récupère une adresse. Le jeton, long et renouvelable, tient
 donc lieu d'authentification, et le contrôleur lit ensuite les rappels *dans*
@@ -304,6 +316,12 @@ détectable à la mise à jour. Le Caddyfile lui impose `Cache-Control: no-cache
 Stratégies du service worker : réseau d'abord pour les navigations avec repli
 sur `/offline`, cache d'abord pour `/assets/*` (versionnés par condensat, donc
 immuables). Pas d'écriture hors ligne — écartée à la conception.
+
+Il porte aussi les notifications poussées (`push`, `notificationclick`). La
+paire de clés VAPID se tire par `console app:vapid`, **une seule par
+déploiement** : en changer invalide tous les abonnements déjà pris. Sans clés,
+la ligne « notifications système » ne se rend pas du tout — proposer un
+interrupteur qui ne peut rien faire serait pire que de ne rien proposer.
 
 En touchant aux icônes, penser à `tests/Unit/Shared/Pwa/ManifestTest.php` :
 c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
