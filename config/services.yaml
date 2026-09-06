@@ -282,3 +282,12 @@ when@test:
         App\Tests\Double\Assistant\FakeCompletion:
             public: true
             tags: [{ name: 'app.chat_completion', priority: 100 }]
+
+        # Le prestataire de paiement, simulé : aucune clé Stripe n'est
+        # nécessaire pour vérifier ce qui nous appartient — le bouton, le
+        # palier envoyé, le nombre de places.
+        App\Tests\Double\Billing\FakePaymentProvider:
+            public: true
+
+        App\Billing\Application\Port\PaymentProvider:
+            alias: App\Tests\Double\Billing\FakePaymentProvider

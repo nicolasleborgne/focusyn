@@ -14,6 +14,12 @@
             <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
         {% endfor %}
 
+        {# Le paiement vient d'être fait, mais c'est le webhook qui ouvre le
+           palier : le dire évite de croire que rien ne s'est passé. #}
+        {% if justPaid %}
+            <p class="fx-settings__notice" role="status">{{ 'billing.just_paid'|trans }}</p>
+        {% endif %}
+
         {% if billing.needsAttention %}
             <p class="fx-auth__error" role="alert">{{ 'billing.past_due'|trans }}</p>
         {% endif %}
@@ -96,13 +102,19 @@
                         </span>
                     </div>
 
+                    {# « En cours » vaut pour un palier **payé**, pas pour celui
+                       que l'essai prête : pendant l'essai on est sur le
+                       personnel sans l'avoir payé, et désactiver son bouton
+                       interdirait justement de convertir l'essai. #}
+                    {% set isCurrent = not billing.trialing and billing.entitled == plan %}
+
                     {% if billing.paymentConfigured %}
                         <form method="post" action="{{ path('billing_checkout') }}">
                             <input type="hidden" name="_token" value="{{ csrf_token('billing-checkout') }}">
                             <input type="hidden" name="plan" value="{{ plan.value }}">
-                            <button type="submit" class="fx-button fx-button--small {{ billing.entitled == plan ? '' : 'fx-button--primary' }}"
-                                    {{ billing.entitled == plan ? 'disabled' : '' }}>
-                                {{ (billing.entitled == plan ? 'billing.current_plan' : 'billing.choose')|trans }}
+                            <button type="submit" class="fx-button fx-button--small {{ isCurrent ? '' : 'fx-button--primary' }}"
+                                    {{ isCurrent ? 'disabled' : '' }}>
+                                {{ (isCurrent ? 'billing.current_plan' : 'billing.choose')|trans }}
                             </button>
                         </form>
                     {% endif %}

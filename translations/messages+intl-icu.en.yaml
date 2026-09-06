@@ -518,6 +518,7 @@ email_change:
         if_not_you: If this was not you, change your password right away and close your open sessions.
 
 billing:
+    just_paid: 'Payment recorded with the provider. The plan opens as soon as it confirms — seconds at most.'
     heading: Subscription
     current: Current plan
     plans: Change plan

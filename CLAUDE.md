@@ -310,6 +310,16 @@ inexportable. Les autres contextes interrogent le port partagé `Entitlements`,
 et `PlanLimitReached` est traduit en message par `PlanLimitListener` plutôt que
 rattrapé dans chaque contrôleur.
 
+**« En cours » vaut pour un palier payé, pas pour celui que l'essai prête.**
+Pendant l'essai on est sur le personnel sans l'avoir payé : désactiver son
+bouton interdirait de convertir l'essai en abonnement, et il faudrait attendre
+que l'essai expire pour pouvoir payer.
+
+**Rien n'est activé au retour du paiement.** `?paye=1` dit seulement que le
+prestataire a pris le paiement et que le palier s'ouvre d'un instant à l'autre ;
+c'est le webhook signé qui fait foi. Sans ce mot, l'écran afficherait l'ancien
+palier sans rien dire, et l'on croirait le paiement perdu.
+
 **Le prestataire fait foi sur l'état commercial** : prorata, relances, cartes
 expirées. On ne recalcule rien, on enregistre ce que le webhook signé raconte —
 et l'on répond 200 même à un événement qu'on ignore, sans quoi Stripe le

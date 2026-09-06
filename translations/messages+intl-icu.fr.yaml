@@ -525,6 +525,7 @@ email_change:
         if_not_you: Si ce n'est pas vous, changez votre mot de passe sans attendre et fermez les sessions ouvertes.
 
 billing:
+    just_paid: 'Paiement enregistré chez le prestataire. Le palier s''ouvre dès qu''il nous le confirme — quelques secondes, tout au plus.'
     heading: Abonnement
     current: Palier en cours
     plans: Changer de palier
