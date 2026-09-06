@@ -61,6 +61,28 @@ chaîne (`note:<uuid>`, `task:<uuid>`), son destinataire un identifiant résolu 
 l'envoi par le port `AccountDirectory`. Un sujet ne porte qu'un rappel : reposer
 une échéance déplace celle qui existe, plutôt que d'en empiler une seconde.
 
+**Une clé d'API suit la personne, pas l'organisation** : c'est sa clé, c'est sa
+facture. `AssistantSettings` n'a pas d'`organization_id`, et son identifiant de
+propriétaire *est* sa clé primaire — une personne, un réglage.
+
+**La clé n'existe en clair nulle part dans le domaine.** L'agrégat manipule un
+`SealedKey` et ignore comment on le descelle ; le `KeyVault` chiffre en
+XSalsa20-Poly1305 avec `ASSISTANT_SECRET`. Ce que cela protège : le vol de la
+seule base. Ce que cela ne protège pas : base + secret ensemble. Un chiffrement
+de bout en bout est impossible — personne n'est là pour saisir un mot de passe
+quand le serveur appelle le modèle. La déclaration de l'écran des réglages le
+dit ainsi, et ne doit pas être adoucie.
+
+**Le consentement se vérifie avant tout le reste.** Dans `AskAssistantHandler`,
+`ConsentGate` passe avant la lecture des réglages : sans consentement, rien
+n'est lu, rien n'est déchiffré, et l'on ne révèle même pas qu'une clé existe.
+
+**Changer de fournisseur efface la clé et le modèle.** Une clé Anthropic n'ouvre
+rien chez OpenAI et « claude-haiku » n'y existe pas : les garder ne ferait
+qu'échouer plus tard, à un endroit où l'on ne comprendrait plus pourquoi. De
+même, seul un fournisseur local prend une adresse — la laisser changer pour un
+fournisseur hébergé permettrait de détourner la clé vers un serveur tiers.
+
 **Un abonnement poussé suit la personne, pas l'organisation** : `PushSubscription`
 n'a pas d'`organization_id`, comme `PrivacyChoices`. Un navigateur ne se
 dédouble pas selon l'organisation dans laquelle on travaille. Le point de
@@ -338,6 +360,11 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   protection CSRF le dérive pour signer ses jetons, et sans lui *tout* écran
   portant un formulaire tombe en 500. Le symptôme est
   `InvalidArgumentException: A non-empty secret is required.`
+- **Le client de test redémarre le noyau à chaque requête** : un double de
+  service que l'on règle avant la requête n'est pas celui qui répondra.
+  `$client->disableReboot()` avant de le muter.
+- **Le rendu Twig échappe les apostrophes** (`n&#039;est`) : une assertion de
+  test ne doit pas s'ancrer sur un fragment qui en contient.
 - **Un `<a class="fx-button">` doit rester non souligné** : `base/typography.css`
   souligne tous les liens, ce qui est juste pour la prose et faux pour une
   commande. `.fx-button` neutralise la règle ; un nouveau composant-lien devra

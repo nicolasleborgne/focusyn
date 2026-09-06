@@ -67,6 +67,10 @@
             <p class="fx-note__status" data-note-editor-target="status" aria-live="polite"></p>
         </div>
 
+        {# Panneau porté par Assistant : Notebook l'appelle sans connaître le
+           contexte, la clé, ni le fournisseur. #}
+        <twig:AssistantPanel :noteId="note.id" />
+
         <form method="post" action="{{ path('note_delete', { id: note.id }) }}" class="fx-note__danger">
             <input type="hidden" name="_token" value="{{ csrf_token('note-delete') }}">
             <button type="submit" class="fx-button fx-button--danger fx-button--small">{{ 'notebook.delete'|trans }}</button>

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\UI\Console;
 
+use App\Assistant\Application\Port\KeyVault;
+use App\Assistant\Domain\Model\AssistantSettings;
+use App\Assistant\Domain\Model\OwnerId;
+use App\Assistant\Domain\Repository\AssistantSettingsRepository;
 use App\Identity\Application\Command\RegisterUser\RegisterUser;
 use App\Identity\Domain\Model\EmailAddress;
 use App\Identity\Domain\Repository\UserRepository;
@@ -21,6 +25,10 @@ use App\Notebook\Domain\Repository\NoteRepository;
 use App\Notebook\Domain\Repository\ObsessionRepository;
 use App\Organization\Domain\Model\MemberId;
 use App\Organization\Domain\Repository\OrganizationRepository;
+use App\Privacy\Domain\Model\Consent;
+use App\Privacy\Domain\Model\PrivacyChoices;
+use App\Privacy\Domain\Model\SubjectId;
+use App\Privacy\Domain\Repository\PrivacyChoicesRepository;
 use App\Reminder\Domain\Model\RecipientId;
 use App\Reminder\Domain\Model\Reminder;
 use App\Reminder\Domain\Model\ReminderId;
@@ -68,6 +76,9 @@ final class SeedDemoDataCommand extends Command
         private readonly ObsessionRepository $obsessions,
         private readonly TaskListRepository $lists,
         private readonly ReminderRepository $reminders,
+        private readonly PrivacyChoicesRepository $privacy,
+        private readonly AssistantSettingsRepository $assistant,
+        private readonly KeyVault $vault,
         private readonly TenantScope $scope,
         private readonly ClockInterface $clock,
     ) {
@@ -107,6 +118,7 @@ final class SeedDemoDataCommand extends Command
             $this->seedObsessions($tenant);
             $this->seedLists($tenant);
             $this->seedReminders($tenant, $recipient);
+            $this->seedAssistant($recipient);
         });
 
         $io->success(\sprintf('Compte de démonstration prêt : %s / %s', self::EMAIL, self::PASSWORD));
@@ -172,6 +184,26 @@ final class SeedDemoDataCommand extends Command
                 $now,
             ));
         }
+    }
+
+    /**
+     * L'assistant consenti et branché : sans cela, ni le panneau de l'éditeur
+     * ni l'état « enregistrée » des réglages ne se voient sur une capture.
+     *
+     * La clé est factice — l'écran ne la relit jamais, et rien n'appelle le
+     * fournisseur tant qu'on ne clique pas.
+     */
+    private function seedAssistant(RecipientId $person): void
+    {
+        $subject = SubjectId::fromString($person->toString());
+        $choices = $this->privacy->ofSubject($subject) ?? PrivacyChoices::forSubject($subject, $this->clock->now());
+        $choices->grant(Consent::Assistant, $this->clock->now());
+        $this->privacy->save($choices);
+
+        $owner = OwnerId::fromString($person->toString());
+        $settings = $this->assistant->ofOwner($owner) ?? AssistantSettings::forOwner($owner);
+        $settings->useKey($this->vault->seal('sk-ant-demonstration-sans-valeur'));
+        $this->assistant->save($settings);
     }
 
     private function seedNotes(TenantId $tenant, AuthorId $author): void

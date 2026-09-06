@@ -144,3 +144,34 @@ services:
     App\Reminder\UI\TwigComponent\ReminderSection:
         arguments:
             $vapidPublicKey: '%env(VAPID_PUBLIC_KEY)%'
+
+    App\Assistant\Domain\Repository\AssistantSettingsRepository:
+        alias: App\Assistant\Infrastructure\Persistence\Doctrine\DoctrineAssistantSettingsRepository
+        public: true
+
+    App\Assistant\Application\Port\KeyVault:
+        alias: App\Assistant\Infrastructure\Crypto\SodiumKeyVault
+
+    App\Assistant\Infrastructure\Crypto\SodiumKeyVault:
+        arguments:
+            $secret: '%env(ASSISTANT_SECRET)%'
+
+    App\Shared\Application\Privacy\ConsentGate:
+        alias: App\Privacy\Infrastructure\Consent\StoredConsentGate
+
+    App\Shared\Application\Notebook\NoteSource:
+        alias: App\Notebook\Infrastructure\Assistant\StoredNoteSource
+
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        # Le double du fournisseur passe devant les trois adaptateurs réels et
+        # répond pour tous : aucun appel ne doit sortir de la machine parce
+        # qu'une suite tourne. La priorité suffit — le registre retient le
+        # premier qui dit savoir parler au fournisseur demandé.
+        App\Tests\Double\Assistant\FakeCompletion:
+            public: true
+            tags: [{ name: 'app.chat_completion', priority: 100 }]

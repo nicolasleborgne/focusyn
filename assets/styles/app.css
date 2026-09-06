@@ -33,6 +33,7 @@
 @import url("./layout/header.css");
 @import url("./layout/tabbar.css");
 
+@import url("./components/assistant.css");
 @import url("./components/avatar.css");
 @import url("./components/button.css");
 @import url("./components/card.css");

@@ -1,0 +1,102 @@
+{% set assistant = this.view %}
+
+<section class="fx-settings__section" {{ attributes }}>
+    <p class="fx-eyebrow">{{ 'assistant.heading'|trans }}</p>
+
+    {# Cette phrase engage : elle doit décrire ce que le serveur fait vraiment
+       de la clé, et non ce qu'en disait une maquette locale. #}
+    <p class="fx-card__help fx-assistant__statement">{{ 'assistant.statement'|trans }}</p>
+
+    {% if not assistant.consented %}
+        <p class="fx-card__help fx-assistant__blocked">{{ 'assistant.needs_consent'|trans }}</p>
+    {% endif %}
+
+    <div class="fx-settings__row">
+        <div class="fx-settings__label">
+            <span class="fx-card__title">{{ 'assistant.provider_label'|trans }}</span>
+        </div>
+
+        <form method="post" action="{{ path('assistant_adjust') }}" class="fx-field__row">
+            <input type="hidden" name="_token" value="{{ csrf_token('assistant-adjust') }}">
+            {% for provider in this.providers %}
+                <button type="submit" name="provider" value="{{ provider.value }}"
+                        class="fx-chip {{ assistant.provider == provider ? 'fx-chip--selected' }}">
+                    {{ ('assistant.provider.' ~ provider.value)|trans }}
+                </button>
+            {% endfor %}
+        </form>
+    </div>
+
+    <div class="fx-settings__row fx-settings__row--stacked">
+        <div class="fx-settings__label">
+            <span class="fx-card__title">
+                {{ (assistant.provider.isLocal ? 'assistant.address_label' : 'assistant.key_label')|trans }}
+            </span>
+            <span class="fx-card__help fx-assistant__key-state">
+                {{ (assistant.hasKey or assistant.baseUrl ? 'assistant.key_stored' : 'assistant.key_absent')|trans }}
+            </span>
+        </div>
+
+        <div class="fx-assistant__key">
+            <form method="post" action="{{ path('assistant_adjust') }}" class="fx-field__row">
+                <input type="hidden" name="_token" value="{{ csrf_token('assistant-adjust') }}">
+                {% if assistant.provider.isLocal %}
+                    <input type="url" name="baseUrl" class="fx-field__control fx-assistant__field"
+                           value="{{ assistant.baseUrl }}" placeholder="http://localhost:11434"
+                           aria-label="{{ 'assistant.address_label'|trans }}">
+                {% else %}
+                    {# Jamais de `value` : une clé enregistrée ne se relit pas,
+                       même par son propriétaire. Le champ vide et l'état
+                       « enregistrée » à côté disent tout. #}
+                    <input type="password" name="apiKey" class="fx-field__control fx-assistant__field"
+                           autocomplete="off" placeholder="{{ ('assistant.key_hint.' ~ assistant.provider.value)|trans }}"
+                           aria-label="{{ 'assistant.key_label'|trans }}">
+                {% endif %}
+                <button type="submit" class="fx-button fx-button--small">{{ 'assistant.key_save'|trans }}</button>
+            </form>
+
+            <form method="post" action="{{ path('assistant_test') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('assistant-test') }}">
+                <button type="submit" class="fx-button fx-button--small">{{ 'assistant.test'|trans }}</button>
+            </form>
+        </div>
+    </div>
+
+    {# La hauteur est réservée en permanence : sinon le résultat du test fait
+       sauter la section au moment du clic. #}
+    <p class="fx-assistant__test-status" role="status">
+        {%- for message in app.flashes('assistant_test') %}{{ message }}{% endfor -%}
+        {%- for message in app.flashes('assistant_error') %}{{ message|trans }}{% endfor -%}
+    </p>
+
+    <div class="fx-settings__row">
+        <div class="fx-settings__label">
+            <span class="fx-card__title">{{ 'assistant.model_label'|trans }}</span>
+            <span class="fx-card__help">{{ 'assistant.model_help'|trans }}</span>
+        </div>
+
+        <form method="post" action="{{ path('assistant_adjust') }}" class="fx-field__row fx-field__row--column">
+            <input type="hidden" name="_token" value="{{ csrf_token('assistant-adjust') }}">
+            {% for model in assistant.provider.models %}
+                <button type="submit" name="model" value="{{ model }}"
+                        class="fx-pill {{ assistant.model == model ? 'fx-pill--selected' }}">{{ model }}</button>
+            {% endfor %}
+        </form>
+    </div>
+
+    <div class="fx-settings__row">
+        <div class="fx-settings__label">
+            <span class="fx-card__title">{{ 'assistant.whole_note'|trans }}</span>
+            <span class="fx-card__help">{{ 'assistant.whole_note_help'|trans }}</span>
+        </div>
+
+        <form method="post" action="{{ path('assistant_adjust') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('assistant-adjust') }}">
+            <input type="hidden" name="wholeNote" value="{{ assistant.wholeNote ? '0' : '1' }}">
+            <button type="submit" class="fx-switch {{ assistant.wholeNote ? 'fx-switch--on' }}"
+                    aria-pressed="{{ assistant.wholeNote ? 'true' : 'false' }}">
+                <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+            </button>
+        </form>
+    </div>
+</section>

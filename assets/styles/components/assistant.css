@@ -1,0 +1,185 @@
+/*
+ * Assistant : panneau sous l'éditeur, et section des réglages.
+ *
+ * Le panneau se lit comme un pied de page de la note : séparé par un filet,
+ * jamais plus appuyé qu'elle. Ce qui vient du modèle est en monospace — c'est
+ * une proposition, pas encore de la prose.
+ */
+
+/* Un filet sépare le panneau de la note : il doit se lire comme un pied de
+   page, pas comme la suite du texte. */
+.fx-assistant {
+    margin-top: var(--fx-space-10);
+    padding-top: var(--fx-space-9);
+    border-top: 1px solid var(--fx-border-faint);
+}
+
+.fx-assistant:empty {
+    display: none;
+    border-top: 0;
+}
+
+.fx-assistant__head {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+    margin-bottom: var(--fx-space-5);
+}
+
+/* Pastille d'activité : elle bat pendant l'appel, éteinte le reste du temps. */
+.fx-assistant__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--fx-radius-round);
+    background: var(--fx-border-contrast);
+}
+
+.fx-assistant__dot.is-busy {
+    background: var(--fx-accent);
+    animation: fx-assistant-pulse 1s infinite;
+}
+
+@keyframes fx-assistant-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+}
+
+.fx-assistant__status {
+    font-size: var(--fx-size-xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-assistant__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-2);
+    margin-bottom: var(--fx-space-4);
+}
+
+.fx-assistant__prompt {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-4);
+    padding: var(--fx-space-4) var(--fx-space-5);
+    border: 1px solid var(--fx-border-default);
+}
+
+.fx-assistant__caret {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+}
+
+.fx-assistant__prompt .fx-field__control {
+    flex: 1;
+    min-width: 0;
+}
+
+.fx-assistant__result {
+    margin-top: var(--fx-space-5);
+    padding: var(--fx-space-7) var(--fx-space-7) var(--fx-space-5);
+    border: 1px solid var(--fx-border-faint);
+    background: var(--fx-surface-sunken);
+}
+
+.fx-assistant__text {
+    margin: 0;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-smd);
+    line-height: var(--fx-leading-relaxed);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--fx-text-body);
+}
+
+.fx-assistant__verdict {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-2);
+    margin-top: var(--fx-space-6);
+}
+
+.fx-assistant__ignore {
+    padding: var(--fx-space-3) var(--fx-space-5);
+    border: 1px solid transparent;
+    background: none;
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+    cursor: pointer;
+}
+
+.fx-assistant__ignore:hover {
+    color: var(--fx-text-primary);
+}
+
+.fx-assistant__absent {
+    margin: 0;
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+}
+
+/* --- réglages ------------------------------------------------------------ */
+
+.fx-assistant__statement,
+.fx-assistant__blocked {
+    max-width: 58ch;
+    margin-top: var(--fx-space-6);
+    line-height: var(--fx-leading-relaxed);
+}
+
+.fx-assistant__blocked {
+    color: var(--fx-danger);
+}
+
+/* Le champ, son enregistrement et le test tiennent sur une ligne : ce sont
+   trois gestes du même moment. Deux formulaires distincts, une seule rangée. */
+.fx-assistant__key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-3);
+    align-items: center;
+}
+
+.fx-assistant__key > form {
+    display: flex;
+    gap: var(--fx-space-3);
+    align-items: center;
+}
+
+.fx-assistant__key > form:first-child {
+    flex: 1 1 260px;
+}
+
+/* `fx-field__control` fait 100 % de large : dans une rangée, il pousse le
+   bouton à la ligne suivante. Ici le champ partage la place. */
+.fx-assistant__field {
+    flex: 1 1 200px;
+    width: auto;
+    min-width: 0;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+}
+
+.fx-assistant__key-state {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-2xs);
+}
+
+/* La hauteur est réservée : sans elle, le résultat du test fait sauter la
+   section au moment du clic. */
+.fx-assistant__test-status {
+    min-height: 17px;
+    margin: var(--fx-space-3) 0 0;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    color: var(--fx-text-disabled);
+}
+
+.fx-field__row--column {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.fx-settings__row--stacked {
+    flex-wrap: wrap;
+}

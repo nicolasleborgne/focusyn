@@ -303,3 +303,69 @@ reminder:
         subject: 'Reminder: {label}'
         intro: You asked to be reminded.
         open: Open Focusyn
+
+assistant:
+    heading: Assistant
+    statement: >-
+        Focusyn hosts no model. You plug in the provider of your choice with
+        your own key: it is encrypted before being stored, appears neither in
+        your notes nor in your exports, and is never shown back to you. The
+        server must be able to read it to call the provider on your behalf.
+    needs_consent: >-
+        The assistant stays off until you consent to it, under "Personal data"
+        below.
+    provider_label: Provider
+    provider:
+        anthropic: Claude
+        openai: ChatGPT
+        google: Gemini
+        ollama: Local (Ollama)
+    key_label: API key
+    key_hint:
+        anthropic: sk-ant-…
+        openai: sk-…
+        google: AIza…
+        ollama: ''
+    address_label: Server address
+    key_stored: stored, encrypted
+    key_absent: not set
+    key_save: Save
+    test: Test
+    model_label: Model
+    model_help: The lightest is enough to summarise; the largest to rewrite.
+    whole_note: Send the whole note
+    whole_note_help: Turned off, only the selected passage goes to the model.
+    saved: Setting saved.
+    rejected: That setting was not accepted.
+    prompt: Ask something else about this note — Enter
+    insert: Append to the note
+    replace: Replace the note
+    ignore: Dismiss
+    not_configured: The assistant is not plugged in yet.
+    configure: Set it up
+    scope:
+        whole: whole note
+        selection: selection
+    action:
+        summarise: Summarise in 3 bullets
+        clarify: Clarify the prose
+        leads: Leads to follow
+        tensions: Tensions & contradictions
+        tasks: Tasks to draw from it
+        asked: Request
+    error:
+        no_account: No account signed in.
+        no_consent: The assistant stays off until you consent to it.
+        not_configured: No provider is plugged in.
+        no_key: No key has been stored.
+        no_selection: Nothing is selected, and the setting only sends the selection.
+        note_gone: That note cannot be found.
+        empty_instruction: There is nothing to ask.
+        unsealable_key: That key can no longer be read. Store it again.
+        rejected_key: The provider refused that key.
+        rate_limited: The provider is throttling calls. Try again shortly.
+        refused: The provider refused the request.
+        unreachable: The provider cannot be reached.
+        unreadable: The provider's answer could not be read.
+        empty: The model answered nothing.
+        unknown_provider: That provider is not known.

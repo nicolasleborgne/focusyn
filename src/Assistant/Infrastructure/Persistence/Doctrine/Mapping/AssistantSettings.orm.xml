@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!-- Pas de organization_id : c'est sa clé, c'est sa facture. L'identifiant
+         du propriétaire est aussi la clé primaire — une personne, un réglage. -->
+    <entity name="App\Assistant\Domain\Model\AssistantSettings" table="assistant_settings">
+        <id name="ownerId" type="assistant_owner_id" column="owner_id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="provider" type="assistant_provider" column="provider"/>
+        <field name="key" type="sealed_key" column="api_key" nullable="true"/>
+        <field name="model" type="string" column="model" length="60" nullable="true"/>
+        <field name="baseUrl" type="string" column="base_url" length="200" nullable="true"/>
+        <field name="wholeNote" type="boolean" column="whole_note"/>
+    </entity>
+</doctrine-mapping>

@@ -101,12 +101,37 @@ export default class extends Controller {
             }
         };
         window.addEventListener('beforeunload', this.onBeforeUnload);
+
+        // L'assistant vit dans un autre composant, plus bas dans la page : il
+        // annonce son résultat, l'éditeur décide où le mettre. Personne d'autre
+        // que lui ne doit toucher au document.
+        this.onAssistantApply = (event) => this.apply(event.detail);
+        document.addEventListener('focusyn:apply', this.onAssistantApply);
     }
 
     disconnect() {
         window.removeEventListener('beforeunload', this.onBeforeUnload);
+        document.removeEventListener('focusyn:apply', this.onAssistantApply);
         window.clearTimeout(this.timer);
         this.view?.destroy();
+    }
+
+    /* Insère à la fin, ou remplace tout. Un seul changement, donc une seule
+       entrée dans l'historique : Ctrl-Z annule l'insertion d'un bloc. */
+    apply({ text, mode }) {
+        const doc = this.view.state.doc;
+        const trimmed = String(text ?? '').trim();
+
+        if (trimmed === '') {
+            return;
+        }
+
+        const change = mode === 'replace'
+            ? { from: 0, to: doc.length, insert: trimmed + '\n' }
+            : { from: doc.length, to: doc.length, insert: '\n\n' + trimmed + '\n' };
+
+        this.view.dispatch({ changes: change });
+        this.view.focus();
     }
 
     scheduleSave() {

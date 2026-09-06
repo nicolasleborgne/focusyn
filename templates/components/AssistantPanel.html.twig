@@ -1,0 +1,76 @@
+{% set settings = this.settings %}
+
+<div {{ attributes }} class="fx-assistant">
+    {% if settings.isAvailable %}
+        <div class="fx-assistant__head">
+            <span class="fx-eyebrow">{{ 'assistant.heading'|trans }}</span>
+            <span class="fx-assistant__dot" data-loading="addClass(is-busy)"></span>
+            <span class="fx-assistant__status">
+                {%- if error -%}
+                    {{ error|trans }}
+                {%- elseif label -%}
+                    {{ label|trans }}
+                {%- else -%}
+                    {{ ('assistant.provider.' ~ settings.provider.value)|trans }} · {{ settings.model }} ·
+                    {{ (settings.wholeNote ? 'assistant.scope.whole' : 'assistant.scope.selection')|trans }}
+                {%- endif -%}
+            </span>
+        </div>
+
+        <div class="fx-assistant__actions">
+            {% for action in this.quickActions %}
+                <button type="button" class="fx-chip"
+                        data-action="live#action" data-live-action-param="run"
+                        data-live-action-arg-param="{{ action.value }}">
+                    {{ ('assistant.action.' ~ action.value)|trans }}
+                </button>
+            {% endfor %}
+        </div>
+
+        <form class="fx-assistant__prompt" data-action="live#action:prevent" data-live-action-param="send">
+            <span class="fx-assistant__caret">›</span>
+            <input type="text" class="fx-field__control fx-field__control--bare"
+                   data-model="prompt" value="{{ prompt }}"
+                   placeholder="{{ 'assistant.prompt'|trans }}"
+                   aria-label="{{ 'assistant.prompt'|trans }}">
+        </form>
+
+        {% if result %}
+            {# Le texte du modèle n'est jamais rendu comme du markdown : il est
+               montré tel quel, et c'est l'éditeur qui l'interprétera si on
+               choisit de l'insérer. #}
+            <div class="fx-assistant__result" data-controller="assistant-result">
+                <pre class="fx-assistant__text" data-assistant-result-target="text">{{ result }}</pre>
+
+                <div class="fx-assistant__verdict">
+                    <button type="button" class="fx-button fx-button--primary fx-button--small"
+                            data-action="assistant-result#insert live#action"
+                            data-live-action-param="dismiss">
+                        {{ 'assistant.insert'|trans }}
+                    </button>
+                    <button type="button" class="fx-button fx-button--small"
+                            data-action="assistant-result#replace live#action"
+                            data-live-action-param="dismiss">
+                        {{ 'assistant.replace'|trans }}
+                    </button>
+                    <button type="button" class="fx-assistant__ignore"
+                            data-action="live#action" data-live-action-param="dismiss">
+                        {{ 'assistant.ignore'|trans }}
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    {% elseif settings.consented %}
+        {# Consenti mais pas branché : on dit où aller plutôt que de disparaître. #}
+        <p class="fx-assistant__absent">
+            {{ 'assistant.not_configured'|trans }}
+            <a href="{{ path('settings') }}">{{ 'assistant.configure'|trans }}</a>
+        </p>
+    {% endif %}
+
+    {# Un refus se montre même quand le panneau n'a pas lieu d'être : sans cela,
+       une demande partie malgré tout resterait sans réponse à l'écran. #}
+    {% if error and not settings.isAvailable %}
+        <p class="fx-assistant__absent" role="alert">{{ error|trans }}</p>
+    {% endif %}
+</div>

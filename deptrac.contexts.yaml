@@ -129,6 +129,8 @@ deptrac:
             - Notebook
             - Task
             - Reminder
+            - Assistant
+            - Privacy
         Kernel:
             - Shared
             - PublishedEvents

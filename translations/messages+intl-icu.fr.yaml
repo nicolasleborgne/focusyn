@@ -308,3 +308,71 @@ reminder:
         subject: 'Rappel : {label}'
         intro: Vous aviez demandé qu'on vous le rappelle.
         open: Ouvrir Focusyn
+
+assistant:
+    heading: Assistant
+    # Cette phrase engage : elle décrit ce que le serveur fait de la clé.
+    statement: >-
+        Focusyn n'héberge aucun modèle. Vous branchez le fournisseur de votre
+        choix avec votre propre clé : elle est chiffrée avant d'être conservée,
+        n'apparaît ni dans les notes ni dans les exports, et ne vous est jamais
+        réaffichée. Le serveur doit pouvoir la relire pour appeler le
+        fournisseur en votre nom.
+    needs_consent: >-
+        L'assistant est éteint tant que vous n'y avez pas consenti, dans
+        « Données personnelles » ci-dessous.
+    provider_label: Fournisseur
+    provider:
+        anthropic: Claude
+        openai: ChatGPT
+        google: Gemini
+        ollama: Local (Ollama)
+    key_label: Clé d'API
+    key_hint:
+        anthropic: sk-ant-…
+        openai: sk-…
+        google: AIza…
+        ollama: ''
+    address_label: Adresse du serveur
+    key_stored: enregistrée, chiffrée
+    key_absent: non renseignée
+    key_save: Enregistrer
+    test: Tester
+    model_label: Modèle
+    model_help: Le plus léger suffit pour résumer ; le plus gros pour reformuler.
+    whole_note: Envoyer la note entière
+    whole_note_help: Désactivé, seul le passage sélectionné part au modèle.
+    saved: Réglage enregistré.
+    rejected: Ce réglage n'a pas été accepté.
+    prompt: Demander autre chose sur cette note — Entrée
+    insert: Insérer à la fin
+    replace: Remplacer la note
+    ignore: Ignorer
+    not_configured: L'assistant n'est pas encore branché.
+    configure: Le configurer
+    scope:
+        whole: note entière
+        selection: sélection
+    action:
+        summarise: Résumer en 3 puces
+        clarify: Clarifier la prose
+        leads: Pistes à creuser
+        tensions: Tensions & contradictions
+        tasks: Tâches à en tirer
+        asked: Demande
+    error:
+        no_account: Aucun compte connecté.
+        no_consent: L'assistant est éteint tant que vous n'y avez pas consenti.
+        not_configured: Aucun fournisseur n'est branché.
+        no_key: Aucune clé n'a été enregistrée.
+        no_selection: Rien n'est sélectionné, et le réglage n'envoie que la sélection.
+        note_gone: Cette note est introuvable.
+        empty_instruction: Il n'y a rien à demander.
+        unsealable_key: Cette clé ne peut plus être relue. Enregistrez-la de nouveau.
+        rejected_key: Le fournisseur a refusé cette clé.
+        rate_limited: Le fournisseur limite les appels. Réessayez dans un instant.
+        refused: Le fournisseur a refusé la demande.
+        unreachable: Le fournisseur est injoignable.
+        unreadable: La réponse du fournisseur n'a pas pu être lue.
+        empty: Le modèle n'a rien répondu.
+        unknown_provider: Ce fournisseur n'est pas connu.
