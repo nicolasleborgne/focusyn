@@ -46,7 +46,22 @@
                 {% endif %}
             </div>
 
-            {# Où l'on en est du plafond : c'est la seule limite qui se compte. #}
+            {# Où l'on en est des places, dès qu'on est plusieurs : seul, le
+               décompte n'apprendrait rien. #}
+            {% if billing.members > 1 %}
+                <div class="fx-settings__row">
+                    <div class="fx-settings__label">
+                        <span class="fx-card__title">{{ 'billing.members_used'|trans({ used: billing.members, allowance: billing.memberAllowance }) }}</span>
+                        <span class="fx-card__help">{{ 'billing.members_help'|trans }}</span>
+                    </div>
+
+                    <span class="fx-meter fx-billing__meter">
+                        <span class="fx-meter__value" style="width: {{ min(100, (billing.members / billing.memberAllowance * 100)|round) }}%"></span>
+                    </span>
+                </div>
+            {% endif %}
+
+            {# Où l'on en est du plafond de notes. #}
             {% if billing.noteAllowance %}
                 <div class="fx-settings__row">
                     <div class="fx-settings__label">

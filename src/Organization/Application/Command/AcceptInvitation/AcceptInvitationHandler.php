@@ -14,6 +14,8 @@ use App\Organization\Domain\Model\OrganizationId;
 use App\Organization\Domain\Repository\InvitationRepository;
 use App\Organization\Domain\Repository\OrganizationRepository;
 use App\Shared\Application\Account\CurrentAccount;
+use App\Shared\Application\Billing\Entitlements;
+use App\Shared\Application\Billing\PlanLimitReached;
 use InvalidArgumentException;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -32,6 +34,7 @@ final readonly class AcceptInvitationHandler
         private InvitationRepository $invitations,
         private OrganizationRepository $organizations,
         private CurrentAccount $account,
+        private Entitlements $entitlements,
         private ClockInterface $clock,
     ) {
     }
@@ -56,10 +59,24 @@ final readonly class AcceptInvitationHandler
         $organization = $this->organizations->ofId($invitation->organizationId())
             ?? throw InvitationCannotBeAccepted::becauseItWasAddressedToSomeoneElse();
 
+        $member = MemberId::fromString($accountId);
+
+        // Les places sont comptées ici aussi : entre l'envoi et l'acceptation,
+        // l'abonnement a pu retomber. On refuse avant d'enregistrer quoi que
+        // ce soit — la transaction est annulée, l'invitation reste valable, et
+        // elle entrera dès qu'une place se libère ou se paie.
+        //
+        // Le contrôle vient après la vérification d'adresse : à un lien
+        // transféré, on ne doit même pas apprendre que l'équipe est complète.
+        if (!$organization->hasMember($member)
+            && \count($organization->memberships()) >= $this->entitlements->memberAllowanceOf($organization->id()->toString())) {
+            throw PlanLimitReached::members();
+        }
+
         try {
             $organization->addMember(
                 MembershipId::generate(),
-                MemberId::fromString($accountId),
+                $member,
                 $invitation->role(),
                 $now,
             );

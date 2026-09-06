@@ -28,4 +28,9 @@ final class PlanLimitReached extends RuntimeException
     {
         return new self('billing.limit.teams');
     }
+
+    public static function members(): self
+    {
+        return new self('billing.limit.members');
+    }
 }

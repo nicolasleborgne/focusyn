@@ -8,6 +8,7 @@ use App\Billing\Domain\Model\Plan;
 use App\Billing\Domain\Repository\SubscriptionRepository;
 use App\Shared\Application\Billing\Entitlements;
 use App\Shared\Application\Tenant\CurrentTenant;
+use App\Shared\Domain\TenantId;
 use Psr\Clock\ClockInterface;
 
 /**
@@ -43,6 +44,15 @@ final class CurrentEntitlements implements Entitlements
     public function noteAllowance(): ?int
     {
         return $this->plan()->noteAllowance();
+    }
+
+    public function memberAllowanceOf(string $organizationId): int
+    {
+        $subscription = $this->subscriptions->ofOrganization(TenantId::fromString($organizationId));
+
+        // Sans abonnement, une seule place : l'inconnu n'ouvre aucune porte,
+        // ici comme ailleurs.
+        return $subscription?->memberAllowance($this->clock->now()) ?? 1;
     }
 
     public function plan(): Plan

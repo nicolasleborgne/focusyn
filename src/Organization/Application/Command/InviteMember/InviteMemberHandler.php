@@ -66,6 +66,18 @@ final readonly class InviteMemberHandler
             $this->invitations->remove($existing);
         }
 
+        // Les places se comptent invitations comprises : sans cela, vingt
+        // invitations parties pour trois places entreraient toutes, une à une,
+        // sans jamais repasser par ici.
+        $pending = \count(array_filter(
+            $this->invitations->ofOrganization($organizationId),
+            static fn (Invitation $sent): bool => $sent->isPendingAt($now),
+        ));
+
+        if (\count($organization->memberships()) + $pending >= $this->entitlements->memberAllowanceOf($organizationId->toString())) {
+            throw PlanLimitReached::members();
+        }
+
         $invitation = Invitation::open(
             InvitationId::generate(),
             $organizationId,

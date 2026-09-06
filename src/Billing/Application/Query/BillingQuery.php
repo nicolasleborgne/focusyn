@@ -50,6 +50,7 @@ final readonly class BillingQuery
             needsAttention: $subscription->needsAttention(),
             seats: $subscription->seats(),
             members: $this->team->size(),
+            memberAllowance: $subscription->memberAllowance($now),
             notes: $this->notes->count(),
             noteAllowance: $entitled->noteAllowance(),
             hasCustomerAccount: null !== $subscription->customerReference(),

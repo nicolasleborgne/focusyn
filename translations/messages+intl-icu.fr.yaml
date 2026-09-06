@@ -524,6 +524,8 @@ billing:
     not_configured: Le paiement n'est pas configuré sur cette instance. L'essai puis le palier gratuit fonctionnent normalement.
     unavailable: Le prestataire de paiement n'a pas répondu. Réessayez dans un instant.
     notes_used: '{used} notes sur {allowance}'
+    members_used: '{used, plural, one {# membre} other {# membres}} sur {allowance, plural, one {# place} other {# places}}'
+    members_help: 'Au-delà, on n''invite plus. Personne n''est renvoyé pour autant : une équipe qui repasse sous ses places garde ses membres.'
     notes_help: Au-delà, l'écriture s'arrête. Rien n'est effacé, tout reste lisible et exportable.
     plan:
         free: Gratuit
@@ -536,3 +538,4 @@ billing:
         notes: Le palier gratuit s'arrête à cinquante notes. Rien n'est perdu — passez à un palier supérieur pour continuer d'écrire.
         assistant: L'assistant d'écriture demande un abonnement.
         teams: Ouvrir une équipe ou inviter quelqu'un demande un abonnement.
+        members: 'L''équipe est au complet : toutes ses places sont prises, invitations en attente comprises. Ajoutez des places pour inviter quelqu''un de plus.'

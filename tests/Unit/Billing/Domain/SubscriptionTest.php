@@ -112,6 +112,57 @@ final class SubscriptionTest extends TestCase
         self::assertFalse(Plan::Free->isBilledPerSeat());
     }
 
+    public function testTheTrialOpensASmallTeamRatherThanASingleSeat(): void
+    {
+        $subscription = $this->opened();
+
+        // L'essai ouvre l'équipe : sans cela, une organisation créée pour
+        // l'essayer ne pourrait inviter personne, et l'essai ne servirait à
+        // rien. Cinq places, pas davantage — on essaie une équipe, on ne la
+        // fait pas tourner gratuitement quinze jours.
+        self::assertSame(5, $subscription->memberAllowance(new DateTimeImmutable('2026-09-10')));
+    }
+
+    public function testATeamHasExactlyTheSeatsItPaysFor(): void
+    {
+        $subscription = $this->opened();
+        $subscription->activate(Plan::Team, new DateTimeImmutable('2026-10-06'), seats: 3);
+
+        self::assertSame(3, $subscription->memberAllowance(new DateTimeImmutable('2026-10-01')));
+    }
+
+    public function testThePersonalPlanIsForOnePerson(): void
+    {
+        $subscription = $this->opened();
+        $subscription->activate(Plan::Personal, new DateTimeImmutable('2026-10-06'), seats: 9);
+
+        // Le personnel est à prix fixe : les places déclarées par le
+        // prestataire ne l'agrandissent pas, sans quoi on tiendrait une équipe
+        // au prix d'une personne.
+        self::assertSame(1, $subscription->memberAllowance(new DateTimeImmutable('2026-10-01')));
+    }
+
+    public function testOnceEverythingLapsesOnlyOnePlaceRemains(): void
+    {
+        $subscription = $this->opened();
+        $subscription->activate(Plan::Team, new DateTimeImmutable('2026-10-06'), seats: 8);
+
+        // La période est passée : le plafond retombe avec le palier. Personne
+        // n'est pour autant renvoyé — c'est l'invitation qui s'arrête, pas
+        // l'appartenance.
+        self::assertSame(1, $subscription->memberAllowance(new DateTimeImmutable('2026-10-07')));
+    }
+
+    public function testTheSeatsOnlyCountOnThePlanBilledPerSeat(): void
+    {
+        self::assertSame(4, Plan::Team->memberAllowance(4));
+        self::assertSame(1, Plan::Personal->memberAllowance(4));
+        self::assertSame(1, Plan::Free->memberAllowance(4));
+
+        // Une organisation sans membre n'existe pas : jamais zéro place.
+        self::assertSame(1, Plan::Team->memberAllowance(0));
+    }
+
     private function opened(): Subscription
     {
         return Subscription::open(

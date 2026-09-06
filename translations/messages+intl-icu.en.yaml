@@ -516,6 +516,8 @@ billing:
     not_configured: Payment is not configured on this instance. The trial and the free plan work as usual.
     unavailable: The payment provider did not answer. Try again shortly.
     notes_used: '{used} notes out of {allowance}'
+    members_used: '{used, plural, one {# member} other {# members}} out of {allowance, plural, one {# seat} other {# seats}}'
+    members_help: 'Past that, no one else can be invited. Nobody is removed for it: a team that drops below its seats keeps its members.'
     notes_help: Past that, writing stops. Nothing is erased; everything stays readable and exportable.
     plan:
         free: Free
@@ -528,3 +530,4 @@ billing:
         notes: The free plan stops at fifty notes. Nothing is lost — move up a plan to keep writing.
         assistant: The writing assistant needs a subscription.
         teams: Opening a team or inviting someone needs a subscription.
+        members: 'The team is full: every seat is taken, pending invitations included. Add seats to invite one more person.'

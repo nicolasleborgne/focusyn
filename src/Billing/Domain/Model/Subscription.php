@@ -23,6 +23,16 @@ final class Subscription extends AggregateRoot
 {
     private const int TRIAL_DAYS = 14;
 
+    /**
+     * Ce que l'essai ouvre en nombre de personnes.
+     *
+     * Assez pour essayer une équipe — inviter, accepter, partager —, trop peu
+     * pour en faire tourner une gratuitement pendant quinze jours. Sans cela,
+     * une organisation neuve n'aurait qu'une place et l'essai d'une équipe
+     * n'aurait aucun sens.
+     */
+    private const int TRIAL_SEATS = 5;
+
     private function __construct(
         private readonly SubscriptionId $id,
         private readonly TenantId $organizationId,
@@ -137,6 +147,23 @@ final class Subscription extends AggregateRoot
             SubscriptionStatus::PastDue,
             SubscriptionStatus::Trialing => Plan::Free,
         };
+    }
+
+    /**
+     * Combien de personnes tiennent dans l'organisation, à cet instant.
+     *
+     * Le plafond suit le palier réellement dû, et donc les places payées ; en
+     * essai, il vaut ce que l'essai ouvre. Il arrête l'invitation, jamais
+     * l'appartenance : une équipe qui repasse sous le nombre de ses membres ne
+     * renvoie personne.
+     */
+    public function memberAllowance(DateTimeImmutable $now): int
+    {
+        if ($this->isTrialingAt($now)) {
+            return self::TRIAL_SEATS;
+        }
+
+        return $this->entitledPlan($now)->memberAllowance($this->seats);
     }
 
     public function activate(Plan $plan, DateTimeImmutable $periodEndsAt, int $seats): void

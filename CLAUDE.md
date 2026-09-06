@@ -173,6 +173,28 @@ paliers — gratuit (cinquante notes, ni assistant ni équipe), personnel à pri
 fixe, équipe au membre. Toute organisation naît avec quatorze jours d'essai sur
 le palier personnel, sans carte.
 
+**Les places se comptent, comme les notes.** `Subscription::memberAllowance($now)`
+donne le nombre de personnes qui tiennent dans l'organisation : les places
+payées sur le palier équipe, une seule partout ailleurs — le personnel est à
+prix fixe, et le tenir pour extensible reviendrait à servir une équipe au prix
+d'une personne. **L'essai en ouvre cinq** : avec une seule, une organisation
+créée pour essayer l'équipe ne pourrait inviter personne.
+
+Le plafond est vérifié **deux fois**, et il le faut. À l'invitation, il compte
+les invitations en attente avec les membres, sans quoi vingt invitations parties
+pour trois places entreraient toutes, une à une. À l'acceptation, il compte de
+nouveau : entre l'envoi et le clic, l'abonnement a pu retomber. Là, la question
+porte sur une organisation **nommée** (`Entitlements::memberAllowanceOf()`) et
+non sur l'organisation courante — celui qui accepte est encore dans la sienne,
+et l'interroger donnerait le plafond du mauvais abonnement.
+
+Un refus à l'acceptation ne consomme pas l'invitation : elle vaudra encore le
+jour où une place se paie. Et personne n'est jamais renvoyé — une équipe
+redescendue sous le nombre de ses membres cesse d'inviter, elle ne se vide pas.
+Après la connexion, `AcceptPendingInvitationListener` traite l'équipe complète
+comme un refus ordinaire : faire échouer la connexion elle-même serait hors de
+proportion.
+
 **Tout tient dans `Subscription::entitledPlan($now)`** : essai fini, paiement
 échoué, période dépassée donnent la même réponse — le gratuit. **Jamais rien de
 moins.** Un plafond arrête l'écriture ; il ne rend jamais un carnet illisible ni
@@ -316,12 +338,12 @@ DESKTOP/MOBILE : c'était un outil d'aperçu du logiciel de design, pas une
 fonction du produit. La coquille utilise un seul balisage et une requête média
 à 900 px. Ne pas réintroduire l'interrupteur.
 
-**Données provisoires.** `PrototypeShellDataProvider` et
-`PrototypeHomeDataProvider` (dans `Shared/Infrastructure/`) servent les données
-de la maquette pour que la coquille soit visible avant que les contextes
-n'existent. Elles implémentent des ports de la couche Application : les
-remplacer ne doit toucher aucun gabarit. Les supprimer dès que Notebook et Task
-exposent leurs requêtes.
+**Coquille et accueil sont agrégés, pas devinés.** `AggregatedShellDataProvider`
+et `AggregatedHomeDataProvider` (dans `Shared/Infrastructure/`) rassemblent ce
+que chaque contexte expose pour la navigation et l'accueil, derrière des ports
+de la couche Application : un gabarit n'interroge jamais un contexte
+directement, et ajouter une source ne touche aucun gabarit. Ils ont remplacé
+les fournisseurs de données de la maquette, qui n'existent plus.
 
 **Traductions.** Aucun texte en dur dans les templates : catalogues `fr` et `en`
 dès l'écriture. La copie française de référence est celle de la maquette.

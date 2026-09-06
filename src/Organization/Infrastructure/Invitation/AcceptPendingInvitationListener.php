@@ -8,6 +8,7 @@ use App\Organization\Application\Command\AcceptInvitation\AcceptInvitation;
 use App\Organization\Application\Command\SwitchOrganization\SwitchOrganization;
 use App\Organization\Application\Port\PendingInvitation;
 use App\Organization\Domain\Exception\InvitationCannotBeAccepted;
+use App\Shared\Application\Billing\PlanLimitReached;
 use App\Shared\Application\Command\CommandBus;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -20,7 +21,9 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
  * une équipe, on y arrive.
  *
  * Un refus n'interrompt rien : on vient de se connecter, et c'est la seule
- * chose qui compte à cet instant. L'écran d'équipe dira le reste.
+ * chose qui compte à cet instant. L'écran d'équipe dira le reste. Une équipe
+ * complète est un refus comme un autre — laisser passer la limite ferait
+ * échouer la connexion elle-même, ce qui serait hors de proportion.
  */
 final readonly class AcceptPendingInvitationListener
 {
@@ -43,7 +46,7 @@ final readonly class AcceptPendingInvitationListener
         try {
             $joined = $this->commands->dispatch(new AcceptInvitation($token));
             $this->commands->dispatch(new SwitchOrganization((string) $joined));
-        } catch (InvitationCannotBeAccepted $refusal) {
+        } catch (InvitationCannotBeAccepted|PlanLimitReached $refusal) {
             $this->logger->info('Invitation refusée après connexion.', ['raison' => $refusal->getMessage()]);
         }
     }

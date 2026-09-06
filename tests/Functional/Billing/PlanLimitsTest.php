@@ -8,8 +8,11 @@ use App\Billing\Domain\Model\Plan;
 use App\Billing\Domain\Repository\SubscriptionRepository;
 use App\Identity\Domain\Model\EmailAddress;
 use App\Identity\Domain\Repository\UserRepository;
+use App\Organization\Domain\Model\Invitation;
 use App\Organization\Domain\Model\MemberId;
+use App\Organization\Domain\Model\Membership;
 use App\Organization\Domain\Model\Organization;
+use App\Organization\Domain\Repository\InvitationRepository;
 use App\Organization\Domain\Repository\OrganizationRepository;
 use App\Shared\Domain\TenantId;
 use App\Tests\Factory\Notebook\NoteFactory;
@@ -17,6 +20,7 @@ use App\Tests\Functional\LogsIn;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -114,6 +118,50 @@ final class PlanLimitsTest extends WebTestCase
         self::assertCount(1, $this->organizationsOfDemo());
     }
 
+    public function testATeamStopsAtTheSeatsItPaysForButKeepsItsMembers(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+        $this->openTeam($client, 'Le studio');
+
+        // Le propriétaire occupe déjà une place : quatre invitations
+        // remplissent les cinq de l'essai.
+        foreach (['ana', 'bo', 'cyd', 'dov'] as $name) {
+            $this->invite($client, $name.'@exemple.fr');
+        }
+
+        $crawler = $this->invite($client, 'la-personne-de-trop@exemple.fr');
+
+        self::assertStringContainsString('au complet', $crawler->filter('.fx-auth__error')->text());
+
+        // L'invitation de trop n'est pas partie, et celles qui tenaient dans
+        // les places restent valables : un plafond arrête, il n'annule pas.
+        self::assertCount(4, $this->invitationsOfTeam());
+    }
+
+    public function testAnInvitationSentInTimeStillDoesNotEnterOnceThePlacesAreGone(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+        $this->openTeam($client, 'Le studio');
+        $this->invite($client, 'camille@focusyn.fr');
+
+        // Entre l'envoi et l'acceptation, l'essai s'achève : il ne reste
+        // qu'une place, et le propriétaire l'occupe.
+        $this->endTrial();
+
+        $token = $this->invitationsOfTeam()[0]->token()->toString();
+        $this->signOut($client);
+        $this->logIn($client, 'camille@focusyn.fr');
+        $client->request('GET', '/invitations/'.$token);
+        $client->followRedirect();
+
+        // Elle n'entre pas, et l'invitation n'est pas consommée pour autant :
+        // elle vaudra encore le jour où une place se paie.
+        self::assertCount(1, $this->membersOfTeam());
+        self::assertFalse($this->invitationsOfTeam()[0]->isAccepted());
+    }
+
     private function consentToAssistant(KernelBrowser $client): void
     {
         $client->request('POST', '/reglages/donnees', [
@@ -158,6 +206,55 @@ final class PlanLimitsTest extends WebTestCase
         self::assertInstanceOf(OrganizationRepository::class, $organizations);
 
         return $organizations->ofMember(MemberId::fromString($user->id()->toString()));
+    }
+
+    private function openTeam(KernelBrowser $client, string $name): void
+    {
+        $crawler = $client->request('GET', '/equipe');
+        $client->submit($crawler->filter('form[action="/equipe/nouvelle"]')->form(['name' => $name]));
+        $client->followRedirect();
+    }
+
+    private function invite(KernelBrowser $client, string $email): Crawler
+    {
+        $client->request(
+            'POST',
+            '/equipe/inviter',
+            [
+                '_token' => $this->token($client, '/equipe', '/equipe/inviter'),
+                'email' => $email,
+                'role' => 'member',
+            ],
+            server: ['HTTP_REFERER' => '/equipe'],
+        );
+
+        return $client->followRedirect();
+    }
+
+    /** @return list<Membership> */
+    private function membersOfTeam(): array
+    {
+        return $this->team()->memberships();
+    }
+
+    /** @return list<Invitation> */
+    private function invitationsOfTeam(): array
+    {
+        $invitations = self::getContainer()->get(InvitationRepository::class);
+        self::assertInstanceOf(InvitationRepository::class, $invitations);
+
+        return $invitations->ofOrganization($this->team()->id());
+    }
+
+    private function team(): Organization
+    {
+        $team = array_values(array_filter(
+            $this->organizationsOfDemo(),
+            static fn (Organization $organization): bool => !$organization->isPersonal(),
+        ));
+        self::assertCount(1, $team);
+
+        return $team[0];
     }
 
     private function token(KernelBrowser $client, string $page, string $action): string

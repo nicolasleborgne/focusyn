@@ -18,11 +18,18 @@ final readonly class BillingView
         public bool $needsAttention,
         public int $seats,
         public int $members,
+        public int $memberAllowance,
         public int $notes,
         public ?int $noteAllowance,
         public bool $hasCustomerAccount,
         public bool $paymentConfigured,
     ) {
+    }
+
+    /** Combien de personnes peuvent encore entrer. */
+    public function placesLeft(): int
+    {
+        return max(0, $this->memberAllowance - $this->members);
     }
 
     /** Ce qui reste avant le plafond, quand il y en a un. */
