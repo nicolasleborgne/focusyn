@@ -42,6 +42,8 @@ shell:
         note_hint: markdown
         list: Task list
         list_hint: checklist
+        routine: Routine
+        routine_hint: that comes back
 
 home:
     dormant: Gone quiet

@@ -43,6 +43,8 @@ shell:
         note_hint: markdown
         list: Liste de tâches
         list_hint: à cocher
+        routine: Routine
+        routine_hint: qui revient
 
 home:
     dormant: Ce qui dort

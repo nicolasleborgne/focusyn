@@ -42,6 +42,35 @@ final class RoutineJourneyTest extends WebTestCase
         self::assertStringContainsString('Quotidienne', $crawler->filter('.fx-pill--selected')->text());
     }
 
+    public function testAnAccountWithoutAnyRoutineCanStillFindThem(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+
+        $crawler = $client->request('GET', '/');
+
+        // La section reste, vide, comme celles des obsessions et des listes :
+        // la cacher reviendrait à masquer l'existence même des routines à qui
+        // n'en a pas encore.
+        self::assertStringContainsString('Routines', $crawler->filter('.fx-sidebar__scroll')->text());
+        // Et le menu de création en propose une : sans cela, un compte neuf
+        // n'aurait aucun chemin vers les routines depuis la barre latérale.
+        self::assertCount(1, $crawler->filter('.fx-sidebar__create form[action="/routines/nouvelle"]'));
+    }
+
+    public function testARoutineIsOpenedFromTheSidebarMenu(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+
+        $crawler = $client->request('GET', '/');
+        $client->submit($crawler->filter('.fx-sidebar__create form[action="/routines/nouvelle"]')->form());
+        $crawler = $client->followRedirect();
+
+        self::assertResponseIsSuccessful();
+        self::assertSame('Nouvelle routine', $crawler->filter('.fx-list__title')->text());
+    }
+
     public function testTheRoutineShowsUpInTheSidebarAndOnTheTasksScreen(): void
     {
         $client = self::createClient();

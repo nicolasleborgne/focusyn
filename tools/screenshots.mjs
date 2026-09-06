@@ -80,6 +80,19 @@ for (const viewport of VIEWPORTS) {
         process.stdout.write(`  note-${viewport.name}.png\n`);
     }
 
+    // Le menu de création, ouvert : ses entrées sont cachées au chargement, et
+    // c'est là qu'un chemin manquant se voit.
+    // Le menu vit dans la barre latérale, absente sur téléphone : on ne le
+    // capture que là où il existe.
+    await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+    if (await page.locator('.fx-button--create').isVisible()) {
+        await page.click('.fx-button--create');
+        await page.waitForSelector('.fx-menu__item', { state: 'visible', timeout: 3000 }).catch(() => {});
+        await page.evaluate(() => document.fonts.ready);
+        await page.screenshot({ path: `${OUT}/creer-${viewport.name}.png`, fullPage: true });
+        process.stdout.write(`  creer-${viewport.name}.png\n`);
+    }
+
     // La revue du soir : un dialogue, donc caché au chargement. Sans ce clic,
     // aucune capture ne le montrerait jamais.
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
