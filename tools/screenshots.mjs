@@ -29,6 +29,7 @@ const SCREENS = [
     { name: 'bibliotheque', path: '/bibliotheque' },
     { name: 'recherche', path: '/recherche?query=sommeil' },
     { name: 'taches', path: '/taches' },
+    { name: 'boite', path: '/boite' },
     { name: 'reglages', path: '/reglages' },
     { name: 'equipe', path: '/equipe' },
     { name: 'abonnement', path: '/abonnement' },

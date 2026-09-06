@@ -74,7 +74,8 @@ final class ShellViewTest extends TestCase
         int $noteCount = 0,
         array $obsessions = [],
         array $taskLists = [],
+        int $inboxCount = 0,
     ): ShellView {
-        return new ShellView($accountEmail, $noteCount, $obsessions, $taskLists);
+        return new ShellView($accountEmail, $noteCount, $obsessions, $taskLists, $inboxCount);
     }
 }

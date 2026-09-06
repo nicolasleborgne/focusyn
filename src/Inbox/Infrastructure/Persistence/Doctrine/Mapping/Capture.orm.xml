@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Inbox\Domain\Model\Capture" table="captures">
+        <id name="id" type="capture_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="tenantId" type="tenant_id" column="organization_id"/>
+        <field name="kind" type="string" column="kind" length="10"
+               enum-type="App\Inbox\Domain\Model\CaptureKind"/>
+        <field name="title" type="capture_title" column="title"/>
+        <field name="body" type="text" column="body"/>
+        <field name="source" type="string" column="source" length="20"
+               enum-type="App\Inbox\Domain\Model\CaptureSource"/>
+        <field name="capturedAt" type="datetime_immutable" column="captured_at"/>
+
+        <indexes>
+            <!-- L'écran et le compteur de la coquille lisent tous deux la boîte
+                 d'une organisation, la plus récente d'abord. -->
+            <index name="idx_captures_org_captured" columns="organization_id,captured_at"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

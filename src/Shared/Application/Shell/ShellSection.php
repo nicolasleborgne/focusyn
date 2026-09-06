@@ -15,6 +15,7 @@ enum ShellSection: string
     case Home = 'home';
     case Library = 'library';
     case Tasks = 'tasks';
+    case Inbox = 'inbox';
     case Search = 'search';
     case Settings = 'settings';
 }

@@ -114,6 +114,18 @@
     font-size: var(--fx-size-nav);
 }
 
+/* Écarter est une issue comme les autres, mais on ne la propose pas : sans
+   contour, elle se tient en retrait des deux classements. */
+.fx-button--quiet {
+    border-color: transparent;
+    color: var(--fx-text-disabled);
+}
+
+.fx-button--quiet:hover {
+    border-color: transparent;
+    color: var(--fx-text-title);
+}
+
 .fx-button--small {
     padding: var(--fx-space-3) var(--fx-space-6);
     font-size: var(--fx-size-md);

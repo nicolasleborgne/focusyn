@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Notebook;
 
+use App\Inbox\Domain\Model\Capture;
+use App\Inbox\Domain\Model\CaptureId;
+use App\Inbox\Domain\Model\CaptureSource;
+use App\Inbox\Domain\Repository\CaptureRepository;
 use App\Notebook\Domain\Model\NoteId;
 use App\Notebook\Domain\Model\ObsessionName;
 use App\Notebook\Domain\Repository\NoteRepository;
@@ -167,6 +171,28 @@ final class TenantIsolationTest extends KernelTestCase
         self::assertNull($this->reminders()->ofId($foreign->id()));
     }
 
+    public function testACaptureNeverCrossesTheBoundary(): void
+    {
+        $mine = $this->capture($this->alice, 'Relire Ekirch');
+        $theirs = $this->capture($this->bob, 'Secret industriel');
+
+        $this->workingIn($this->alice);
+
+        $titles = array_map(
+            static fn ($capture): string => $capture->title()->toString(),
+            $this->captures()->pending(),
+        );
+
+        self::assertSame(['Relire Ekirch'], $titles);
+        self::assertSame(1, $this->captures()->count());
+
+        // Ni par identifiant : le compteur de la coquille et l'écran lisent le
+        // même dépôt, et une capture partagée depuis un autre appareil ne doit
+        // pas se trier depuis la mauvaise organisation.
+        self::assertNull($this->captures()->ofId($theirs->id()));
+        self::assertNotNull($this->captures()->ofId($mine->id()));
+    }
+
     public function testTheWorkerQueryIsTheOneExceptionAndItIsDeliberate(): void
     {
         ReminderFactory::new()->ownedBy($this->alice)->dueAt('2026-09-01 09:00')->create();
@@ -182,6 +208,30 @@ final class TenantIsolationTest extends KernelTestCase
         }
 
         self::assertCount(2, $this->reminders()->dueEverywhere(new DateTimeImmutable('2026-09-02'), 10));
+    }
+
+    private function capture(TenantId $tenant, string $text): Capture
+    {
+        $this->workingIn($tenant);
+
+        $capture = Capture::receive(
+            CaptureId::generate(),
+            $tenant,
+            $text,
+            CaptureSource::TypedIn,
+            new DateTimeImmutable('2026-09-06 10:00'),
+        );
+        $this->captures()->save($capture);
+
+        return $capture;
+    }
+
+    private function captures(): CaptureRepository
+    {
+        $repository = self::getContainer()->get(CaptureRepository::class);
+        self::assertInstanceOf(CaptureRepository::class, $repository);
+
+        return $repository;
     }
 
     private function reminders(): ReminderRepository

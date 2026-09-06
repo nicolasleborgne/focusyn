@@ -54,7 +54,39 @@ src/<Contexte>/
 ```
 
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
-`Reminder`, `Assistant`, `Billing`, `Privacy`.
+`Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
+
+**Une capture ignore ce qu'elle deviendra**, comme un rappel ignore ce qu'il
+porte. La boîte de réception est un sas : ce qui y tombe n'est ni une note ni
+une tâche, et trier ne transforme rien — cela écrit ailleurs, puis **la capture
+disparaît**. Écarter, classer en note, classer en tâche : trois issues, aucune
+survivance. Une boîte qu'on ne peut pas vider cesse d'être une boîte, et ce qui
+mérite d'être gardé se classe plutôt qu'il ne s'archive.
+
+Elle est immuable : on la trie ou on l'écarte, on ne la corrige pas — corriger,
+c'est déjà l'avoir sortie de la boîte. Son titre est la première ligne coupée à
+soixante-dix caractères, une étiquette de liste ; le texte, lui, est conservé
+entier.
+
+**Inbox n'écrit ni note ni tâche lui-même** : il passe par les ports partagés
+`NoteWriter` et `TaskWriter`, que Notebook et Task implémentent en appelant
+**directement leur gestionnaire**, sans repasser par le bus. On est déjà dans la
+transaction du tri, et il faut que ce qui est écrit et la capture retirée
+tiennent ou tombent ensemble ; un second envoi ouvrirait une transaction dans la
+transaction. L'ordre compte : l'écriture d'abord, de sorte qu'un plafond de
+notes atteint fasse tomber la transaction et **laisse la capture dans la
+boîte** — la perdre pour une note qui n'a pas pu s'écrire serait la pire issue.
+
+**Le partage entrant n'a pas de jeton CSRF, et ne peut pas en avoir.** Le
+`share_target` du manifeste fait poster le système d'exploitation sur
+`/partage` ; il n'a jamais vu notre page. Ce que cela ouvre est une ligne de
+plus dans la boîte, chez quelqu'un de déjà connecté, à l'endroit même prévu pour
+trier ce qui vient d'ailleurs : rien n'est écrit dans le carnet, rien n'est
+modifié, rien n'est supprimé, et le tri reste protégé. La route répond **303**,
+pour que revenir en arrière ne rejoue pas le partage, et son adresse n'est pas
+localisée — elle est inscrite dans le manifeste installé sur l'appareil.
+*Limite connue* : partager hors session mène à l'écran de connexion et le
+contenu partagé est perdu.
 
 **Un rappel ne connaît ni la note ni la tâche qu'il porte.** Son sujet est une
 chaîne (`note:<uuid>`, `task:<uuid>`), son destinataire un identifiant résolu à
@@ -524,6 +556,10 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   le carnet au départ. Ni l'un ni l'autre n'a de titre d'écran : le champ en
   tient lieu, comme dans la maquette. Un test qui identifie ces écrans doit donc
   s'ancrer sur l'invite du champ, pas sur un `<h1>`.
+- **La barre d'onglets ne rend pas la même liste que la barre latérale.**
+  Six entrées tiennent dans une colonne, pas en bas d'un écran de téléphone :
+  `ShellRuntime::mobileNavigation()` en retire la recherche et suit l'ordre de
+  la maquette. Ajouter une destination demande de penser aux deux.
 - **Une couleur en dur, ou une primitive lue par un composant, ne se voit
   qu'en thème sombre** — et seulement sur l'écran concerné. Après avoir touché
   au CSS : `grep -rn '#[0-9a-f]\{3,8\}' assets/styles/{base,layout,components}`

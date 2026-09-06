@@ -44,6 +44,7 @@
 @import url("./components/prose.css");
 @import url("./components/reminder.css");
 @import url("./components/switch.css");
+@import url("./components/capture.css");
 
 /* En dernier : les bascules d'affichage doivent pouvoir écraser tout le reste,
    une requête média n'apportant aucune spécificité supplémentaire. */

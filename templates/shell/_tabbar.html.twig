@@ -1,5 +1,5 @@
 <nav class="fx-tabbar" aria-label="{{ 'shell.nav.label'|trans }}">
-    {% for item in shell_navigation() %}
+    {% for item in shell_mobile_navigation() %}
         {% set current = section.value == item.key %}
         <a class="fx-tabbar__item {{ current ? 'fx-tabbar__item--current' }}"
            href="{{ path(item.route) }}"

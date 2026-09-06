@@ -1,0 +1,78 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ 'inbox.heading'|trans }} — Focusyn{% endblock %}
+{% set crumb = 'inbox.heading'|trans %}
+
+{% block page %}
+    <div class="fx-app__content fx-app__content--list">
+        <div class="fx-board__header">
+            <h1 class="fx-heading">{{ 'inbox.heading'|trans }}</h1>
+            <span class="fx-eyebrow">{{ 'inbox.summary'|trans({ count: captures|length }) }}</span>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <p class="fx-settings__notice" role="status">{{ message|trans }}</p>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
+        {% endfor %}
+
+        {# Le champ de capture, en tête : on vient ici pour déposer autant que
+           pour trier. #}
+        <form method="post" action="{{ path('inbox_capture') }}" class="fx-capture">
+            <input type="hidden" name="_token" value="{{ csrf_token('inbox-capture') }}">
+            <span class="fx-capture__caret" aria-hidden="true">›</span>
+            <input type="text" name="text" class="fx-capture__input"
+                   placeholder="{{ 'inbox.placeholder'|trans }}"
+                   aria-label="{{ 'inbox.placeholder'|trans }}" autocomplete="off">
+            <button type="submit" class="fx-button fx-button--small">{{ 'inbox.add'|trans }}</button>
+        </form>
+
+        {% for capture in captures %}
+            <article class="fx-capture-row">
+                <div class="fx-capture-row__meta">
+                    <span class="fx-tag">{{ ('inbox.kind.' ~ capture.kind)|trans }}</span>
+                    <span class="fx-meta">{{ ('inbox.source.' ~ capture.source)|trans }}</span>
+                    <span class="fx-meta fx-capture-row__when">{{ capture.capturedAt|fx_ago }}</span>
+                </div>
+
+                <p class="fx-capture-row__title">{{ capture.title }}</p>
+                {% if capture.excerpt is not empty %}
+                    <p class="fx-capture-row__excerpt">{{ capture.excerpt }}</p>
+                {% endif %}
+
+                {# Trois issues, un seul formulaire : c'est le bouton pressé qui
+                   décide, et le jeton ne voyage qu'une fois. #}
+                <form method="post" action="{{ path('inbox_file', { id: capture.id }) }}" class="fx-capture-row__actions">
+                    <input type="hidden" name="_token" value="{{ csrf_token('inbox-file') }}">
+
+                    <button type="submit" name="note" value="1" class="fx-button fx-button--small">
+                        {{ 'inbox.to_note'|trans }}
+                    </button>
+
+                    {# Sans liste, pas de bouton : proposer un classement qui ne
+                       peut aboutir nulle part serait pire que de ne rien
+                       proposer. #}
+                    {% if shell().taskLists is not empty %}
+                        <select name="taskList" class="fx-select" aria-label="{{ 'inbox.to_task_list'|trans }}">
+                            {% for list in shell().taskLists %}
+                                <option value="{{ list.slug }}">{{ list.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" name="task" value="1" class="fx-button fx-button--small">
+                            {{ 'inbox.to_task'|trans }}
+                        </button>
+                    {% endif %}
+
+                    <button type="submit" name="discard" value="1" class="fx-button fx-button--small fx-button--quiet">
+                        {{ 'inbox.discard'|trans }}
+                    </button>
+                </form>
+            </article>
+        {% else %}
+            <div class="fx-library__empty">
+                <p class="fx-card__help">{{ 'inbox.empty'|trans }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

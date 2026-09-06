@@ -22,6 +22,7 @@ final class ShellExtension extends AbstractExtension
         return [
             new TwigFunction('shell', [ShellRuntime::class, 'view']),
             new TwigFunction('shell_navigation', [ShellRuntime::class, 'navigation']),
+            new TwigFunction('shell_mobile_navigation', [ShellRuntime::class, 'mobileNavigation']),
         ];
     }
 }

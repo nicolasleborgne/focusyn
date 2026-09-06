@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Shell;
 
 use App\Shared\Application\Account\CurrentAccount;
+use App\Shared\Application\Shell\InboxSummaryProvider;
 use App\Shared\Application\Shell\NotebookSummaryProvider;
 use App\Shared\Application\Shell\ShellDataProvider;
 use App\Shared\Application\Shell\ShellView;
@@ -20,6 +21,7 @@ final readonly class AggregatedShellDataProvider implements ShellDataProvider
         private CurrentAccount $account,
         private NotebookSummaryProvider $notebook,
         private TaskSummaryProvider $tasks,
+        private InboxSummaryProvider $inbox,
     ) {
     }
 
@@ -30,6 +32,7 @@ final readonly class AggregatedShellDataProvider implements ShellDataProvider
             noteCount: $this->notebook->noteCount(),
             obsessions: $this->notebook->obsessions(),
             taskLists: $this->tasks->lists(),
+            inboxCount: $this->inbox->pendingCount(),
         );
     }
 }

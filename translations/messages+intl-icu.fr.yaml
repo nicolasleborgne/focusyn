@@ -26,6 +26,7 @@ shell:
         home: Accueil
         library: Bibliothèque
         tasks: Tâches
+        inbox: Boîte
         search: Recherche
         settings: Réglages
     section:
@@ -543,3 +544,22 @@ billing:
         assistant: L'assistant d'écriture demande un abonnement.
         teams: Ouvrir une équipe ou inviter quelqu'un demande un abonnement.
         members: 'L''équipe est au complet : toutes ses places sont prises, invitations en attente comprises. Ajoutez des places pour inviter quelqu''un de plus.'
+
+inbox:
+    heading: Boîte de réception
+    summary: '{count, plural, =0 {boîte vide} one {# élément à trier} other {# éléments à trier}}'
+    placeholder: 'Coller un lien, jeter une idée — Entrée'
+    add: Ajouter
+    empty: 'Boîte vide. Tout est classé.'
+    to_note: En note
+    to_task: En tâche
+    to_task_list: Liste où ranger la tâche
+    discard: Écarter
+    filed_as_task: Ajouté à la liste.
+    discarded: Élément écarté.
+    kind:
+        link: Lien
+        text: Texte
+    source:
+        typed_in: Saisi dans Focusyn
+        shared: Partagé depuis une autre application

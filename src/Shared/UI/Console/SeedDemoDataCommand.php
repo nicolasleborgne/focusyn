@@ -11,6 +11,10 @@ use App\Assistant\Domain\Repository\AssistantSettingsRepository;
 use App\Identity\Application\Command\RegisterUser\RegisterUser;
 use App\Identity\Domain\Model\EmailAddress;
 use App\Identity\Domain\Repository\UserRepository;
+use App\Inbox\Domain\Model\Capture;
+use App\Inbox\Domain\Model\CaptureId;
+use App\Inbox\Domain\Model\CaptureSource;
+use App\Inbox\Domain\Repository\CaptureRepository;
 use App\Notebook\Domain\Model\AuthorId;
 use App\Notebook\Domain\Model\Note;
 use App\Notebook\Domain\Model\NoteBody;
@@ -76,6 +80,7 @@ final class SeedDemoDataCommand extends Command
         private readonly ObsessionRepository $obsessions,
         private readonly TaskListRepository $lists,
         private readonly ReminderRepository $reminders,
+        private readonly CaptureRepository $captures,
         private readonly PrivacyChoicesRepository $privacy,
         private readonly AssistantSettingsRepository $assistant,
         private readonly KeyVault $vault,
@@ -118,6 +123,7 @@ final class SeedDemoDataCommand extends Command
             $this->seedObsessions($tenant);
             $this->seedLists($tenant);
             $this->seedReminders($tenant, $recipient);
+            $this->seedInbox($tenant);
             $this->seedAssistant($recipient);
         });
 
@@ -144,12 +150,39 @@ final class SeedDemoDataCommand extends Command
             $this->reminders->remove($reminder);
         }
 
+        foreach ($this->captures->pending() as $capture) {
+            $this->captures->remove($capture);
+        }
+
         foreach (self::obsessions() as [$name]) {
             $existing = $this->obsessions->ofSlug(ObsessionName::fromString($name)->slug());
 
             if (null !== $existing) {
                 $this->obsessions->remove($existing);
             }
+        }
+    }
+
+    /**
+     * Deux entrées dans la boîte, de provenances différentes : une adresse
+     * partagée depuis un navigateur, et une phrase collée à la main. C'est ce
+     * qui distingue les deux étiquettes à l'écran.
+     */
+    private function seedInbox(TenantId $tenant): void
+    {
+        $captures = [
+            ["Segmented sleep in pre-industrial Europe\n\nhttps://exemple.fr/ekirch", CaptureSource::Shared],
+            ["L'agitation compte autant que le temps de contact\n\nRemuer à mi-parcours change l'extraction plus que trente secondes de plus.", CaptureSource::TypedIn],
+        ];
+
+        foreach ($captures as $index => [$text, $source]) {
+            $this->captures->save(Capture::receive(
+                CaptureId::generate(),
+                $tenant,
+                $text,
+                $source,
+                $this->clock->now()->modify(\sprintf('-%d hours', 2 * ($index + 1))),
+            ));
         }
     }
 

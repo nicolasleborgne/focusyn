@@ -1,0 +1,102 @@
+/**
+ * La boîte de réception : le champ où l'on jette, et les rangées à trier.
+ *
+ * Une rangée de capture n'est pas une rangée de note. Elle porte d'abord d'où
+ * vient la chose — étiquette, provenance, âge —, parce que c'est cela qui aide
+ * à décider, et non ce que la chose raconte.
+ */
+
+/* --- Le champ de capture ------------------------------------------------ */
+
+.fx-capture {
+    display: flex;
+    align-items: center;
+    gap: var(--fx-space-5);
+    margin-bottom: var(--fx-space-8);
+    padding: 10px 13px;
+    border: 1px solid var(--fx-border-subtle);
+}
+
+.fx-capture__caret {
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    color: var(--fx-text-disabled);
+}
+
+.fx-capture__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: var(--fx-size-xl);
+    color: var(--fx-text-body);
+}
+
+.fx-capture__input:focus {
+    outline: none;
+}
+
+.fx-capture__input::placeholder {
+    color: var(--fx-text-faint);
+}
+
+/* --- Une rangée à trier -------------------------------------------------- */
+
+.fx-capture-row {
+    padding: var(--fx-space-8) var(--fx-space-3);
+    border-bottom: 1px solid var(--fx-border-faint);
+}
+
+.fx-capture-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--fx-space-4);
+    margin-bottom: 7px;
+}
+
+/* L'âge est poussé à droite : il se compare d'une rangée à l'autre, ce qu'une
+   colonne alignée rend immédiat. */
+.fx-capture-row__when {
+    margin-left: auto;
+}
+
+.fx-capture-row__title {
+    margin: 0 0 6px;
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-title-row);
+    font-weight: var(--fx-weight-regular);
+    line-height: var(--fx-leading-snug);
+    color: var(--fx-text-title);
+}
+
+/* L'extrait est en sans, comme celui d'une note : deux serifs superposés se
+   disputeraient l'attention. */
+.fx-capture-row__excerpt {
+    margin: 0;
+    font-size: var(--fx-size-base);
+    line-height: var(--fx-leading-loose);
+    color: var(--fx-text-muted);
+}
+
+.fx-capture-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--fx-space-4);
+    margin-top: 13px;
+}
+
+/* Le choix de liste vit entre « en note » et « en tâche » : il n'a de sens que
+   pour le second, et se lit comme sa préposition. */
+.fx-select {
+    padding: var(--fx-space-3) var(--fx-space-4);
+    border: 1px solid var(--fx-border-subtle);
+    border-radius: var(--fx-radius-sm);
+    background: transparent;
+    font-family: inherit;
+    font-size: var(--fx-size-md);
+    color: var(--fx-text-secondary);
+    cursor: pointer;
+}

@@ -25,6 +25,7 @@ shell:
         home: Home
         library: Library
         tasks: Tasks
+        inbox: Inbox
         search: Search
         settings: Settings
     section:
@@ -535,3 +536,22 @@ billing:
         assistant: The writing assistant needs a subscription.
         teams: Opening a team or inviting someone needs a subscription.
         members: 'The team is full: every seat is taken, pending invitations included. Add seats to invite one more person.'
+
+inbox:
+    heading: Inbox
+    summary: '{count, plural, =0 {empty} one {# item to sort} other {# items to sort}}'
+    placeholder: 'Paste a link, drop an idea — Enter'
+    add: Add
+    empty: 'Inbox empty. Everything is sorted.'
+    to_note: As a note
+    to_task: As a task
+    to_task_list: List to file the task in
+    discard: Discard
+    filed_as_task: Added to the list.
+    discarded: Item discarded.
+    kind:
+        link: Link
+        text: Text
+    source:
+        typed_in: Typed in Focusyn
+        shared: Shared from another app

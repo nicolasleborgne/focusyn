@@ -22,6 +22,7 @@ final readonly class ShellView
         public int $noteCount,
         public array $obsessions,
         public array $taskLists,
+        public int $inboxCount,
     ) {
     }
 

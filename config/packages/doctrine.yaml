@@ -44,6 +44,8 @@ doctrine:
             reminder_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderIdType
             reminder_subject: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderSubjectType
             reminder_label: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderLabelType
+            capture_id: App\Inbox\Infrastructure\Persistence\Doctrine\Type\CaptureIdType
+            capture_title: App\Inbox\Infrastructure\Persistence\Doctrine\Type\CaptureTitleType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
             invitation_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\InvitationIdType
             invited_email: App\Organization\Infrastructure\Persistence\Doctrine\Type\InvitedEmailType
@@ -95,6 +97,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Task/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Task\Domain\Model'
                 alias: Task
+            Inbox:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Inbox/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Inbox\Domain\Model'
+                alias: Inbox
             Reminder:
                 type: xml
                 is_bundle: false

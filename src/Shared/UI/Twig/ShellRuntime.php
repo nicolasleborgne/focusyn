@@ -45,8 +45,30 @@ final class ShellRuntime implements RuntimeExtensionInterface
             ['key' => 'home', 'route' => 'home', 'count' => null, 'shortcut' => null],
             ['key' => 'library', 'route' => 'library', 'count' => $view->noteCount, 'shortcut' => null],
             ['key' => 'tasks', 'route' => 'tasks', 'count' => $view->openTaskCount(), 'shortcut' => null],
+            ['key' => 'inbox', 'route' => 'inbox', 'count' => $view->inboxCount ?: null, 'shortcut' => null],
             ['key' => 'search', 'route' => 'search', 'count' => null, 'shortcut' => '⌘K'],
             ['key' => 'settings', 'route' => 'settings', 'count' => null, 'shortcut' => null],
         ];
+    }
+
+    /**
+     * La même chose sur un téléphone, mais pas la même liste.
+     *
+     * Cinq onglets tiennent en bas d'un écran, six s'y serrent. La recherche
+     * en sort — c'est la seule destination qui a son propre geste au clavier
+     * et qui se retrouve depuis n'importe quel écran —, et l'ordre suit la
+     * maquette : ce qu'on ouvre le plus souvent d'abord.
+     *
+     * @return list<array{key: string, route: string, count: int|null, shortcut: string|null}>
+     */
+    public function mobileNavigation(): array
+    {
+        $keep = ['home', 'tasks', 'library', 'inbox', 'settings'];
+        $byKey = array_column($this->navigation(), null, 'key');
+
+        return array_values(array_map(
+            static fn (string $key): array => $byKey[$key],
+            $keep,
+        ));
     }
 }
