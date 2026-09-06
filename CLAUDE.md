@@ -70,6 +70,14 @@ tient la proposition ; « garder » seul appelle `DescribeObsession`. Les puces
 et numéros que le modèle remet malgré la consigne sont retirés — l'écran
 numérote déjà.
 
+**La recherche traverse les contextes par des ports.** `TaskFinder` et
+`RoutineFinder` sont déclarés dans `Shared\Application\Search` et implémentés
+par Task et Routine : l'écran appartient à Notebook, qui n'a le droit de
+connaître ni l'un ni l'autre. Une routine se cherche **par son nom et par ses
+étapes** — « Matin » ne dit rien de ce qu'elle contient, et c'est « rafraîchir
+le levain » qu'on aura en tête. Ce qui est annoncé sous le champ doit
+correspondre à ce qui est réellement fouillé : un test le vérifie.
+
 **Ce qui rapproche deux notes est grossier, et doit le rester.**
 `NoteKeywords` retient les mots d'au moins cinq lettres hors liste de mots
 vides ; un mot partagé vaut un point, une **obsession commune en vaut quatre**

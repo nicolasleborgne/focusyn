@@ -28,6 +28,9 @@ const SCREENS = [
     { name: 'accueil', path: '/' },
     { name: 'bibliotheque', path: '/bibliotheque' },
     { name: 'recherche', path: '/recherche?query=sommeil' },
+    // Une requête qui touche aussi les routines : sans elle, la bande
+    // « Routines » de la recherche ne se verrait sur aucune capture.
+    { name: 'recherche-routines', path: '/recherche?query=semaine' },
     { name: 'taches', path: '/taches' },
     { name: 'boite', path: '/boite' },
     { name: 'reglages', path: '/reglages' },

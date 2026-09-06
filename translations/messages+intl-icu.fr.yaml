@@ -198,7 +198,7 @@ notebook:
     note_count: '{count, plural, =0 {aucune note} one {# note} other {# notes}}'
     search:
         placeholder: Chercher partout
-        scopes: notes · tâches · tags
+        scopes: notes · tâches · routines · tags
         results: '{count, plural, =0 {aucun résultat} one {# résultat} other {# résultats}}'
         nothing: Aucun résultat.
     editor:
@@ -580,6 +580,7 @@ inbox:
 
 routine:
     heading: Routines
+    count: '{count, plural, =0 {aucune routine} one {# routine} other {# routines}}'
     due_today: Routines du jour
     new: Nouvelle routine
     empty: 'Aucune routine. Une routine, c''est ce qu''on refait — et que l''on veut voir revenir.'

@@ -13,9 +13,10 @@
 
     {% set notes = this.results %}
     {% set tasks = this.taskResults %}
+    {% set routines = this.routineResults %}
 
     <p class="fx-search__scope">
-        <span>{{ 'notebook.search.results'|trans({ count: notes|length + tasks|length }) }}</span>
+        <span>{{ 'notebook.search.results'|trans({ count: notes|length + tasks|length + routines|length }) }}</span>
         <span>{{ 'notebook.search.scopes'|trans }}</span>
     </p>
 
@@ -31,6 +32,27 @@
                     <span class="fx-check {{ task.done ? 'fx-check--done' }}" aria-hidden="true"><span class="fx-check__tick">✓</span></span>
                     <span class="fx-hit__text {{ task.done ? 'fx-hit__text--done' }}">{{ task.text }}</span>
                     <span class="fx-hit__when">{{ task.listName }}</span>
+                </a>
+            {% endfor %}
+        {% endif %}
+
+    {% if routines is not empty %}
+            <p class="fx-search__band">
+                <span class="fx-eyebrow">{{ 'routine.heading'|trans }}</span>
+                <span class="fx-search__rule"></span>
+                <span class="fx-search__tally">{{ 'routine.count'|trans({ count: routines|length }) }}</span>
+            </p>
+
+            {% for routine in routines %}
+                {# La ligne montre l'étape qui a répondu, et la routine à
+                   laquelle elle appartient : sans quoi on ne saurait pas
+                   pourquoi elle est là. #}
+                <a class="fx-hit fx-hit--task" href="{{ path('routine_show', { id: routine.routineId }) }}">
+                    <span class="fx-check {{ routine.ticked ? 'fx-check--done' }}" aria-hidden="true"><span class="fx-check__tick">✓</span></span>
+                    <span class="fx-hit__text {{ routine.ticked ? 'fx-hit__text--done' }}">{{ routine.text }}</span>
+                    {% if not routine.matchedName %}
+                        <span class="fx-hit__when">{{ routine.routineName }}</span>
+                    {% endif %}
                 </a>
             {% endfor %}
         {% endif %}
@@ -55,7 +77,7 @@
             {% endfor %}
         {% endif %}
 
-    {% if notes is empty and tasks is empty %}
+    {% if notes is empty and tasks is empty and routines is empty %}
         <p class="fx-search__empty">{{ 'notebook.search.nothing'|trans }}</p>
     {% endif %}
 </div>

@@ -6,6 +6,8 @@ namespace App\Notebook\UI\LiveComponent;
 
 use App\Notebook\Application\Query\NotebookQuery;
 use App\Notebook\Application\Query\NoteSummary;
+use App\Shared\Application\Search\RoutineFinder;
+use App\Shared\Application\Search\RoutineHit;
 use App\Shared\Application\Search\TaskFinder;
 use App\Shared\Application\Search\TaskHit;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -30,6 +32,7 @@ final class NoteSearch
     public function __construct(
         private readonly NotebookQuery $notebook,
         private readonly TaskFinder $tasks,
+        private readonly RoutineFinder $routines,
     ) {
     }
 
@@ -49,13 +52,24 @@ final class NoteSearch
     }
 
     /**
-     * L'écran annonce « notes · tâches · tags » : les tâches arrivent par un
-     * port partagé, Notebook n'ayant pas le droit de connaître le contexte Task.
+     * L'écran annonce ce qu'il fouille : les tâches et les routines arrivent
+     * par des ports partagés, Notebook n'ayant le droit de connaître ni l'un
+     * ni l'autre contexte.
      *
      * @return list<TaskHit>
      */
     public function taskResults(): array
     {
         return '' === trim($this->query) ? [] : $this->tasks->matching($this->query);
+    }
+
+    /**
+     * Au repos, rien : l'écran déroule le carnet, pas tout le reste avec.
+     *
+     * @return list<RoutineHit>
+     */
+    public function routineResults(): array
+    {
+        return '' === trim($this->query) ? [] : $this->routines->matching($this->query);
     }
 }
