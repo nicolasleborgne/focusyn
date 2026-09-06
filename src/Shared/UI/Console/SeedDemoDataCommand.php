@@ -21,6 +21,12 @@ use App\Notebook\Domain\Repository\NoteRepository;
 use App\Notebook\Domain\Repository\ObsessionRepository;
 use App\Organization\Domain\Model\MemberId;
 use App\Organization\Domain\Repository\OrganizationRepository;
+use App\Reminder\Domain\Model\RecipientId;
+use App\Reminder\Domain\Model\Reminder;
+use App\Reminder\Domain\Model\ReminderId;
+use App\Reminder\Domain\Model\ReminderLabel;
+use App\Reminder\Domain\Model\ReminderSubject;
+use App\Reminder\Domain\Repository\ReminderRepository;
 use App\Shared\Application\Command\CommandBus;
 use App\Shared\Application\Tenant\TenantScope;
 use App\Shared\Domain\TenantId;
@@ -61,6 +67,7 @@ final class SeedDemoDataCommand extends Command
         private readonly NoteRepository $notes,
         private readonly ObsessionRepository $obsessions,
         private readonly TaskListRepository $lists,
+        private readonly ReminderRepository $reminders,
         private readonly TenantScope $scope,
         private readonly ClockInterface $clock,
     ) {
@@ -92,11 +99,14 @@ final class SeedDemoDataCommand extends Command
         // Le cloisonnement n'est pas armé en console : on le déclare
         // explicitement, faute de quoi la purge toucherait toutes les
         // organisations de la base.
-        $this->scope->runAs($tenant, function () use ($tenant, $author): void {
+        $recipient = RecipientId::fromString($user->id()->toString());
+
+        $this->scope->runAs($tenant, function () use ($tenant, $author, $recipient): void {
             $this->purge();
             $this->seedNotes($tenant, $author);
             $this->seedObsessions($tenant);
             $this->seedLists($tenant);
+            $this->seedReminders($tenant, $recipient);
         });
 
         $io->success(\sprintf('Compte de démonstration prêt : %s / %s', self::EMAIL, self::PASSWORD));
@@ -118,12 +128,49 @@ final class SeedDemoDataCommand extends Command
             $this->lists->remove($list);
         }
 
+        foreach ($this->reminders->all() as $reminder) {
+            $this->reminders->remove($reminder);
+        }
+
         foreach (self::obsessions() as [$name]) {
             $existing = $this->obsessions->ofSlug(ObsessionName::fromString($name)->slug());
 
             if (null !== $existing) {
                 $this->obsessions->remove($existing);
             }
+        }
+    }
+
+    /**
+     * Une échéance sur la première note et sur la première tâche : de quoi voir
+     * les deux états de la pastille sur une capture.
+     */
+    private function seedReminders(TenantId $tenant, RecipientId $recipient): void
+    {
+        $now = $this->clock->now();
+        $notes = $this->notes->mostRecent(1);
+        $lists = $this->lists->all();
+        $subjects = [];
+
+        if ([] !== $notes) {
+            $subjects[] = [ReminderSubject::note($notes[0]->id()->toString()), $notes[0]->title()->toString()];
+        }
+
+        if ([] !== $lists && [] !== $lists[0]->items()) {
+            $item = $lists[0]->items()[0];
+            $subjects[] = [ReminderSubject::task($item->id()->toString()), $item->text()->toString()];
+        }
+
+        foreach ($subjects as $index => [$subject, $label]) {
+            $this->reminders->save(Reminder::schedule(
+                ReminderId::generate(),
+                $tenant,
+                $recipient,
+                $subject,
+                ReminderLabel::fromString($label),
+                $now->modify(\sprintf('+%d days', $index + 2))->setTime(9, 0),
+                $now,
+            ));
         }
     }
 

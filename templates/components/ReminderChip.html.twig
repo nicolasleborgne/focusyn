@@ -1,0 +1,19 @@
+{% set reminder = this.reminder %}
+
+{# Attributs lus par le dialogue, qui écoute au niveau du document : la
+   pastille peut donc vivre n'importe où, y compris dans un Live Component qui
+   remplace ses lignes. #}
+<button type="button"
+        class="fx-reminder-chip {{ reminder ? 'fx-reminder-chip--set' }}"
+        data-fx-remind-subject="{{ this.subject }}"
+        data-fx-remind-label="{{ this.label }}"
+        data-fx-remind-ics="{{ reminder ? path('reminder_ics', { id: reminder.id }) }}"
+        data-fx-remind-date="{{ reminder ? reminder.dueAt|date('Y-m-d') }}"
+        data-fx-remind-time="{{ reminder ? reminder.dueAt|date('H:i') }}"
+        title="{{ 'reminder.chip'|trans }}">
+    {%- if reminder -%}
+        {{ reminder.dueAt|format_datetime(pattern: "d MMM HH:mm", locale: app.request.locale) }}
+    {%- else -%}
+        {{ 'reminder.chip'|trans }}
+    {%- endif -%}
+</button>

@@ -254,3 +254,41 @@ privacy:
     saved: Preference saved.
     erase_confirm: Click a second time to confirm the erasure.
     erased: Your notes and lists have been erased.
+
+reminder:
+    heading: Reminder
+    chip: Remind me
+    close: Close
+    date: Reminder date
+    time: Reminder time
+    save: Save reminder
+    ics: Add to calendar (.ics)
+    drop: Remove reminder
+    help: >-
+        You will get an email at the appointed time. The .ics file drops the
+        event into your calendar, which then takes over.
+    shortcut:
+        tonight: Tonight 8 pm
+        tomorrow: Tomorrow 9 am
+        three_days: In 3 days
+        monday: Monday 8 am
+    saved: Reminder saved.
+    dropped: Reminder removed.
+    invalid: That moment was not understood.
+    feed:
+        heading: Calendar
+        label: iCal feed
+        help: >-
+            Subscribe your calendar to this address: your reminders show up
+            there and keep themselves up to date.
+        absent: Open a feed to see your reminders in the calendar of your choice.
+        secret: >-
+            This address is as good as a password: whoever has it sees your
+            reminders. Rotating it cuts off every calendar already subscribed.
+        open: Open a feed
+        rotate: Rotate the address
+        rotated: New feed address. Calendars on the old one receive nothing further.
+    email:
+        subject: 'Reminder: {label}'
+        intro: You asked to be reminded.
+        open: Open Focusyn

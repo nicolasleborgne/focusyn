@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Reminder\Domain\Model\Reminder" table="reminders">
+        <id name="id" type="reminder_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="tenantId" type="tenant_id" column="organization_id"/>
+        <field name="recipientId" type="recipient_id" column="recipient_id"/>
+        <field name="subject" type="reminder_subject" column="subject"/>
+        <field name="label" type="reminder_label" column="label"/>
+        <field name="dueAt" type="datetime_immutable" column="due_at"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at"/>
+        <field name="notifiedAt" type="datetime_immutable" column="notified_at" nullable="true"/>
+
+        <unique-constraints>
+            <!-- Un sujet ne porte qu'un rappel : la contrainte le dit en base,
+                 pas seulement dans le cas d'usage. -->
+            <unique-constraint name="uniq_reminders_org_subject" columns="organization_id,subject"/>
+        </unique-constraints>
+
+        <indexes>
+            <!-- La requête du worker : échus, jamais notifiés. -->
+            <index name="idx_reminders_due" columns="due_at,notified_at"/>
+        </indexes>
+    </entity>
+</doctrine-mapping>

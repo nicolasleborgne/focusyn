@@ -1,0 +1,57 @@
+{# Un seul dialogue par écran : Stimulus y recopie le sujet de la puce cliquée.
+   L'ouverture est un état d'onglet, elle ne vaut pas un aller-retour serveur. #}
+<div class="fx-dialog fx-remind" data-controller="reminder"
+     data-reminder-default-date-value="{{ this.defaultDate }}"
+     data-action="click->reminder#dismiss" hidden>
+
+    <div class="fx-dialog__panel fx-remind__panel" role="dialog" aria-modal="true"
+         aria-labelledby="fx-remind-title">
+        <div class="fx-remind__head">
+            <p class="fx-eyebrow">{{ 'reminder.heading'|trans }}</p>
+            <button type="button" class="fx-remind__close" data-action="reminder#close"
+                    aria-label="{{ 'reminder.close'|trans }}">×</button>
+        </div>
+
+        <p class="fx-remind__subject" id="fx-remind-title" data-reminder-target="label"></p>
+
+        <form method="post" action="{{ path('reminder_schedule') }}" data-reminder-target="form">
+            <input type="hidden" name="_token" value="{{ csrf_token('reminder-schedule') }}">
+            <input type="hidden" name="subject" data-reminder-target="subject">
+            <input type="hidden" name="label" data-reminder-target="labelField">
+
+            <div class="fx-remind__when">
+                <input type="date" name="date" class="fx-field__control" required
+                       data-reminder-target="date" aria-label="{{ 'reminder.date'|trans }}">
+                <input type="time" name="time" class="fx-field__control fx-remind__time" required
+                       data-reminder-target="time" aria-label="{{ 'reminder.time'|trans }}">
+            </div>
+
+            <div class="fx-remind__shortcuts">
+                {% for shortcut in this.shortcuts %}
+                    <button type="button" class="fx-pill"
+                            data-action="reminder#shortcut"
+                            data-reminder-date-param="{{ shortcut.date }}"
+                            data-reminder-time-param="{{ shortcut.time }}">
+                        {{ ('reminder.shortcut.' ~ shortcut.label)|trans }}
+                    </button>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="fx-button fx-button--primary fx-remind__save">
+                {{ 'reminder.save'|trans }}
+            </button>
+        </form>
+
+        <a class="fx-button fx-remind__ics" data-reminder-target="ics" href="#" hidden download>
+            {{ 'reminder.ics'|trans }}
+        </a>
+
+        <p class="fx-remind__help">{{ 'reminder.help'|trans }}</p>
+
+        <form method="post" action="{{ path('reminder_drop') }}" data-reminder-target="dropForm" hidden>
+            <input type="hidden" name="_token" value="{{ csrf_token('reminder-drop') }}">
+            <input type="hidden" name="subject" data-reminder-target="dropSubject">
+            <button type="submit" class="fx-remind__drop">{{ 'reminder.drop'|trans }}</button>
+        </form>
+    </div>
+</div>

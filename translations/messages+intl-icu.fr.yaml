@@ -257,3 +257,43 @@ privacy:
     saved: Préférence enregistrée.
     erase_confirm: Cliquez une seconde fois pour confirmer l'effacement.
     erased: Vos notes et vos listes ont été effacées.
+
+reminder:
+    heading: Rappel
+    chip: Rappel
+    close: Fermer
+    date: Date du rappel
+    time: Heure du rappel
+    save: Enregistrer le rappel
+    ics: Ajouter au calendrier (.ics)
+    drop: Supprimer le rappel
+    help: >-
+        Vous recevrez un courriel à l'heure dite. Le fichier .ics dépose
+        l'événement dans votre agenda, qui prend alors le relais.
+    shortcut:
+        tonight: Ce soir 20 h
+        tomorrow: Demain 9 h
+        three_days: Dans 3 jours
+        monday: Lundi 8 h
+    saved: Rappel enregistré.
+    dropped: Rappel supprimé.
+    invalid: Ce moment n'a pas été compris.
+    feed:
+        heading: Agenda
+        label: Flux iCal
+        help: >-
+            Abonnez votre agenda à cette adresse : vos rappels y apparaissent et
+            s'y mettent à jour tout seuls.
+        absent: >-
+            Ouvrez un flux pour retrouver vos rappels dans l'agenda de votre
+            choix.
+        secret: >-
+            Cette adresse vaut mot de passe : qui l'a voit vos rappels. La
+            renouveler coupe l'accès à tous les agendas déjà abonnés.
+        open: Ouvrir un flux
+        rotate: Renouveler l'adresse
+        rotated: Nouvelle adresse de flux. Les agendas abonnés à l'ancienne ne reçoivent plus rien.
+    email:
+        subject: 'Rappel : {label}'
+        intro: Vous aviez demandé qu'on vous le rappelle.
+        open: Ouvrir Focusyn

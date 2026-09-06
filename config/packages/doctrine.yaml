@@ -30,6 +30,12 @@ doctrine:
             task_item_id: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskItemIdType
             task_list_name: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskListNameType
             task_text: App\Task\Infrastructure\Persistence\Doctrine\Type\TaskTextType
+            calendar_feed_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\CalendarFeedIdType
+            feed_token: App\Reminder\Infrastructure\Persistence\Doctrine\Type\FeedTokenType
+            recipient_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\RecipientIdType
+            reminder_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderIdType
+            reminder_subject: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderSubjectType
+            reminder_label: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderLabelType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
             membership_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MembershipIdType
             member_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\MemberIdType

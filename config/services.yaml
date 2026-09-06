@@ -109,3 +109,24 @@ services:
     App\Privacy\Domain\Repository\PrivacyChoicesRepository:
         alias: App\Privacy\Infrastructure\Persistence\Doctrine\DoctrinePrivacyChoicesRepository
         public: true
+
+    App\Reminder\Domain\Repository\ReminderRepository:
+        alias: App\Reminder\Infrastructure\Persistence\Doctrine\DoctrineReminderRepository
+        public: true
+
+    App\Shared\Application\Account\AccountDirectory:
+        alias: App\Identity\Infrastructure\Security\UserDirectory
+
+    App\Reminder\Application\Port\ReminderNotifier:
+        alias: App\Reminder\Infrastructure\Mail\MailerReminderNotifier
+
+    App\Reminder\Application\Command\NotifyDueReminders\NotifyDueRemindersHandler:
+        arguments:
+            $defaultLocale: '%kernel.default_locale%'
+
+    App\Reminder\Domain\Repository\CalendarFeedRepository:
+        alias: App\Reminder\Infrastructure\Persistence\Doctrine\DoctrineCalendarFeedRepository
+        public: true
+
+    App\Reminder\Application\Port\FeedTokenGenerator:
+        alias: App\Reminder\Infrastructure\Feed\RandomFeedTokenGenerator

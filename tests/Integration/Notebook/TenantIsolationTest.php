@@ -7,9 +7,13 @@ namespace App\Tests\Integration\Notebook;
 use App\Notebook\Domain\Model\NoteId;
 use App\Notebook\Domain\Model\ObsessionName;
 use App\Notebook\Domain\Repository\NoteRepository;
+use App\Reminder\Domain\Model\ReminderSubject;
+use App\Reminder\Domain\Repository\ReminderRepository;
 use App\Shared\Domain\TenantId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Filter\TenantFilter;
 use App\Tests\Factory\Notebook\NoteFactory;
+use App\Tests\Factory\Reminder\ReminderFactory;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Foundry\Test\Factories;
@@ -138,6 +142,54 @@ final class TenantIsolationTest extends KernelTestCase
         $this->workingIn($this->alice);
 
         self::assertNull($this->notes()->ofId(NoteId::generate()));
+    }
+
+    public function testAReminderNeverCrossesTheBoundary(): void
+    {
+        $subject = ReminderSubject::note(NoteId::generate()->toString());
+        ReminderFactory::new()->ownedBy($this->alice)->about('Relire')->create();
+        ReminderFactory::new()->ownedBy($this->bob)->on($subject)->about('Chez Bob')->create();
+
+        $this->workingIn($this->alice);
+
+        self::assertCount(1, $this->reminders()->all());
+        self::assertNull(
+            $this->reminders()->ofSubject($subject),
+            'Deviner le sujet d\'un rappel ne doit pas donner celui d\'une autre organisation.',
+        );
+    }
+
+    public function testAReminderCannotBeFetchedByIdAcrossTheBoundary(): void
+    {
+        $foreign = ReminderFactory::new()->ownedBy($this->bob)->create();
+        $this->workingIn($this->alice);
+
+        self::assertNull($this->reminders()->ofId($foreign->id()));
+    }
+
+    public function testTheWorkerQueryIsTheOneExceptionAndItIsDeliberate(): void
+    {
+        ReminderFactory::new()->ownedBy($this->alice)->dueAt('2026-09-01 09:00')->create();
+        ReminderFactory::new()->ownedBy($this->bob)->dueAt('2026-09-01 09:00')->create();
+
+        // Hors requête HTTP, le filtre est désarmé : un planificateur doit voir
+        // toutes les organisations, sinon personne ne serait jamais prévenu.
+        $this->entityManager()->clear();
+        $filters = $this->entityManager()->getFilters();
+
+        if ($filters->isEnabled('tenant')) {
+            $filters->disable('tenant');
+        }
+
+        self::assertCount(2, $this->reminders()->dueEverywhere(new DateTimeImmutable('2026-09-02'), 10));
+    }
+
+    private function reminders(): ReminderRepository
+    {
+        $repository = self::getContainer()->get(ReminderRepository::class);
+        self::assertInstanceOf(ReminderRepository::class, $repository);
+
+        return $repository;
     }
 
     private function workingIn(TenantId $tenant): void

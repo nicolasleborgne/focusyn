@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!-- Pas de cloisonnement Doctrine ici : l'entité ne porte pas TenantScoped,
+         parce qu'elle est lue sans session, par le jeton. La colonne
+         organization_id reste une donnée, pas un discriminant de filtre. -->
+    <entity name="App\Reminder\Domain\Model\CalendarFeed" table="calendar_feeds">
+        <id name="id" type="calendar_feed_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="organizationId" type="tenant_id" column="organization_id" unique="true"/>
+        <field name="token" type="feed_token" column="token" unique="true"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at"/>
+        <field name="rotatedAt" type="datetime_immutable" column="rotated_at"/>
+    </entity>
+</doctrine-mapping>

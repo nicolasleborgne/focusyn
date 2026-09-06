@@ -56,6 +56,16 @@ src/<Contexte>/
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
 `Reminder`, `Assistant`, `Billing`, `Privacy`.
 
+**Un rappel ne connaît ni la note ni la tâche qu'il porte.** Son sujet est une
+chaîne (`note:<uuid>`, `task:<uuid>`), son destinataire un identifiant résolu à
+l'envoi par le port `AccountDirectory`. Un sujet ne porte qu'un rappel : reposer
+une échéance déplace celle qui existe, plutôt que d'en empiler une seconde.
+
+**`CalendarFeed` est le seul agrégat délibérément non cloisonné.** Un agenda ne
+se connecte pas : il récupère une adresse. Le jeton, long et renouvelable, tient
+donc lieu d'authentification, et le contrôleur lit ensuite les rappels *dans*
+l'organisation du flux, par `TenantScope::runAs()`.
+
 **Une obsession n'est pas créée, elle est mentionnée.** Elle existe dès qu'une
 note la porte ; l'agrégat `Obsession` n'est que sa *fiche éditoriale*, et son
 absence est un état normal. C'est ce qui évite toute synchronisation :
@@ -155,6 +165,20 @@ front, à respecter strictement :
 - **Stimulus** pour l'état purement présentationnel, local à l'onglet (ouverture
   d'un menu, mode focus). Faire un aller-retour réseau pour ouvrir un menu
   serait un gaspillage visible à l'œil.
+
+**Une section d'écran appartenant à un autre contexte est un composant Twig,
+pas un bloc de gabarit.** `ShowSettingsController` vit dans Identity et n'a pas
+le droit de connaître Privacy ni Reminder : ces contextes exposent
+`PrivacySection`, `CalendarFeedSection`, `ReminderChip`, que les gabarits
+appellent. Les gabarits ne sont pas analysés par deptrac — c'est le contrôleur
+qui doit rester propre.
+
+**Un contrôleur Stimulus n'écoute que son propre sous-arbre.** La pastille de
+rappel vit dans la liste des tâches, le dialogue à la fin de la page : un
+`data-action` sur la pastille ne l'aurait jamais atteint. L'écoute est déléguée
+au document, ce qui a un second mérite — les lignes de tâches sont remplacées à
+chaque action du Live Component, et une écoute posée sur elles disparaîtrait
+avec elles.
 
 Seul l'éditeur de note échappe aux deux : CodeMirror 6 piloté par Stimulus
 (`assets/controllers/note_editor_controller.js`), parce qu'un aller-retour par
@@ -296,6 +320,10 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   protection CSRF le dérive pour signer ses jetons, et sans lui *tout* écran
   portant un formulaire tombe en 500. Le symptôme est
   `InvalidArgumentException: A non-empty secret is required.`
+- **Un `<a class="fx-button">` doit rester non souligné** : `base/typography.css`
+  souligne tous les liens, ce qui est juste pour la prose et faux pour une
+  commande. `.fx-button` neutralise la règle ; un nouveau composant-lien devra
+  faire de même.
 - **Ne jamais lire un jeton CSRF par position dans un test**
   (`filter('input[name="_token"]')->last()`) : ajouter une section à l'écran des
   réglages casse alors des tests qui n'ont rien à voir. Toujours ancrer sur le

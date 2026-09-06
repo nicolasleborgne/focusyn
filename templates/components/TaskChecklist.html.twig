@@ -24,6 +24,7 @@
                         <span class="fx-check__tick">✓</span>
                     </button>
                     <span class="fx-task-line__text">{{ item.text }}</span>
+                    <twig:ReminderChip subject="task:{{ item.id }}" label="{{ item.text }}" />
                     <button type="button" class="fx-checklist__remove"
                             data-action="live#action" data-live-action-param="remove"
                             data-live-task-id-param="{{ item.id }}"

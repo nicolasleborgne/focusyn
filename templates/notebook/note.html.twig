@@ -29,6 +29,9 @@
             <span>{{ 'notebook.reading_minutes'|trans({ count: note.readingMinutes }) }}</span>
             <span>·</span>
             <span>{{ note.updatedAt|format_datetime(pattern: "d MMM 'à' HH:mm", locale: app.request.locale) }}</span>
+            {# Puce portée par Reminder : Notebook l'affiche sans connaître le
+               contexte qui la remplit. #}
+            <twig:ReminderChip subject="note:{{ note.id }}" label="{{ note.title }}" />
         </p>
 
         {# Étiquetage : saisie libre, séparée par des virgules. Il n'y a pas de
@@ -82,4 +85,6 @@
             </aside>
         {% endif %}
     </div>
+
+    <twig:ReminderDialog />
 {% endblock %}

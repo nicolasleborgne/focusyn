@@ -18,6 +18,9 @@
     font-family: var(--fx-font-ui);
     font-size: var(--fx-size-base);
     line-height: 1;
+    /* Un lien déguisé en bouton n'est pas souligné : la règle de base vaut pour
+       les liens de prose, pas pour les commandes. */
+    text-decoration: none;
     color: var(--fx-text-secondary);
     white-space: nowrap;
     cursor: pointer;

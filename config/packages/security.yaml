@@ -53,6 +53,9 @@ security:
         - { path: '^/(connexion|login)/(google|github)', roles: PUBLIC_ACCESS }
         - { path: '^/(mot-de-passe-oublie|forgotten-password)$', roles: PUBLIC_ACCESS }
         - { path: '^/mot-de-passe/', roles: PUBLIC_ACCESS }
+        # Le flux d'agenda : un calendrier ne se connecte pas, il récupère une
+        # adresse. C'est le jeton, long et renouvelable, qui fait foi.
+        - { path: '^/(calendrier|calendar)/[A-Za-z0-9_-]{43}\.ics$', roles: PUBLIC_ACCESS }
         # L'écran du second facteur n'est atteignable qu'entre les deux étapes.
         - { path: '^/(double-authentification|two-factor)', roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/, roles: ROLE_USER }

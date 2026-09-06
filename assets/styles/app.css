@@ -41,6 +41,7 @@
 @import url("./components/home.css");
 @import url("./components/overlay.css");
 @import url("./components/prose.css");
+@import url("./components/reminder.css");
 @import url("./components/switch.css");
 
 /* En dernier : les bascules d'affichage doivent pouvoir écraser tout le reste,

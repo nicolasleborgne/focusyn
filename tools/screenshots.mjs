@@ -73,6 +73,23 @@ for (const viewport of VIEWPORTS) {
         process.stdout.write(`  note-${viewport.name}.png\n`);
     }
 
+    // Une liste ouverte : c'est là que se voient les pastilles de rappel.
+    await page.goto(`${BASE}/taches`, { waitUntil: 'networkidle' });
+    const firstList = await page.getAttribute('.fx-board__card', 'href');
+    if (firstList) {
+        await page.goto(`${BASE}${firstList}`, { waitUntil: 'networkidle' });
+        await page.evaluate(() => document.fonts.ready);
+        await page.screenshot({ path: `${OUT}/liste-${viewport.name}.png`, fullPage: true });
+        process.stdout.write(`  liste-${viewport.name}.png\n`);
+
+        // Le dialogue d'échéance ne s'ouvre qu'au clic : sans cette capture,
+        // rien ne le regarde jamais.
+        await page.click('.fx-reminder-chip');
+        await page.waitForSelector('.fx-remind:not([hidden])', { timeout: 2000 }).catch(() => {});
+        await page.screenshot({ path: `${OUT}/rappel-${viewport.name}.png`, fullPage: false });
+        process.stdout.write(`  rappel-${viewport.name}.png\n`);
+    }
+
     await context.close();
 }
 

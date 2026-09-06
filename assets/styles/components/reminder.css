@@ -1,0 +1,123 @@
+/*
+ * Dialogue d'échéance.
+ *
+ * La coquille est celle de `fx-dialog` : un rappel n'est pas une autre sorte de
+ * fenêtre, seulement un autre contenu. Seul ce qui lui est propre est décrit
+ * ici. La pastille, elle, vit dans `chip.css` avec les autres.
+ */
+
+.fx-remind[hidden] {
+    display: none;
+}
+
+/* La largeur de la maquette ; le reste vient de `fx-dialog`. */
+.fx-remind__panel {
+    max-width: 380px;
+}
+
+.fx-remind__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--fx-space-4);
+    margin-bottom: var(--fx-space-5);
+}
+
+.fx-remind__head .fx-eyebrow {
+    flex: 1;
+    margin: 0;
+}
+
+.fx-remind__close {
+    border: 0;
+    background: none;
+    color: var(--fx-text-disabled);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-md);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.fx-remind__close:hover {
+    color: var(--fx-text-primary);
+}
+
+.fx-remind__subject {
+    margin: 0 0 var(--fx-space-7);
+    font-family: var(--fx-font-prose);
+    font-size: var(--fx-title-row);
+    font-weight: var(--fx-weight-regular);
+    line-height: var(--fx-leading-snug);
+    color: var(--fx-text-title);
+}
+
+.fx-remind__when {
+    display: flex;
+    gap: var(--fx-space-3);
+    margin-bottom: var(--fx-space-4);
+}
+
+.fx-remind__when .fx-field__control {
+    flex: 1;
+    min-width: 0;
+}
+
+.fx-remind__time {
+    flex: 0 0 108px;
+}
+
+.fx-remind__shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-2);
+    margin-bottom: var(--fx-space-7);
+}
+
+.fx-remind__save,
+.fx-remind__ics {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.fx-remind__ics {
+    margin-top: var(--fx-space-3);
+}
+
+.fx-remind__ics[hidden] {
+    display: none;
+}
+
+.fx-remind__help {
+    margin: var(--fx-space-4) 0 0;
+    font-size: var(--fx-size-xs);
+    line-height: var(--fx-leading-relaxed);
+    color: var(--fx-text-disabled);
+}
+
+.fx-remind__drop {
+    margin-top: var(--fx-space-2);
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: var(--fx-size-xs);
+    color: var(--fx-text-disabled);
+    cursor: pointer;
+}
+
+.fx-remind__drop:hover {
+    color: var(--fx-text-primary);
+}
+
+/* --- flux d'agenda ------------------------------------------------------- */
+
+.fx-feed__url {
+    width: 100%;
+    margin-top: var(--fx-space-4);
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-xs);
+    color: var(--fx-text-muted);
+}
+
+.fx-feed__warning {
+    margin-top: var(--fx-space-2);
+}
