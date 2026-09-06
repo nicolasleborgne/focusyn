@@ -23,7 +23,7 @@
     width: 100%;
     min-width: 0;
     padding: 9px var(--fx-space-5);
-    border: 1px solid var(--fx-neutral-550);
+    border: 1px solid var(--fx-border-subtle);
     border-radius: 0;
     outline: none;
     background: var(--fx-surface-app);

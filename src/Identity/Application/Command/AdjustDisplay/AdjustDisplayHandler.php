@@ -9,6 +9,7 @@ use App\Identity\Domain\Model\Accent;
 use App\Identity\Domain\Model\Density;
 use App\Identity\Domain\Model\MarkOpacity;
 use App\Identity\Domain\Model\ProseFont;
+use App\Identity\Domain\Model\Theme;
 use App\Identity\Domain\Model\UserId;
 use App\Identity\Domain\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -50,6 +51,10 @@ final readonly class AdjustDisplayHandler
 
         if (null !== $command->previewPane) {
             $display = $display->withPreviewPane($command->previewPane);
+        }
+
+        if (null !== $command->theme) {
+            $display = $display->withTheme(Theme::from($command->theme));
         }
 
         if ($display->equals($user->display())) {

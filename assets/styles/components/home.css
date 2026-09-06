@@ -577,7 +577,7 @@
     padding: 0 var(--fx-space-2);
     font-size: var(--fx-size-xl);
     line-height: 1;
-    color: var(--fx-neutral-850);
+    color: var(--fx-text-disabled);
     opacity: 0;
     transition: opacity var(--fx-duration-fast) var(--fx-easing);
 }
@@ -649,7 +649,7 @@
     margin-bottom: var(--fx-space-10);
     font-size: var(--fx-size-lg);
     line-height: 1.65;
-    color: var(--fx-ink-200);
+    color: var(--fx-text-muted);
 }
 
 .fx-auth__fields {
@@ -664,7 +664,7 @@
 .fx-auth__input {
     width: 100%;
     padding: 11px var(--fx-space-6);
-    border: 1px solid var(--fx-neutral-550);
+    border: 1px solid var(--fx-border-subtle);
     outline: none;
     background: var(--fx-surface-app);
     font-size: var(--fx-size-nav);
@@ -703,7 +703,7 @@
 }
 
 .fx-auth__recourse a {
-    color: var(--fx-ink-200);
+    color: var(--fx-text-muted);
     text-decoration: none;
 }
 
@@ -715,7 +715,7 @@
     display: inline-block;
     margin-top: var(--fx-space-8);
     font-size: var(--fx-size-md);
-    color: var(--fx-ink-200);
+    color: var(--fx-text-muted);
     text-decoration: none;
 }
 
@@ -778,7 +778,7 @@
     padding-top: 4px;
     font-family: var(--fx-font-meta);
     font-size: var(--fx-size-sm);
-    color: var(--fx-neutral-800);
+    color: var(--fx-text-disabled);
 }
 
 .fx-points__text {
@@ -874,26 +874,28 @@
     gap: var(--fx-space-4);
 }
 
+/* Chaque pastille porte sa teinte en `--fx-dot`, posé par le gabarit avec ses
+   deux valeurs — de jour et de nuit. C'est la seule couleur du système qui
+   voyage en attribut, parce qu'elle désigne un choix et non un rôle : les cinq
+   pastilles doivent se montrer ensemble, alors qu'`--fx-accent` n'en vaut
+   qu'une à la fois. */
 .fx-accents__dot {
     width: 20px;
     height: 20px;
     border: none;
     border-radius: var(--fx-radius-round);
+    background: var(--fx-dot);
     box-shadow: var(--fx-shadow-hairline);
     cursor: pointer;
 }
 
-/* La pastille courante est cerclée de blanc puis de sa propre teinte : un
-   contour neutre se perdrait sur les accents clairs comme sur les sombres. */
+/* La pastille courante est cerclée de la couleur du fond puis de sa propre
+   teinte : un contour neutre se perdrait sur les accents clairs comme sur les
+   sombres. `currentcolor` évite d'avoir à répéter les cinq teintes ici. */
 .fx-accents__dot--current {
+    color: var(--fx-dot);
     box-shadow: 0 0 0 2px var(--fx-surface-app), 0 0 0 3px currentcolor;
 }
-
-.fx-accents__dot--current[style*="#41586e"] { color: #41586e; }
-.fx-accents__dot--current[style*="#1f1f1f"] { color: #1f1f1f; }
-.fx-accents__dot--current[style*="#5a6b4a"] { color: #5a6b4a; }
-.fx-accents__dot--current[style*="#7d5a3c"] { color: #7d5a3c; }
-.fx-accents__dot--current[style*="#8c4a45"] { color: #8c4a45; }
 
 /* L'interrupteur des réglages est un bouton de formulaire, pas une case. */
 .fx-settings__row .fx-switch {

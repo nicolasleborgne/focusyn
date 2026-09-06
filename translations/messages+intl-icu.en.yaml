@@ -118,6 +118,10 @@ settings:
         brick: Brick
     editor:
         heading: Editor
+        dark: Dark theme
+        dark_system: Follows your device.
+        dark_forced: Set by hand, whatever your device says.
+        dark_follow: Follow the device
         serif: Serif body
         serif_help: Newsreader for note prose; Archivo otherwise.
         preview: Preview pane

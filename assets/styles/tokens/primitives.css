@@ -2,8 +2,10 @@
  * Primitives — les seules valeurs brutes du design system.
  *
  * Aucun composant ne doit référencer ces variables directement : elles sont
- * consommées par les jetons sémantiques de `semantic.css`. Cette indirection
- * permettra d'ajouter un thème sombre sans toucher une seule règle de composant.
+ * consommées par les jetons sémantiques de `semantic.css`. C'est cette
+ * indirection qui a permis d'ajouter le thème sombre sans toucher une seule
+ * règle de composant : deux rampes cohabitent ici, et seul `semantic.css`
+ * choisit entre elles.
  *
  * La rampe de neutres reprend les teintes exactes de la maquette Focusyn
  * (gris chauds, légèrement désaturés vers le vert). Les quelques valeurs
@@ -26,6 +28,7 @@
     --fx-neutral-550: #e4e4e1;
     --fx-neutral-600: #e0e0dd;
     --fx-neutral-620: #dededa;
+    --fx-neutral-660: #dcdcda;
     --fx-neutral-700: #d8d8d4;
     --fx-neutral-730: #d4d4d0;
     --fx-neutral-750: #d0d0cc;
@@ -46,12 +49,53 @@
     --fx-ink-800: #1f1f1f;
     --fx-ink-900: #131313;
 
+    /* --- Neutres sombres ------------------------------------------------
+       La rampe du thème sombre. Elle se lit dans le même sens que celle des
+       neutres clairs : le nombre croît en s'éloignant du fond. Ici le fond est
+       noir, donc le nombre croît vers le clair — `night-0` est le fond de
+       page, `night-700` le trait le plus soutenu. Teintes exactes de la
+       maquette (gris chauds, très légèrement verts). */
+    --fx-night-0: #131312;
+    --fx-night-50: #1a1a19;
+    --fx-night-100: #1e1e1c;
+    --fx-night-150: #232322;
+    --fx-night-200: #252523;
+    --fx-night-300: #282826;
+    --fx-night-400: #2a2a28;
+    --fx-night-500: #2e2e2b;
+    --fx-night-550: #33322f;
+    --fx-night-600: #383835;
+    --fx-night-700: #4a4a46;
+
+    /* --- Craies ---------------------------------------------------------
+       Ce que l'encre devient sur fond noir. Les paliers répondent un à un à
+       ceux de l'encre : `chalk-900` tient le rôle de `ink-900`, et ainsi de
+       suite jusqu'aux teintes effacées. */
+    --fx-chalk-900: #eceae6;
+    --fx-chalk-800: #d6d4cf;
+    --fx-chalk-700: #bab8b3;
+    --fx-chalk-600: #9d9b96;
+    --fx-chalk-500: #85837e;
+    --fx-chalk-400: #6e6c68;
+    --fx-chalk-300: #5a5854;
+
     /* --- Accents (« Encre » est la valeur par défaut) -------------------- */
     --fx-accent-ink: #1f1f1f;
     --fx-accent-slate: #41586e;
     --fx-accent-olive: #5a6b4a;
     --fx-accent-tobacco: #7d5a3c;
     --fx-accent-brick: #8c4a45;
+
+    /* --- Accents de nuit ------------------------------------------------
+       Les cinq mêmes teintes, éclaircies pour rester lisibles sur fond noir —
+       « encre » y disparaîtrait tout à fait. Ce sont les valeurs de la
+       maquette, pas un éclaircissement calculé : un `color-mix` uniforme
+       donnerait des contrastes inégaux d'une teinte à l'autre. */
+    --fx-accent-ink-night: #e2e1de;
+    --fx-accent-slate-night: #8aa8c4;
+    --fx-accent-olive-night: #a2b98b;
+    --fx-accent-tobacco-night: #c9a077;
+    --fx-accent-brick-night: #d4938b;
 
     /* --- Familles typographiques ---------------------------------------- */
     --fx-family-sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -146,9 +190,12 @@
     --fx-radius-full: 99px;
 
     /* --- Ombres ---------------------------------------------------------- */
-    --fx-shadow-hairline: 0 0 0 1px rgb(0 0 0 / 8%);
-    --fx-shadow-menu: 0 12px 30px rgb(0 0 0 / 12%);
-    --fx-shadow-device: 0 24px 60px rgb(0 0 0 / 16%);
+    /* Un noir translucide ne se voit plus sur un fond presque noir : la nuit,
+       les mêmes ombres sont portées plus loin. Le contour d'une surface
+       flottante (`--fx-border-floating`) fait alors l'essentiel du travail. */
+    --fx-shadow-hairline: light-dark(0 0 0 1px rgb(0 0 0 / 8%), 0 0 0 1px rgb(0 0 0 / 40%));
+    --fx-shadow-menu: light-dark(0 12px 30px rgb(0 0 0 / 12%), 0 12px 30px rgb(0 0 0 / 50%));
+    --fx-shadow-device: light-dark(0 24px 60px rgb(0 0 0 / 16%), 0 24px 60px rgb(0 0 0 / 60%));
 
     /* --- Mouvement -------------------------------------------------------- */
     --fx-duration-fast: 0.18s;

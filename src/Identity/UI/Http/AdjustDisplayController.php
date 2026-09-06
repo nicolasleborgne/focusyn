@@ -45,6 +45,7 @@ final class AdjustDisplayController extends AbstractController
                 density: self::stringOrNull($request, 'density'),
                 markOpacity: $request->request->has('markOpacity') ? (float) $request->request->get('markOpacity') : null,
                 previewPane: $request->request->has('previewPane') ? $request->request->getBoolean('previewPane') : null,
+                theme: self::stringOrNull($request, 'theme'),
             ));
         } catch (ValueError|InvalidArgumentException) {
             // Valeur hors des choix proposés : on l'ignore plutôt que de

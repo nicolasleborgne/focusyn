@@ -32,7 +32,7 @@
     font-family: var(--fx-font-meta);
     font-size: var(--fx-size-2xs);
     letter-spacing: 0.04em;
-    color: var(--fx-neutral-950);
+    color: var(--fx-text-faint);
 }
 
 .fx-sidebar__nav {
@@ -109,11 +109,11 @@
     height: 14px;
     flex: 0 0 3px;
     border-radius: var(--fx-radius-xs);
-    background: var(--fx-neutral-800);
+    background: var(--fx-marker-idle);
 }
 
 .fx-nav-item--current .fx-nav-item__marker {
-    background: var(--fx-ink-800);
+    background: var(--fx-marker-current);
 }
 
 .fx-nav-item__count {
@@ -127,7 +127,7 @@
     margin-left: auto;
     font-family: var(--fx-font-meta);
     font-size: var(--fx-size-xs);
-    color: var(--fx-neutral-950);
+    color: var(--fx-text-faint);
 }
 
 /* Entrée secondaire : obsessions et listes de tâches. */
@@ -143,16 +143,16 @@
     width: 5px;
     height: 5px;
     border-radius: var(--fx-radius-round);
-    background: #c4c4bf;
+    background: var(--fx-marker-idle);
 }
 
 .fx-nav-item__square {
     flex: 0 0 9px;
     width: 9px;
     height: 9px;
-    border: 1px solid var(--fx-neutral-750);
+    border: 1px solid var(--fx-border-strong);
     border-radius: var(--fx-radius-xs);
-    background: var(--fx-neutral-450);
+    background: var(--fx-marker-fill);
 }
 
 /* Une liste comportant des tâches ouvertes garde un carré vide teinté. */

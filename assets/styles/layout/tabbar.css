@@ -26,7 +26,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #a9a9a5;
+    color: var(--fx-text-faint);
 }
 
 .fx-tabbar__label {

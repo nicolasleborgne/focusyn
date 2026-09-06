@@ -45,9 +45,14 @@ final class AccountDisplay implements CurrentDisplay
         return $this->preferences()->previewPane;
     }
 
+    public function theme(): string
+    {
+        return $this->preferences()->theme->value;
+    }
+
     /**
-     * Résolu une seule fois par requête : le gabarit de base interroge cinq
-     * réglages, ce qui ferait cinq lectures pour la même réponse.
+     * Résolu une seule fois par requête : le gabarit de base en interroge six,
+     * ce qui ferait six lectures pour la même réponse.
      */
     private function preferences(): DisplayPreferences
     {

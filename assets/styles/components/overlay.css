@@ -55,7 +55,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--fx-space-12);
-    background: rgb(0 0 0 / 18%);
+    background: var(--fx-scrim);
 }
 
 .fx-dialog__panel {

@@ -48,7 +48,7 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #dcdcda;
+    background: var(--fx-scrollbar-thumb);
     border: 3px solid transparent;
     border-radius: var(--fx-radius-xl);
     background-clip: content-box;

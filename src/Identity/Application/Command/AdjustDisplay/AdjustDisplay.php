@@ -13,6 +13,7 @@ final readonly class AdjustDisplay
         public ?string $density = null,
         public ?float $markOpacity = null,
         public ?bool $previewPane = null,
+        public ?string $theme = null,
     ) {
     }
 }

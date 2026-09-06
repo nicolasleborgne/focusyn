@@ -10,13 +10,13 @@
 a {
     color: var(--fx-text-title);
     text-decoration: underline;
-    text-decoration-color: #b5b5b5;
+    text-decoration-color: var(--fx-link-underline);
     text-underline-offset: 3px;
 }
 
 a:hover {
-    color: #5a5a5a;
-    text-decoration-color: #5a5a5a;
+    color: var(--fx-link-hover);
+    text-decoration-color: var(--fx-link-hover);
 }
 
 /* Étiquette de section : capitales monospace très espacées. */

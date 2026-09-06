@@ -5,6 +5,7 @@
       data-fx-accent="{{ display().accent }}"
       data-fx-density="{{ display().density }}"
       data-fx-prose="{{ display().proseFont }}"
+      data-fx-theme="{{ display().theme }}"
       style="--fx-markdown-mark-opacity: {{ display().markOpacity }}">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +14,18 @@
     <link rel="icon" href="/icons/mark.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.webmanifest">
-    <meta name="theme-color" content="#eaeae8">
+    {# La couleur du chrome du navigateur ne s'exprime qu'en HTML : c'est la
+       seule teinte que le serveur choisit, faute de pouvoir la déléguer au
+       design system. Sans thème choisi, les deux sont déclarées et c'est
+       l'appareil qui tranche, comme pour le reste. #}
+    {% if display().theme == 'dark' %}
+        <meta name="theme-color" content="#131312">
+    {% elseif display().theme == 'light' %}
+        <meta name="theme-color" content="#eaeae8">
+    {% else %}
+        <meta name="theme-color" content="#eaeae8" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#131312" media="(prefers-color-scheme: dark)">
+    {% endif %}
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Focusyn">
 

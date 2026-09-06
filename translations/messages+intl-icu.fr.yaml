@@ -119,6 +119,10 @@ settings:
         brick: Brique
     editor:
         heading: Éditeur
+        dark: Thème sombre
+        dark_system: Suit votre appareil.
+        dark_forced: Réglé à la main, quoi que dise votre appareil.
+        dark_follow: Suivre l'appareil
         serif: Corps en serif
         serif_help: Newsreader pour la prose des notes ; sinon Archivo.
         preview: Panneau d'aperçu

@@ -34,7 +34,7 @@
     font-family: var(--fx-font-meta);
     font-weight: var(--fx-weight-regular);
     font-style: normal;
-    color: var(--fx-ink-100);
+    color: var(--fx-text-muted);
     opacity: var(--fx-markdown-mark-opacity);
 }
 
@@ -57,7 +57,7 @@
     font-weight: var(--fx-weight-heading);
     letter-spacing: -0.015em;
     line-height: 1.25;
-    color: #141414;
+    color: var(--fx-text-title);
 }
 
 .fx-prose__line--h3 {
@@ -65,7 +65,7 @@
     font-size: var(--fx-prose-h3);
     font-weight: var(--fx-weight-strong);
     line-height: var(--fx-leading-snug);
-    color: var(--fx-ink-750);
+    color: var(--fx-text-primary);
 }
 
 .fx-prose__line--quote {
@@ -97,7 +97,7 @@
 .fx-prose__line--rule {
     height: 0;
     margin: calc(26px * var(--fx-prose-density)) 0;
-    border-top: 1px solid var(--fx-neutral-450);
+    border-top: 1px solid var(--fx-border-subtle);
 }
 
 .fx-prose__line--blank {
@@ -126,7 +126,7 @@
 
 .fx-prose__link {
     text-decoration: underline;
-    text-decoration-color: #c0c0bc;
+    text-decoration-color: var(--fx-link-underline);
     text-underline-offset: 3px;
     color: inherit;
 }

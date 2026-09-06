@@ -2,61 +2,107 @@
  * Jetons sémantiques — la seule couche que les composants ont le droit de lire.
  *
  * Chaque nom décrit un rôle, jamais une teinte : `--fx-border-strong` et non
- * `--fx-neutral-600`. Un thème (sombre, contrasté, imprimé) se résume alors à
- * redéfinir ce fichier.
+ * `--fx-neutral-600`. Un thème se résume alors à ce fichier.
  *
- * `--fx-accent` est délibérément la seule variable réécrite à l'exécution :
- * les cinq accents des réglages sont appliqués via l'attribut `data-fx-accent`
- * sur l'élément racine, sans toucher au reste du système.
+ * **Les deux thèmes sont déclarés ici, jeton par jeton, avec `light-dark()`.**
+ * C'est ce qui évite le bloc sombre dupliqué — une fois pour le choix
+ * explicite, une fois sous `prefers-color-scheme` — où l'oubli d'un jeton dans
+ * l'une des deux copies ne se verrait que sur un écran, un jour, chez
+ * quelqu'un. Ici un jeton porte ses deux valeurs côte à côte : il n'y a pas de
+ * seconde liste à tenir à jour.
+ *
+ * C'est `color-scheme` qui décide laquelle des deux s'applique, et lui seul :
+ * `light dark` s'en remet au système, une valeur unique le force. Le réglage du
+ * compte est rendu en `data-fx-theme` sur `<html>` — le serveur ne calcule
+ * aucune couleur et ignore la préférence de l'appareil, qui changerait sans
+ * qu'aucune requête n'en avertisse.
+ *
+ * `light-dark()` et `color-mix()` demandent tous deux un navigateur de 2024 ;
+ * le second était déjà utilisé ici avant le thème sombre.
+ *
+ * `--fx-accent` reste la seule variable réécrite par un attribut : les cinq
+ * accents sont appliqués via `data-fx-accent`, chacun avec sa jumelle de nuit.
  */
 
 :root {
+    /* Rien n'a été choisi : c'est l'appareil qui tranche. Les deux valeurs
+       étant déclarées partout, il n'y a rien d'autre à faire pour le suivre. */
+    color-scheme: light dark;
+
     /* --- Surfaces --------------------------------------------------------- */
-    --fx-surface-page: var(--fx-neutral-400);
-    --fx-surface-app: var(--fx-neutral-0);
-    --fx-surface-raised: var(--fx-neutral-0);
-    --fx-surface-sidebar: var(--fx-neutral-150);
-    --fx-surface-sunken: var(--fx-neutral-100);
-    --fx-surface-muted: var(--fx-neutral-200);
-    --fx-surface-code: var(--fx-neutral-100);
-    --fx-surface-hover: #eaeae7;
-    --fx-surface-overlay: var(--fx-neutral-50);
-    --fx-surface-selection: #d9d9d6;
+    --fx-surface-page: light-dark(var(--fx-neutral-400), var(--fx-night-0));
+    --fx-surface-app: light-dark(var(--fx-neutral-0), var(--fx-night-100));
+    --fx-surface-raised: light-dark(var(--fx-neutral-0), var(--fx-night-100));
+    --fx-surface-sidebar: light-dark(var(--fx-neutral-150), var(--fx-night-50));
+    --fx-surface-sunken: light-dark(var(--fx-neutral-100), var(--fx-night-300));
+    --fx-surface-muted: light-dark(var(--fx-neutral-200), var(--fx-night-500));
+    --fx-surface-code: light-dark(var(--fx-neutral-100), var(--fx-night-500));
+    --fx-surface-hover: light-dark(var(--fx-neutral-280), var(--fx-night-150));
+    --fx-surface-overlay: light-dark(var(--fx-neutral-50), var(--fx-night-50));
+    --fx-surface-selection: light-dark(var(--fx-neutral-660), var(--fx-night-550));
+    /* Ce qui s'affirme en prenant la couleur du texte pour fond : la pastille
+       choisie parmi plusieurs. S'inverse avec le thème, comme l'accent. */
+    --fx-surface-inverse: light-dark(var(--fx-ink-800), var(--fx-chalk-900));
 
     /* --- Bordures ---------------------------------------------------------- */
-    --fx-border-faint: var(--fx-neutral-300);
-    --fx-border-subtle: var(--fx-neutral-500);
-    --fx-border-default: var(--fx-neutral-600);
-    --fx-border-strong: var(--fx-neutral-700);
-    --fx-border-contrast: var(--fx-neutral-800);
-    /* Contour des surfaces flottantes : menus, dialogues, filet de citation. */
-    --fx-border-floating: var(--fx-neutral-620);
+    --fx-border-faint: light-dark(var(--fx-neutral-300), var(--fx-night-400));
+    --fx-border-subtle: light-dark(var(--fx-neutral-500), var(--fx-night-600));
+    --fx-border-default: light-dark(var(--fx-neutral-600), var(--fx-night-600));
+    --fx-border-strong: light-dark(var(--fx-neutral-700), var(--fx-night-700));
+    --fx-border-contrast: light-dark(var(--fx-neutral-800), var(--fx-night-700));
+    /* Contour des surfaces flottantes : menus, dialogues, filet de citation.
+       Sur fond noir, il fait tout le travail — les ombres n'y portent plus. */
+    --fx-border-floating: light-dark(var(--fx-neutral-620), var(--fx-night-600));
     /* Barré d'une tâche accomplie. */
-    --fx-line-strike: var(--fx-neutral-730);
+    --fx-line-strike: light-dark(var(--fx-neutral-730), var(--fx-night-700));
+    /* Puces et marqueurs. `idle` est la puce au repos, `current` celle de
+       l'écran où l'on se trouve, `fill` le carré plein d'une liste sans reste. */
+    --fx-marker-idle: light-dark(var(--fx-neutral-800), var(--fx-night-700));
+    --fx-marker-current: light-dark(var(--fx-ink-800), var(--fx-chalk-900));
+    --fx-marker-fill: light-dark(var(--fx-neutral-450), var(--fx-night-400));
+    /* Le corps de la marque Focusyn ; sa coiffe, elle, prend l'accent. */
+    --fx-mark-body: light-dark(var(--fx-neutral-700), var(--fx-night-700));
 
     /* --- Texte -------------------------------------------------------------- */
-    --fx-text-title: var(--fx-ink-900);
-    --fx-text-primary: var(--fx-ink-800);
-    --fx-text-body: var(--fx-ink-700);
-    --fx-text-secondary: var(--fx-ink-600);
-    --fx-text-tertiary: var(--fx-ink-500);
-    --fx-text-quote: var(--fx-ink-400);
-    --fx-text-meta: var(--fx-ink-300);
-    --fx-text-muted: var(--fx-ink-100);
-    --fx-text-faint: var(--fx-neutral-950);
-    --fx-text-disabled: var(--fx-neutral-900);
-    --fx-text-on-accent: var(--fx-neutral-50);
+    --fx-text-title: light-dark(var(--fx-ink-900), var(--fx-chalk-900));
+    --fx-text-primary: light-dark(var(--fx-ink-800), var(--fx-chalk-900));
+    --fx-text-body: light-dark(var(--fx-ink-700), var(--fx-chalk-800));
+    --fx-text-secondary: light-dark(var(--fx-ink-600), var(--fx-chalk-700));
+    --fx-text-tertiary: light-dark(var(--fx-ink-500), var(--fx-chalk-700));
+    --fx-text-quote: light-dark(var(--fx-ink-400), var(--fx-chalk-600));
+    --fx-text-meta: light-dark(var(--fx-ink-300), var(--fx-chalk-600));
+    --fx-text-muted: light-dark(var(--fx-ink-100), var(--fx-chalk-500));
+    --fx-text-faint: light-dark(var(--fx-neutral-950), var(--fx-chalk-400));
+    --fx-text-disabled: light-dark(var(--fx-neutral-900), var(--fx-chalk-300));
+    /* Ce qui se pose *sur* l'accent : clair de jour, sombre de nuit, puisque
+       l'accent lui-même s'inverse. */
+    --fx-text-on-accent: light-dark(var(--fx-neutral-50), var(--fx-night-50));
+
+    /* Soulignement d'un lien, dans l'interface comme dans la prose : un gris
+       ténu, la couleur du texte restant celle de son contexte. */
+    --fx-link-underline: light-dark(var(--fx-neutral-850), var(--fx-chalk-300));
+    --fx-link-hover: light-dark(var(--fx-ink-400), var(--fx-chalk-600));
+
+    /* Pouce de l'ascenseur, et bouton d'interrupteur : deux petites pièces
+       qui doivent rester visibles sur leur propre fond. */
+    --fx-scrollbar-thumb: light-dark(var(--fx-neutral-660), var(--fx-night-550));
+    --fx-knob: light-dark(var(--fx-neutral-0), var(--fx-chalk-900));
+
+    /* Voile d'un dialogue. Plus dense la nuit : un noir à 18 % sur un fond
+       presque noir n'assombrit rien et laisse le dialogue flotter sans
+       repère. */
+    --fx-scrim: light-dark(rgb(0 0 0 / 18%), rgb(0 0 0 / 55%));
 
     /* --- Accent ------------------------------------------------------------- */
     /* Ardoise par défaut, comme la maquette. « Encre » reste disponible dans
        les réglages, mais ce n'est pas le choix d'origine. */
-    --fx-accent: var(--fx-accent-slate);
+    --fx-accent: light-dark(var(--fx-accent-slate), var(--fx-accent-slate-night));
     --fx-accent-contrast: var(--fx-text-on-accent);
     --fx-accent-soft: color-mix(in srgb, var(--fx-accent) 35%, transparent);
     --fx-accent-faint: color-mix(in srgb, var(--fx-accent) 12%, transparent);
 
     /* --- Statuts ------------------------------------------------------------ */
-    --fx-danger: var(--fx-accent-brick);
+    --fx-danger: light-dark(var(--fx-accent-brick), var(--fx-accent-brick-night));
     --fx-danger-contrast: var(--fx-text-on-accent);
 
     /* --- Focus clavier ------------------------------------------------------
@@ -78,12 +124,17 @@
     --fx-prose-density: 1;
 }
 
+/* Thème choisi explicitement. Deux règles d'une ligne suffisent : elles ne
+   changent aucune couleur, elles retirent au système le droit de choisir. */
+:root[data-fx-theme="light"] { color-scheme: light; }
+:root[data-fx-theme="dark"] { color-scheme: dark; }
+
 /* Accents sélectionnables dans les réglages. */
-:root[data-fx-accent="ink"] { --fx-accent: var(--fx-accent-ink); }
-:root[data-fx-accent="slate"] { --fx-accent: var(--fx-accent-slate); }
-:root[data-fx-accent="olive"] { --fx-accent: var(--fx-accent-olive); }
-:root[data-fx-accent="tobacco"] { --fx-accent: var(--fx-accent-tobacco); }
-:root[data-fx-accent="brick"] { --fx-accent: var(--fx-accent-brick); }
+:root[data-fx-accent="ink"] { --fx-accent: light-dark(var(--fx-accent-ink), var(--fx-accent-ink-night)); }
+:root[data-fx-accent="slate"] { --fx-accent: light-dark(var(--fx-accent-slate), var(--fx-accent-slate-night)); }
+:root[data-fx-accent="olive"] { --fx-accent: light-dark(var(--fx-accent-olive), var(--fx-accent-olive-night)); }
+:root[data-fx-accent="tobacco"] { --fx-accent: light-dark(var(--fx-accent-tobacco), var(--fx-accent-tobacco-night)); }
+:root[data-fx-accent="brick"] { --fx-accent: light-dark(var(--fx-accent-brick), var(--fx-accent-brick-night)); }
 
 /* Densité de prose compacte. */
 :root[data-fx-density="compact"] { --fx-prose-density: 0.72; }

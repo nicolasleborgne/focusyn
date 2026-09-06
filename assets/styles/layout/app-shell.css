@@ -19,7 +19,7 @@
     min-height: 100vh;
     background: var(--fx-surface-page);
     font-family: var(--fx-font-ui);
-    color: var(--fx-ink-800);
+    color: var(--fx-text-primary);
 }
 
 .fx-app__frame {

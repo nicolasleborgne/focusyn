@@ -76,7 +76,7 @@
     font-size: var(--fx-title-row);
     font-weight: var(--fx-weight-regular);
     line-height: var(--fx-leading-snug);
-    color: var(--fx-ink-750);
+    color: var(--fx-text-primary);
 }
 
 /* L'extrait est en sans : deux familles serif superposées se disputeraient
@@ -87,7 +87,7 @@
     overflow: hidden;
     font-size: var(--fx-size-base);
     line-height: 1.65;
-    color: var(--fx-ink-200);
+    color: var(--fx-text-muted);
     text-overflow: ellipsis;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;

@@ -35,7 +35,7 @@
     height: 16px;
     margin-left: 0;
     border-radius: var(--fx-radius-round);
-    background: var(--fx-neutral-0);
+    background: var(--fx-knob);
     transition: margin-left var(--fx-duration-fast) var(--fx-easing);
 }
 
@@ -91,7 +91,7 @@
     width: 15px;
     height: 15px;
     margin-top: 3px;
-    border: 1px solid var(--fx-neutral-750);
+    border: 1px solid var(--fx-border-strong);
     border-radius: var(--fx-radius-sm);
     background: transparent;
     cursor: pointer;

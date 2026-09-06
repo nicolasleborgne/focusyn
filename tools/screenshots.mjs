@@ -16,9 +16,12 @@ const BASE = process.env.FOCUSYN_URL ?? 'http://127.0.0.1:8000';
 const OUT = 'var/screenshots';
 const ACCOUNT = { email: 'demo@focusyn.fr', password: 'une phrase de passe tenable' };
 
+/* Le thème par défaut suit l'appareil : une passe en `prefers-color-scheme:
+   dark` suffit donc à voir le sombre, sans toucher au réglage du compte. */
 const VIEWPORTS = [
     { name: 'bureau', width: 1280, height: 900 },
     { name: 'mobile', width: 390, height: 844 },
+    { name: 'sombre', width: 1280, height: 900, colorScheme: 'dark' },
 ];
 
 const SCREENS = [
@@ -45,6 +48,7 @@ for (const viewport of VIEWPORTS) {
         viewport: { width: viewport.width, height: viewport.height },
         deviceScaleFactor: 2,
         locale: 'fr-FR',
+        colorScheme: viewport.colorScheme ?? 'light',
     });
     const page = await context.newPage();
 

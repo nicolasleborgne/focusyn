@@ -22,6 +22,7 @@ final readonly class DisplayPreferences
         public Density $density,
         public MarkOpacity $markOpacity,
         public bool $previewPane,
+        public Theme $theme,
     ) {
     }
 
@@ -33,6 +34,7 @@ final readonly class DisplayPreferences
             Density::Comfortable,
             MarkOpacity::fromFloat(0.45),
             previewPane: true,
+            theme: Theme::System,
         );
     }
 
@@ -54,6 +56,7 @@ final readonly class DisplayPreferences
             Density::tryFrom((string) ($stored['density'] ?? '')) ?? $default->density,
             self::opacityOrDefault($stored['markOpacity'] ?? null, $default->markOpacity),
             \is_bool($stored['previewPane'] ?? null) ? $stored['previewPane'] : $default->previewPane,
+            Theme::tryFrom((string) ($stored['theme'] ?? '')) ?? $default->theme,
         );
     }
 
@@ -66,32 +69,38 @@ final readonly class DisplayPreferences
             'density' => $this->density->value,
             'markOpacity' => $this->markOpacity->toFloat(),
             'previewPane' => $this->previewPane,
+            'theme' => $this->theme->value,
         ];
     }
 
     public function withAccent(Accent $accent): self
     {
-        return new self($accent, $this->proseFont, $this->density, $this->markOpacity, $this->previewPane);
+        return new self($accent, $this->proseFont, $this->density, $this->markOpacity, $this->previewPane, $this->theme);
     }
 
     public function withProseFont(ProseFont $proseFont): self
     {
-        return new self($this->accent, $proseFont, $this->density, $this->markOpacity, $this->previewPane);
+        return new self($this->accent, $proseFont, $this->density, $this->markOpacity, $this->previewPane, $this->theme);
     }
 
     public function withDensity(Density $density): self
     {
-        return new self($this->accent, $this->proseFont, $density, $this->markOpacity, $this->previewPane);
+        return new self($this->accent, $this->proseFont, $density, $this->markOpacity, $this->previewPane, $this->theme);
     }
 
     public function withMarkOpacity(MarkOpacity $markOpacity): self
     {
-        return new self($this->accent, $this->proseFont, $this->density, $markOpacity, $this->previewPane);
+        return new self($this->accent, $this->proseFont, $this->density, $markOpacity, $this->previewPane, $this->theme);
     }
 
     public function withPreviewPane(bool $previewPane): self
     {
-        return new self($this->accent, $this->proseFont, $this->density, $this->markOpacity, $previewPane);
+        return new self($this->accent, $this->proseFont, $this->density, $this->markOpacity, $previewPane, $this->theme);
+    }
+
+    public function withTheme(Theme $theme): self
+    {
+        return new self($this->accent, $this->proseFont, $this->density, $this->markOpacity, $this->previewPane, $theme);
     }
 
     public function equals(self $other): bool
@@ -100,7 +109,8 @@ final readonly class DisplayPreferences
             && $this->proseFont === $other->proseFont
             && $this->density === $other->density
             && $this->markOpacity->equals($other->markOpacity)
-            && $this->previewPane === $other->previewPane;
+            && $this->previewPane === $other->previewPane
+            && $this->theme === $other->theme;
     }
 
     private static function opacityOrDefault(mixed $stored, MarkOpacity $default): MarkOpacity

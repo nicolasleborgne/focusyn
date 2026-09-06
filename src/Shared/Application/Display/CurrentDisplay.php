@@ -22,4 +22,7 @@ interface CurrentDisplay
     public function markOpacity(): float;
 
     public function previewPane(): bool;
+
+    /** `system`, `light` ou `dark` — le design system en tire les conséquences. */
+    public function theme(): string;
 }

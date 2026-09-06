@@ -369,9 +369,50 @@ sémantique (`--fx-surface-app`, `--fx-text-muted`, `--fx-accent`). Les réglage
 utilisateur sont des attributs `data-fx-*` sur `<html>` qui redéfinissent des
 variables ; aucun style n'est calculé côté serveur.
 
+Cette règle n'était pas tenue : trente et une déclarations lisaient une
+primitive, et **cela ne s'est vu qu'en allumant le thème sombre** — un titre de
+note en `--fx-ink-750` reste noir sur fond noir. C'est le genre de fuite
+qu'aucun test ne rattrape et qu'aucune relecture ne remarque tant qu'il n'y a
+qu'un thème. En ajouter un est le seul moyen de la rendre visible.
+
+**Le thème sombre tient dans `light-dark()`.** Chaque jeton sémantique porte
+ses deux valeurs côte à côte, et `color-scheme` décide laquelle s'applique :
+`light dark` s'en remet à l'appareil, une valeur unique le force. Pas de bloc
+sombre dupliqué — une fois pour le choix explicite, une fois sous
+`prefers-color-scheme` —, où l'oubli d'un jeton dans l'une des deux copies ne
+se verrait que sur un écran, un jour, chez quelqu'un.
+
+Deux rampes de primitives cohabitent donc : `--fx-neutral-*` / `--fx-ink-*` le
+jour, `--fx-night-*` / `--fx-chalk-*` la nuit. Les paliers se répondent un à un
+(`chalk-900` tient le rôle de `ink-900`), et les nombres croissent dans les deux
+cas **en s'éloignant du fond**. Les cinq accents ont chacun leur jumelle de nuit
+(`--fx-accent-slate-night`…), dessinée par la maquette et non calculée : un
+`color-mix` uniforme donnerait des contrastes inégaux d'une teinte à l'autre.
+
+**Le réglage a trois valeurs, pas deux** : `system`, `light`, `dark`.
+`system` n'est pas l'absence de choix mais un choix à part entière, et le seul
+qui suive l'appareil au fil de la journée ; le ramener à « clair » dès qu'on a
+basculé une fois interdirait d'y revenir. L'écran des réglages ne propose donc
+« suivre l'appareil » que lorsqu'on lui a pris la main.
+
+**Le serveur ignore la préférence de l'appareil**, et c'est heureux : elle
+changerait sans qu'aucune requête n'en avertisse. Une seule conséquence à
+assumer — réglé sur `system`, l'interrupteur rendu serait éteint sur un écran
+sombre. `theme_switch_controller.js` corrige alors sa position *et* la valeur
+qu'il postera. Sans JavaScript la bascule reste juste, elle passe seulement par
+« sombre » d'abord.
+
+La couleur du chrome du navigateur (`<meta name="theme-color">`) est la seule
+teinte que le serveur choisit, faute de pouvoir la déléguer au CSS. Sans thème
+choisi, les deux sont déclarées avec leur `media`.
+
 **L'accent par défaut est l'ardoise** (`--fx-accent-slate`, #41586e), comme la
 maquette. « Encre » reste un choix possible dans les réglages, mais ce n'est pas
 le réglage d'origine.
+
+`devenv shell -- shots` capture une troisième passe, `*-sombre.png`, en
+`prefers-color-scheme: dark`. Le thème par défaut suivant l'appareil, cela suffit
+à voir le sombre sans toucher au réglage du compte.
 
 **Les écrans d'authentification partagent `identity/_auth_frame.html.twig`** et
 suivent une composition fixe : marque, phrase en serif 24 px, champs **sans
@@ -483,6 +524,11 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   le carnet au départ. Ni l'un ni l'autre n'a de titre d'écran : le champ en
   tient lieu, comme dans la maquette. Un test qui identifie ces écrans doit donc
   s'ancrer sur l'invite du champ, pas sur un `<h1>`.
+- **Une couleur en dur, ou une primitive lue par un composant, ne se voit
+  qu'en thème sombre** — et seulement sur l'écran concerné. Après avoir touché
+  au CSS : `grep -rn '#[0-9a-f]\{3,8\}' assets/styles/{base,layout,components}`
+  et `grep -rn 'var(--fx-\(neutral\|ink\|night\|chalk\)-' assets/styles/{base,layout,components}`
+  doivent tous deux ne rien retourner.
 - **Un `<a class="fx-button">` doit rester non souligné** : `base/typography.css`
   souligne tous les liens, ce qui est juste pour la prose et faux pour une
   commande. `.fx-button` neutralise la règle ; un nouveau composant-lien devra

@@ -170,7 +170,7 @@
                     {% for accent in accents %}
                         <button type="submit" name="accent" value="{{ accent.value }}"
                                 class="fx-accents__dot {{ display().accent == accent.value ? 'fx-accents__dot--current' }}"
-                                style="background: {{ accent.hex }}"
+                                style="--fx-dot: light-dark({{ accent.hex }}, {{ accent.nightHex }})"
                                 aria-label="{{ ('settings.accent.' ~ accent.value)|trans }}"
                                 {{ display().accent == accent.value ? 'aria-current="true"' : '' }}></button>
                     {% endfor %}
@@ -181,6 +181,49 @@
         {# ---------------------------------------------------------------- #}
         <section class="fx-settings__section">
             <p class="fx-eyebrow">{{ 'settings.editor.heading'|trans }}</p>
+
+            {# En tête de section, comme dans la maquette : c'est le réglage
+               qui change le plus de choses à l'écran.
+
+               L'état de l'interrupteur est vrai sauf dans un cas — « suit
+               l'appareil », que le serveur ne peut pas connaître. Le contrôleur
+               Stimulus le corrige alors, position et valeur postée : rien ici
+               n'attend le réseau, et sans JavaScript la bascule reste juste,
+               elle passe seulement par « sombre » d'abord. #}
+            <div class="fx-settings__row"
+                 data-controller="theme-switch"
+                 data-theme-switch-choice-value="{{ display().theme }}">
+                <div class="fx-settings__label">
+                    <span class="fx-card__title">{{ 'settings.editor.dark'|trans }}</span>
+                    <span class="fx-card__help">
+                        {{ (display().theme == 'system' ? 'settings.editor.dark_system' : 'settings.editor.dark_forced')|trans }}
+                    </span>
+                </div>
+
+                <div class="fx-field__row">
+                    {# Rendre la main à l'appareil : proposé seulement quand on
+                       la lui a prise, sinon la ligne offrirait ce qui est déjà. #}
+                    {% if display().theme != 'system' %}
+                        <form method="post" action="{{ path('display_adjust') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                            <button type="submit" name="theme" value="system" class="fx-pill">
+                                {{ 'settings.editor.dark_follow'|trans }}
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <form method="post" action="{{ path('display_adjust') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('display-adjust') }}">
+                        <input type="hidden" name="theme" data-theme-switch-target="value"
+                               value="{{ display().theme == 'dark' ? 'light' : 'dark' }}">
+                        <button type="submit" data-theme-switch-target="switch"
+                                class="fx-switch {{ display().theme == 'dark' ? 'fx-switch--on' }}"
+                                aria-pressed="{{ display().theme == 'dark' ? 'true' : 'false' }}">
+                            <span class="fx-switch__track"><span class="fx-switch__knob"></span></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             <div class="fx-settings__row">
                 <div class="fx-settings__label">

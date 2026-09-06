@@ -9,6 +9,7 @@ use App\Identity\Domain\Model\Density;
 use App\Identity\Domain\Model\DisplayPreferences;
 use App\Identity\Domain\Model\MarkOpacity;
 use App\Identity\Domain\Model\ProseFont;
+use App\Identity\Domain\Model\Theme;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -26,6 +27,8 @@ final class DisplayPreferencesTest extends TestCase
         self::assertSame(Density::Comfortable, $defaults->density);
         self::assertSame(0.45, $defaults->markOpacity->toFloat());
         self::assertTrue($defaults->previewPane);
+        // Personne n'a rien choisi : c'est le système qui décide du thème.
+        self::assertSame(Theme::System, $defaults->theme);
     }
 
     public function testEachSettingCanBeChangedOnItsOwn(): void
@@ -89,7 +92,8 @@ final class DisplayPreferencesTest extends TestCase
             ->withAccent(Accent::Tobacco)
             ->withDensity(Density::Compact)
             ->withMarkOpacity(MarkOpacity::fromFloat(0.0))
-            ->withPreviewPane(false);
+            ->withPreviewPane(false)
+            ->withTheme(Theme::Dark);
 
         self::assertTrue($preferences->equals(DisplayPreferences::fromArray($preferences->toArray())));
     }
@@ -109,5 +113,32 @@ final class DisplayPreferencesTest extends TestCase
         self::assertSame('#41586e', Accent::Slate->hex());
         self::assertSame('slate', Accent::Slate->value);
         self::assertCount(5, Accent::cases());
+    }
+
+    public function testEachAccentHasALighterTwinForTheDarkTheme(): void
+    {
+        // La teinte de jour est trop sombre sur un fond noir : chacune a sa
+        // jumelle claire, dessinée par la maquette.
+        self::assertSame('#8aa8c4', Accent::Slate->nightHex());
+        self::assertSame('#e2e1de', Accent::Ink->nightHex());
+
+        foreach (Accent::cases() as $accent) {
+            self::assertNotSame($accent->hex(), $accent->nightHex(), $accent->value);
+        }
+    }
+
+    public function testTheThemeIsChosenLikeAnyOtherSetting(): void
+    {
+        $preferences = DisplayPreferences::default()->withTheme(Theme::Dark);
+
+        self::assertSame(Theme::Dark, $preferences->theme);
+        // Et rien d'autre n'a bougé.
+        self::assertSame(Accent::Slate, $preferences->accent);
+        self::assertFalse(DisplayPreferences::default()->equals($preferences));
+    }
+
+    public function testAnUnknownStoredThemeFallsBackOnTheSystem(): void
+    {
+        self::assertSame(Theme::System, DisplayPreferences::fromArray(['theme' => 'sépia'])->theme);
     }
 }

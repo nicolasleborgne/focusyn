@@ -31,6 +31,9 @@ final class DisplayPreferencesTest extends WebTestCase
         self::assertSame('slate', $html->attr('data-fx-accent'));
         self::assertSame('serif', $html->attr('data-fx-prose'));
         self::assertSame('comfortable', $html->attr('data-fx-density'));
+        // Rien n'a été choisi : le thème suit le système, et c'est la feuille
+        // de style qui en tire les conséquences.
+        self::assertSame('system', $html->attr('data-fx-theme'));
         self::assertStringContainsString('--fx-markdown-mark-opacity: 0.45', (string) $html->attr('style'));
     }
 
@@ -73,6 +76,41 @@ final class DisplayPreferencesTest extends WebTestCase
         self::assertSame('serif', $client->request('GET', '/')->filter('html')->attr('data-fx-prose'));
     }
 
+    public function testTheThemeSwitchesBothWaysAndBackToTheSystem(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+
+        $this->adjust($client, 'theme', 'dark');
+        self::assertSame('dark', $client->request('GET', '/')->filter('html')->attr('data-fx-theme'));
+
+        $this->adjust($client, 'theme', 'light');
+        self::assertSame('light', $client->request('GET', '/')->filter('html')->attr('data-fx-theme'));
+
+        // Et l'on peut s'en remettre au système de nouveau : c'est un choix
+        // comme les deux autres, pas seulement l'état initial.
+        $this->adjust($client, 'theme', 'system');
+        self::assertSame('system', $client->request('GET', '/')->filter('html')->attr('data-fx-theme'));
+    }
+
+    public function testTheThemeIsOfferedAtTheHeadOfTheEditorSection(): void
+    {
+        $client = self::createClient();
+        $this->logIn($client);
+
+        $crawler = $client->request('GET', '/reglages');
+        $editor = $crawler->filter('.fx-settings__section')->reduce(
+            static fn ($section): bool => str_contains($section->text(), 'Éditeur'),
+        );
+
+        self::assertCount(1, $editor);
+        self::assertStringContainsString(
+            'Thème sombre',
+            $editor->filter('.fx-settings__row')->first()->text(),
+            'Le commutateur ouvre la section Éditeur, comme dans la maquette.',
+        );
+    }
+
     public function testTheMarkOpacityFollowsTheOfferedSteps(): void
     {
         $client = self::createClient();
@@ -94,8 +132,11 @@ final class DisplayPreferencesTest extends WebTestCase
         $this->adjust($client, 'markOpacity', '0.61');
         $this->adjust($client, 'accent', 'fuchsia');
 
+        $this->adjust($client, 'theme', 'sépia');
+
         $html = $client->request('GET', '/')->filter('html');
         self::assertSame('slate', $html->attr('data-fx-accent'));
+        self::assertSame('system', $html->attr('data-fx-theme'));
         self::assertStringContainsString('--fx-markdown-mark-opacity: 0.45', (string) $html->attr('style'));
     }
 
@@ -119,6 +160,9 @@ final class DisplayPreferencesTest extends WebTestCase
         $crawler = $client->request('GET', '/connexion');
 
         self::assertSame('slate', $crawler->filter('html')->attr('data-fx-accent'));
+        // Un visiteur n'a rien réglé : son système décide, comme pour un compte
+        // qui n'a pas choisi.
+        self::assertSame('system', $crawler->filter('html')->attr('data-fx-theme'));
     }
 
     private function adjust(KernelBrowser $client, string $field, string $value): void
