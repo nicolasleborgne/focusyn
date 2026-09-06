@@ -54,7 +54,42 @@ src/<Contexte>/
 ```
 
 Contextes : `Shared`, `Identity`, `Organization`, `Notebook`, `Task`,
-`Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
+`Routine`, `Inbox`, `Reminder`, `Assistant`, `Billing`, `Privacy`.
+
+**Une routine se repose, une liste s'épuise.** Tout tient dans la **période** :
+`Cadence::periodOf()` rend une étiquette (`2026-09-07`, `2026-W37`, `2026-09`),
+et deux cochages comptent pour la même période si et seulement si leurs
+étiquettes sont égales. Cocher n'efface donc rien — cela vaut jusqu'à la période
+suivante, où tout se repose. C'est la seule différence de fond avec une liste de
+tâches, où ce qui est coché le reste.
+
+**Chaque étape porte son propre calendrier**, pas la routine entière :
+« rafraîchir le levain » tous les jours et « relever le pH » le samedi
+cohabitent. Sans jour nommé, une étape est due n'importe quel jour de sa période
+— « une fois cette semaine, quand on veut » —, la période ne bougeant pas pour
+autant. Les jours sont en **ISO-8601** (1 lundi, 7 dimanche), comme `format('N')`.
+
+**Changer de cadence oublie les calendriers et les cochages.** Des jours réglés
+pour une routine hebdomadaire ne veulent plus rien dire une fois quotidienne ;
+les garder les ferait réapparaître au retour, sans que personne ne les ait
+redemandés. Les cochages, eux, étaient rangés par période, et les périodes
+viennent de changer de nature.
+
+**La série se calcule sur les étapes d'aujourd'hui**, en remontant les périodes
+entièrement faites. Ce qui était dû il y a trois mois est irrécupérable — les
+étapes ont pu changer depuis. Elle répond donc à « depuis quand tiens-tu la
+routine *telle qu'elle est* ? », seule question à laquelle on puisse répondre
+honnêtement. La période en cours ne compte que si elle est déjà finie, sinon la
+série tomberait à zéro chaque matin. Une période où rien n'était dû rompt la
+série plutôt que de l'allonger : une série qui traverse des périodes vides ne
+dit plus rien de ce qu'on tient.
+
+**Une routine retient le nom de l'obsession qu'elle sert**, pas son identifiant
+— comme un rappel retient un sujet. Le slug, lui, est une règle de Notebook :
+c'est le port partagé `ObsessionDirectory` qui le rend, et **`null` quand
+l'obsession n'est mentionnée par aucune note**. Le lien n'apparaît alors pas :
+une obsession n'est pas créée, elle est mentionnée, et conduire à un écran vide
+promettrait ce qui n'existe pas.
 
 **Une capture ignore ce qu'elle deviendra**, comme un rappel ignore ce qu'il
 porte. La boîte de réception est un sas : ce qui y tombe n'est ni une note ni
@@ -556,6 +591,9 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
   le carnet au départ. Ni l'un ni l'autre n'a de titre d'écran : le champ en
   tient lieu, comme dans la maquette. Un test qui identifie ces écrans doit donc
   s'ancrer sur l'invite du champ, pas sur un `<h1>`.
+- **`.fx-board` est une grille**, pas un conteneur flex : un titre placé
+  dedans occupe une case et se range *à côté* de la première carte au lieu de
+  la surmonter. Le titre d'une section de cartes va au-dessus de la grille.
 - **La barre d'onglets ne rend pas la même liste que la barre latérale.**
   Six entrées tiennent dans une colonne, pas en bas d'un écran de téléphone :
   `ShellRuntime::mobileNavigation()` en retire la recherche et suit l'ordre de

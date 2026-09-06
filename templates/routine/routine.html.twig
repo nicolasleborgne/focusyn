@@ -1,0 +1,65 @@
+{% extends 'shell.html.twig' %}
+
+{% block title %}{{ routine.name }} — Focusyn{% endblock %}
+{% set crumb = 'shell.nav.tasks'|trans ~ ' / ' ~ routine.name %}
+
+{% block page %}
+    <div class="fx-app__content fx-app__content--list">
+        <a class="fx-back fx-meta fx-meta--caps" href="{{ path('tasks') }}">← {{ 'routine.heading'|trans }}</a>
+
+        {% for message in app.flashes('error') %}
+            <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
+        {% endfor %}
+
+        <form method="post" action="{{ path('routine_rename', { id: routine.id }) }}" class="fx-list__title-form">
+            <input type="hidden" name="_token" value="{{ csrf_token('routine-rename') }}">
+            <span class="fx-list__mark" aria-hidden="true"></span>
+            <textarea class="fx-note__title fx-list__title" name="name" rows="1"
+                      data-controller="autogrow"
+                      data-action="keydown->autogrow#submit"
+                      aria-label="{{ 'routine.name_label'|trans }}"
+                      onchange="this.form.requestSubmit()">{{ routine.name }}</textarea>
+        </form>
+
+        {# La cadence, puis l'obsession servie : ce qui décide du rythme d'abord,
+           ce qui dit à quoi il sert ensuite. #}
+        <form method="post" action="{{ path('routine_cadence', { id: routine.id }) }}" class="fx-field__row fx-routine__cadence">
+            <input type="hidden" name="_token" value="{{ csrf_token('routine-cadence') }}">
+            {% for cadence in ['daily', 'weekly', 'monthly'] %}
+                <button type="submit" name="cadence" value="{{ cadence }}"
+                        class="fx-pill {{ routine.cadence == cadence ? 'fx-pill--selected' }}">
+                    {{ ('routine.cadence.' ~ cadence)|trans }}
+                </button>
+            {% endfor %}
+        </form>
+
+        <form method="post" action="{{ path('routine_obsession', { id: routine.id }) }}" class="fx-field__row fx-routine__obsession">
+            <input type="hidden" name="_token" value="{{ csrf_token('routine-obsession') }}">
+            <input type="text" name="obsession" class="fx-field__control fx-field__control--bare"
+                   value="{{ routine.obsession }}"
+                   placeholder="{{ 'routine.obsession_placeholder'|trans }}"
+                   aria-label="{{ 'routine.obsession_label'|trans }}"
+                   onchange="this.form.requestSubmit()">
+            {# Le lien n'apparaît que si l'obsession est réellement mentionnée
+               quelque part : elle n'est pas créée, elle est mentionnée. #}
+            {% if routine.obsessionSlug %}
+                <a class="fx-tag" href="{{ path('obsession_show', { slug: routine.obsessionSlug }) }}">{{ routine.obsession }}</a>
+            {% elseif routine.obsession %}
+                <span class="fx-tag">{{ routine.obsession }}</span>
+            {% endif %}
+        </form>
+
+        <twig:RoutineChecklist routineId="{{ routine.id }}" />
+
+        <form method="post" action="{{ path('routine_delete', { id: routine.id }) }}"
+              class="fx-list__danger" data-controller="confirm">
+            <input type="hidden" name="_token" value="{{ csrf_token('routine-delete') }}">
+            <button type="submit" class="fx-button fx-button--danger fx-button--small"
+                    data-confirm-target="button"
+                    data-action="confirm#arm"
+                    data-confirm-armed-label="{{ 'routine.delete_confirm'|trans }}">
+                {{ 'routine.delete'|trans }}
+            </button>
+        </form>
+    </div>
+{% endblock %}

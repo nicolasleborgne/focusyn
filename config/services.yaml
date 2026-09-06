@@ -74,6 +74,10 @@ services:
         alias: App\Notebook\Infrastructure\Persistence\Doctrine\DoctrineNoteRepository
         public: true
 
+    App\Routine\Domain\Repository\RoutineRepository:
+        alias: App\Routine\Infrastructure\Persistence\Doctrine\DoctrineRoutineRepository
+        public: true
+
     App\Inbox\Domain\Repository\CaptureRepository:
         alias: App\Inbox\Infrastructure\Persistence\Doctrine\DoctrineCaptureRepository
         public: true
@@ -84,8 +88,14 @@ services:
     App\Shared\Application\Notebook\NoteWriter:
         alias: App\Notebook\Infrastructure\Inbox\HandlerNoteWriter
 
+    App\Shared\Application\Notebook\ObsessionDirectory:
+        alias: App\Notebook\Infrastructure\Routine\NoteObsessionDirectory
+
     App\Shared\Application\Task\TaskWriter:
         alias: App\Task\Infrastructure\Inbox\HandlerTaskWriter
+
+    App\Shared\Application\Shell\RoutineSummaryProvider:
+        alias: App\Routine\Infrastructure\Shell\RoutineShellSummary
 
     App\Shared\Application\Shell\InboxSummaryProvider:
         alias: App\Inbox\Infrastructure\Shell\CaptureShellSummary

@@ -80,6 +80,21 @@ for (const viewport of VIEWPORTS) {
         process.stdout.write(`  note-${viewport.name}.png\n`);
     }
 
+    // Une routine ouverte : c'est là que se règlent les calendriers.
+    await page.goto(`${BASE}/taches`, { waitUntil: 'networkidle' });
+    // Les deux premières : l'une quotidienne, l'autre cadencée. Les pastilles
+    // de jours ne se voient que sur la seconde.
+    const routineLinks = await page.locator('a[href^="/routines/"]').evaluateAll(
+        (nodes) => nodes.map((node) => node.getAttribute('href')),
+    );
+    for (const [index, href] of routineLinks.slice(0, 2).entries()) {
+        await page.goto(`${BASE}${href}`, { waitUntil: 'networkidle' });
+        await page.evaluate(() => document.fonts.ready);
+        const name = index === 0 ? 'routine' : 'routine-cadencee';
+        await page.screenshot({ path: `${OUT}/${name}-${viewport.name}.png`, fullPage: true });
+        process.stdout.write(`  ${name}-${viewport.name}.png\n`);
+    }
+
     // Une liste ouverte : c'est là que se voient les pastilles de rappel.
     await page.goto(`${BASE}/taches`, { waitUntil: 'networkidle' });
     const firstList = await page.getAttribute('.fx-board__card', 'href');

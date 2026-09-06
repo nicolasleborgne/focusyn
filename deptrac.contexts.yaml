@@ -68,6 +68,15 @@ deptrac:
                     must_not:
                         -   type: directory
                             value: src/[^/]+/Domain/Event/.*
+        -   name: Routine
+            collectors:
+                -   type: bool
+                    must:
+                        -   type: directory
+                            value: src/Routine/.*
+                    must_not:
+                        -   type: directory
+                            value: src/[^/]+/Domain/Event/.*
         -   name: Inbox
             collectors:
                 -   type: bool
@@ -128,6 +137,7 @@ deptrac:
         Task: [Shared, PublishedEvents]
         Reminder: [Shared, PublishedEvents]
         Inbox: [Shared, PublishedEvents]
+        Routine: [Shared, PublishedEvents]
         Assistant: [Shared, PublishedEvents]
         Billing: [Shared, PublishedEvents]
         Privacy: [Shared, PublishedEvents]
@@ -140,6 +150,7 @@ deptrac:
             - Task
             - Reminder
             - Inbox
+            - Routine
             - Assistant
             - Privacy
         Kernel:
@@ -152,6 +163,7 @@ deptrac:
             - Task
             - Reminder
             - Inbox
+            - Routine
             - Assistant
             - Billing
             - Privacy

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Shared\Application\Shell;
 
 use App\Shared\Application\Shell\ObsessionSummary;
+use App\Shared\Application\Shell\RoutineSummary;
 use App\Shared\Application\Shell\ShellView;
 use App\Shared\Application\Shell\TaskListSummary;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -68,14 +69,16 @@ final class ShellViewTest extends TestCase
     /**
      * @param list<ObsessionSummary> $obsessions
      * @param list<TaskListSummary>  $taskLists
+     * @param list<RoutineSummary>   $routines
      */
     private static function view(
         string $accountEmail = 'moi@focusyn.fr',
         int $noteCount = 0,
         array $obsessions = [],
         array $taskLists = [],
+        array $routines = [],
         int $inboxCount = 0,
     ): ShellView {
-        return new ShellView($accountEmail, $noteCount, $obsessions, $taskLists, $inboxCount);
+        return new ShellView($accountEmail, $noteCount, $obsessions, $taskLists, $routines, $inboxCount);
     }
 }

@@ -1,0 +1,124 @@
+/**
+ * Les routines : ce qui se repose au lieu de s'épuiser.
+ *
+ * Une ligne de routine porte davantage qu'une tâche — son calendrier, et sept
+ * pastilles pour le régler. Elle a donc deux étages, là où une tâche tient sur
+ * une ligne.
+ */
+
+.fx-routine-line {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-3);
+    padding: var(--fx-space-3) 0;
+}
+
+/* Ce qui n'est pas dû aujourd'hui reste lisible mais s'efface : on le garde à
+   l'écran parce que c'est là qu'on règle son calendrier. */
+.fx-routine-line--off {
+    opacity: 0.55;
+}
+
+.fx-routine-line__when {
+    flex: 0 0 auto;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    letter-spacing: var(--fx-tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--fx-text-quote);
+}
+
+.fx-routine-line__schedule {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fx-space-3);
+    padding-left: var(--fx-space-8);
+}
+
+.fx-routine-line__separator {
+    width: 1px;
+    margin: 0 var(--fx-space-2);
+    background: var(--fx-border-subtle);
+}
+
+/* Une pastille de réglage : assez grande pour le doigt sur un téléphone, où
+   sept jours se touchent. */
+.fx-mini-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    min-height: 30px;
+    padding: 0 var(--fx-space-4);
+    border: 1px solid var(--fx-border-subtle);
+    border-radius: var(--fx-radius-sm);
+    background: transparent;
+    font-family: var(--fx-font-meta);
+    font-size: var(--fx-size-sm);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    color: var(--fx-text-quote);
+    cursor: pointer;
+}
+
+.fx-mini-pill--on {
+    border-color: var(--fx-accent);
+    background: var(--fx-accent);
+    color: var(--fx-text-on-accent);
+}
+
+.fx-routine__left {
+    color: var(--fx-accent);
+}
+
+.fx-routine__done {
+    color: var(--fx-text-disabled);
+}
+
+.fx-routine__note {
+    margin-top: var(--fx-space-8);
+}
+
+/* La cadence est la décision qui commande tout le reste : elle respire sous le
+   titre, avant le rattachement, qui n'est qu'une étiquette. */
+.fx-routine__cadence {
+    margin: var(--fx-space-8) 0 var(--fx-space-5);
+}
+
+/* Le champ tient sa largeur : sans borne, il pousse l'étiquette de l'obsession
+   à la ligne suivante, où elle se lit comme une répétition du texte saisi
+   plutôt que comme le lien qu'elle est. */
+.fx-routine__obsession {
+    align-items: baseline;
+    gap: var(--fx-space-5);
+    margin-bottom: var(--fx-space-4);
+}
+
+.fx-routine__obsession .fx-field__control {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 22ch;
+}
+
+.fx-board__tabs {
+    margin-bottom: var(--fx-space-8);
+}
+
+.fx-board__foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--fx-space-4);
+    margin-top: var(--fx-space-4);
+}
+
+.fx-home__routines {
+    margin-bottom: var(--fx-space-12);
+}
+
+/* Sur l'écran des tâches, la section n'a pas de titre : la grille ne doit pas
+   pour autant se coller à la barre d'onglets. */
+.fx-board__tabs + [data-tabs-target] .fx-board {
+    margin-top: 0;
+}

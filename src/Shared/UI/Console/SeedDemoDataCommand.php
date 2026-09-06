@@ -39,6 +39,13 @@ use App\Reminder\Domain\Model\ReminderId;
 use App\Reminder\Domain\Model\ReminderLabel;
 use App\Reminder\Domain\Model\ReminderSubject;
 use App\Reminder\Domain\Repository\ReminderRepository;
+use App\Routine\Domain\Model\Cadence;
+use App\Routine\Domain\Model\Routine;
+use App\Routine\Domain\Model\RoutineId;
+use App\Routine\Domain\Model\RoutineItemId;
+use App\Routine\Domain\Model\RoutineName;
+use App\Routine\Domain\Model\RoutineText;
+use App\Routine\Domain\Repository\RoutineRepository;
 use App\Shared\Application\Command\CommandBus;
 use App\Shared\Application\Tenant\TenantScope;
 use App\Shared\Domain\TenantId;
@@ -81,6 +88,7 @@ final class SeedDemoDataCommand extends Command
         private readonly TaskListRepository $lists,
         private readonly ReminderRepository $reminders,
         private readonly CaptureRepository $captures,
+        private readonly RoutineRepository $routines,
         private readonly PrivacyChoicesRepository $privacy,
         private readonly AssistantSettingsRepository $assistant,
         private readonly KeyVault $vault,
@@ -124,6 +132,7 @@ final class SeedDemoDataCommand extends Command
             $this->seedLists($tenant);
             $this->seedReminders($tenant, $recipient);
             $this->seedInbox($tenant);
+            $this->seedRoutines($tenant);
             $this->seedAssistant($recipient);
         });
 
@@ -154,6 +163,10 @@ final class SeedDemoDataCommand extends Command
             $this->captures->remove($capture);
         }
 
+        foreach ($this->routines->all() as $routine) {
+            $this->routines->remove($routine);
+        }
+
         foreach (self::obsessions() as [$name]) {
             $existing = $this->obsessions->ofSlug(ObsessionName::fromString($name)->slug());
 
@@ -161,6 +174,53 @@ final class SeedDemoDataCommand extends Command
                 $this->obsessions->remove($existing);
             }
         }
+    }
+
+    /**
+     * Trois routines, une par cadence, dont une déjà tenue depuis quelques
+     * jours : c'est la seule façon de voir une série ailleurs qu'à zéro.
+     */
+    private function seedRoutines(TenantId $tenant): void
+    {
+        $now = $this->clock->now();
+
+        $matin = Routine::open(RoutineId::generate(), $tenant, RoutineName::fromString('Matin'), Cadence::Daily, $now);
+        $steps = [];
+
+        foreach (["Noter l'heure du réveil spontané", 'Lire vingt minutes', 'Cinq minutes de silence'] as $text) {
+            $steps[] = $id = RoutineItemId::generate();
+            $matin->addItem($id, RoutineText::fromString($text), $now);
+        }
+
+        // Les quatre jours précédents, entièrement faits : la série vaut quatre,
+        // et aujourd'hui reste à faire.
+        for ($back = 4; $back >= 1; --$back) {
+            foreach ($steps as $step) {
+                $matin->tick($step, $now->modify(\sprintf('-%d days', $back)));
+            }
+        }
+
+        $this->routines->save($matin);
+
+        $semaine = Routine::open(RoutineId::generate(), $tenant, RoutineName::fromString('Revue de la semaine'), Cadence::Weekly, $now);
+        $semaine->serve('Lecture', $now);
+        $tri = RoutineItemId::generate();
+        $semaine->addItem($tri, RoutineText::fromString('Trier la boîte de réception'), $now);
+        $semaine->scheduleItem($tri, [2, 5], null, $now);
+        $relire = RoutineItemId::generate();
+        $semaine->addItem($relire, RoutineText::fromString('Relire les notes de la semaine'), $now);
+        $semaine->scheduleItem($relire, [5], null, $now);
+        $this->routines->save($semaine);
+
+        $velo = Routine::open(RoutineId::generate(), $tenant, RoutineName::fromString('Entretien du vélo'), Cadence::Monthly, $now);
+        $velo->serve('Vélo', $now);
+        $rayons = RoutineItemId::generate();
+        $velo->addItem($rayons, RoutineText::fromString('Tension des rayons'), $now);
+        $velo->scheduleItem($rayons, [6], 1, $now);
+        $chaine = RoutineItemId::generate();
+        $velo->addItem($chaine, RoutineText::fromString('Chaîne et transmission'), $now);
+        $velo->scheduleItem($chaine, [6], -1, $now);
+        $this->routines->save($velo);
     }
 
     /**

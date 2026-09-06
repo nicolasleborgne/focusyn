@@ -1,0 +1,48 @@
+{% set routines = this.routines %}
+
+{# Sur l'accueil, une section vide ne dit rien : on ne la rend pas. Sur l'écran
+   des tâches, au contraire, l'absence de routine mérite d'être expliquée. #}
+{% if routines is not empty or this.only == 'all' %}
+<section {{ attributes.defaults({ class: 'fx-home__section' }) }}>
+    {# Le titre est hors de la grille : dedans, il occuperait une case et se
+       rangerait à côté de la première carte au lieu de la surmonter. #}
+    {% if this.only == 'due' %}
+        <p class="fx-eyebrow fx-section-title">{{ 'routine.due_today'|trans }}</p>
+    {% endif %}
+
+    <div class="fx-board">
+    {% for routine in routines %}
+        <a class="fx-board__card" href="{{ path('routine_show', { id: routine.id }) }}">
+            <span class="fx-board__head">
+                <span class="fx-board__name">{{ routine.name }}</span>
+                <span class="fx-tag">{{ ('routine.cadence.' ~ routine.cadence)|trans }}</span>
+                <span class="fx-board__ratio">{{ routine.doneToday }}/{{ routine.dueToday|length }}</span>
+            </span>
+
+            <span class="fx-board__peek">
+                {% for item in routine.dueToday|slice(0, 3) %}
+                    <span class="fx-board__peek-item {{ item.ticked ? 'fx-board__peek-item--done' }}">{{ item.text }}</span>
+                {% endfor %}
+            </span>
+
+            <span class="fx-board__foot">
+                {# Ce qui reste, ou le fait qu'il ne reste rien : c'est la seule
+                   information qu'on cherche en passant. #}
+                <span class="fx-eyebrow {{ routine.isDone ? 'fx-routine__done' : 'fx-routine__left' }}">
+                    {{ routine.isDone
+                        ? 'routine.all_done'|trans
+                        : 'routine.left'|trans({ count: routine.remaining }) }}
+                </span>
+                <span class="fx-eyebrow">{{ 'routine.streak'|trans({ count: routine.streak }) }}</span>
+            </span>
+
+            <span class="fx-meter fx-board__meter">
+                <span class="fx-meter__value" style="width: {{ routine.progress }}%"></span>
+            </span>
+        </a>
+    {% else %}
+        <p class="fx-card__help">{{ 'routine.empty'|trans }}</p>
+    {% endfor %}
+    </div>
+</section>
+{% endif %}

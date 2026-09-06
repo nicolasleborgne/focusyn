@@ -30,6 +30,7 @@ shell:
         settings: Settings
     section:
         obsessions: Obsessions
+        routines: Routines
         lists: Task lists
     action:
         logout: Sign out
@@ -200,6 +201,7 @@ notebook:
         failed: Could not save — the connection seems to be down
 
 task:
+    tab_lists: Lists
     completed_heading: Done
     board_summary: '{open, plural, =0 {nothing open} one {# open} other {# open}} · {lists, plural, one {# list} other {# lists}}'
     count: '{count, plural, =0 {no tasks} one {# task} other {# tasks}}'
@@ -555,3 +557,47 @@ inbox:
     source:
         typed_in: Typed in Focusyn
         shared: Shared from another app
+
+routine:
+    heading: Routines
+    due_today: Routines for today
+    new: New routine
+    empty: 'No routine yet. A routine is what you do again — and want to see come back.'
+    gone: This routine no longer exists.
+    name_label: Routine name
+    name_required: A routine has a name.
+    add_step: 'Add a step — Enter'
+    check: Tick this step
+    remove: Remove this step
+    delete: Delete the routine
+    delete_confirm: Confirm deletion
+    obsession_label: Obsession served
+    obsession_placeholder: 'Attach to an obsession (optional)'
+    streak: '{count, plural, =0 {no streak} one {# period in a row} other {# periods in a row}}'
+    left: '{count, plural, =0 {nothing left} one {# left} other {# left}}'
+    nothing_today: 'nothing today'
+    all_done: done
+    note: 'Boxes clear at the start of each period. The streak counts closed periods with nothing missed.'
+    cadence:
+        daily: Daily
+        weekly: Weekly
+        monthly: Monthly
+    schedule:
+        daily: every day
+        weekly: every week
+        monthly: start of month
+        every_day: every day
+    day:
+        1: Mon
+        2: Tue
+        3: Wed
+        4: Thu
+        5: Fri
+        6: Sat
+        7: Sun
+    rank:
+        1: 1st
+        2: 2nd
+        3: 3rd
+        4: 4th
+        last: last

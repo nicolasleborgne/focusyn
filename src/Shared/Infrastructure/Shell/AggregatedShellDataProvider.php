@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure\Shell;
 use App\Shared\Application\Account\CurrentAccount;
 use App\Shared\Application\Shell\InboxSummaryProvider;
 use App\Shared\Application\Shell\NotebookSummaryProvider;
+use App\Shared\Application\Shell\RoutineSummaryProvider;
 use App\Shared\Application\Shell\ShellDataProvider;
 use App\Shared\Application\Shell\ShellView;
 use App\Shared\Application\Shell\TaskSummaryProvider;
@@ -21,6 +22,7 @@ final readonly class AggregatedShellDataProvider implements ShellDataProvider
         private CurrentAccount $account,
         private NotebookSummaryProvider $notebook,
         private TaskSummaryProvider $tasks,
+        private RoutineSummaryProvider $routines,
         private InboxSummaryProvider $inbox,
     ) {
     }
@@ -32,6 +34,7 @@ final readonly class AggregatedShellDataProvider implements ShellDataProvider
             noteCount: $this->notebook->noteCount(),
             obsessions: $this->notebook->obsessions(),
             taskLists: $this->tasks->lists(),
+            routines: $this->routines->routines(),
             inboxCount: $this->inbox->pendingCount(),
         );
     }

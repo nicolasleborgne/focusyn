@@ -28,6 +28,21 @@
     </nav>
 
     <div class="fx-sidebar__scroll">
+        {# Routines d'abord, puis listes, puis obsessions : l'ordre de la
+           maquette, du plus quotidien au plus lointain. #}
+        {% if shell().routines is not empty %}
+            <p class="fx-eyebrow fx-sidebar__section">{{ 'shell.section.routines'|trans }}</p>
+            <div class="fx-sidebar__group">
+                {% for routine in shell().routines %}
+                    <a class="fx-nav-item fx-nav-item--sub" href="{{ path('routine_show', { id: routine.id }) }}">
+                        <span class="fx-nav-item__square {{ routine.remaining > 0 ? 'fx-nav-item__square--open' }}" aria-hidden="true"></span>
+                        <span class="fx-nav-item__label">{{ routine.name }}</span>
+                        <span class="fx-nav-item__count">{{ routine.remaining ?: '·' }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <p class="fx-eyebrow fx-sidebar__section">{{ 'shell.section.obsessions'|trans }}</p>
         <div class="fx-sidebar__group">
             {% for obsession in shell().obsessions %}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Routine\Domain\Model\RoutineTick" table="routine_ticks">
+        <id name="id" type="routine_tick_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="itemId" type="routine_item_id" column="item_id"/>
+        <field name="period" type="string" column="period" length="12"/>
+        <field name="tickedAt" type="datetime_immutable" column="ticked_at"/>
+
+        <many-to-one field="routine" target-entity="App\Routine\Domain\Model\Routine" inversed-by="ticks">
+            <join-column name="routine_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <unique-constraints>
+            <!-- Une ligne ne se coche qu'une fois par période : deux clics
+                 simultanés depuis deux appareils ne doivent pas la compter
+                 deux fois. La contrainte le dit en base, pas seulement dans
+                 l'agrégat. -->
+            <unique-constraint name="uniq_routine_ticks_item_period" columns="item_id,period"/>
+        </unique-constraints>
+    </entity>
+</doctrine-mapping>

@@ -1,0 +1,89 @@
+{% set routine = this.routine %}
+
+<div {{ attributes }} class="fx-checklist">
+    {% if routine is null %}
+        <p class="fx-card__help">{{ 'routine.gone'|trans }}</p>
+    {% else %}
+        <p class="fx-checklist__summary">
+            {# « 0/0 » ne veut rien dire : quand rien n'est dû, on le dit. #}
+            <span class="fx-eyebrow">
+                {{ 'routine.streak'|trans({ count: routine.streak }) }} ·
+                {{ routine.dueToday is empty
+                    ? 'routine.nothing_today'|trans
+                    : routine.doneToday ~ '/' ~ routine.dueToday|length }}
+            </span>
+            <span class="fx-meter fx-checklist__meter">
+                <span class="fx-meter__value" style="width: {{ routine.progress }}%"></span>
+            </span>
+        </p>
+
+        <ul class="fx-checklist__items">
+            {% for item in routine.items %}
+                {# Une étape qui n'est pas due aujourd'hui reste visible, en
+                   retrait : c'est là qu'on règle son calendrier, et la cacher
+                   obligerait à changer de jour pour la corriger. #}
+                <li class="fx-routine-line {{ item.dueToday ? '' : 'fx-routine-line--off' }}">
+                    <div class="fx-task-line">
+                        <button type="button" class="fx-check {{ item.ticked ? 'fx-check--done' }}"
+                                data-action="live#action" data-live-action-param="tick"
+                                data-live-item-id-param="{{ item.id }}"
+                                aria-pressed="{{ item.ticked ? 'true' : 'false' }}"
+                                aria-label="{{ 'routine.check'|trans }}">
+                            <span class="fx-check__tick">✓</span>
+                        </button>
+
+                        <span class="fx-task-line__text {{ item.ticked ? 'fx-task-line__text--done' }}">{{ item.text }}</span>
+                        <span class="fx-routine-line__when">{{ routine_schedule(routine.cadence, item.days, item.rank) }}</span>
+
+                        <button type="button" class="fx-checklist__remove"
+                                data-action="live#action" data-live-action-param="remove"
+                                data-live-item-id-param="{{ item.id }}"
+                                aria-label="{{ 'routine.remove'|trans }}">×</button>
+                    </div>
+
+                    {# Le calendrier de l'étape, quand la cadence en demande un.
+                       Quotidienne, il n'y a rien à régler : c'est tous les jours. #}
+                    {% if routine.cadence != 'daily' %}
+                        <div class="fx-routine-line__schedule">
+                            {% if routine.cadence == 'monthly' %}
+                                {% for rank in [1, 2, 3, 4, -1] %}
+                                    <button type="button"
+                                            class="fx-mini-pill {{ (item.rank ?? 1) == rank ? 'fx-mini-pill--on' }}"
+                                            data-action="live#action" data-live-action-param="setRank"
+                                            data-live-item-id-param="{{ item.id }}"
+                                            data-live-rank-param="{{ rank }}">
+                                        {{ ('routine.rank.' ~ (rank == -1 ? 'last' : rank))|trans }}
+                                    </button>
+                                {% endfor %}
+                                <span class="fx-routine-line__separator" aria-hidden="true"></span>
+                            {% endif %}
+
+                            {% for day in 1..7 %}
+                                <button type="button"
+                                        class="fx-mini-pill {{ day in item.days ? 'fx-mini-pill--on' }}"
+                                        data-action="live#action" data-live-action-param="toggleDay"
+                                        data-live-item-id-param="{{ item.id }}"
+                                        data-live-day-param="{{ day }}">
+                                    {{ ('routine.day.' ~ day)|trans }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+
+            <li class="fx-task-line fx-task-line--draft">
+                <span class="fx-check fx-check--ghost" aria-hidden="true"></span>
+                <form data-action="live#action:prevent" data-live-action-param="add" class="fx-checklist__add">
+                    <input type="text"
+                           class="fx-field__control fx-field__control--bare"
+                           data-model="draft"
+                           placeholder="{{ 'routine.add_step'|trans }}"
+                           aria-label="{{ 'routine.add_step'|trans }}">
+                </form>
+            </li>
+        </ul>
+
+        <p class="fx-card__help fx-routine__note">{{ 'routine.note'|trans }}</p>
+    {% endif %}
+</div>

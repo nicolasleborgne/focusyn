@@ -44,6 +44,11 @@ doctrine:
             reminder_id: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderIdType
             reminder_subject: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderSubjectType
             reminder_label: App\Reminder\Infrastructure\Persistence\Doctrine\Type\ReminderLabelType
+            routine_id: App\Routine\Infrastructure\Persistence\Doctrine\Type\RoutineIdType
+            routine_item_id: App\Routine\Infrastructure\Persistence\Doctrine\Type\RoutineItemIdType
+            routine_tick_id: App\Routine\Infrastructure\Persistence\Doctrine\Type\RoutineTickIdType
+            routine_name: App\Routine\Infrastructure\Persistence\Doctrine\Type\RoutineNameType
+            routine_text: App\Routine\Infrastructure\Persistence\Doctrine\Type\RoutineTextType
             capture_id: App\Inbox\Infrastructure\Persistence\Doctrine\Type\CaptureIdType
             capture_title: App\Inbox\Infrastructure\Persistence\Doctrine\Type\CaptureTitleType
             organization_id: App\Organization\Infrastructure\Persistence\Doctrine\Type\OrganizationIdType
@@ -97,6 +102,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Task/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Task\Domain\Model'
                 alias: Task
+            Routine:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Routine/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Routine\Domain\Model'
+                alias: Routine
             Inbox:
                 type: xml
                 is_bundle: false

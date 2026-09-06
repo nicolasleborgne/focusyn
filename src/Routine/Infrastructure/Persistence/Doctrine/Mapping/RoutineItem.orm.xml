@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Routine\Domain\Model\RoutineItem" table="routine_items">
+        <id name="id" type="routine_item_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="text" type="routine_text" column="text"/>
+        <field name="position" type="integer" column="position"/>
+        <!-- Jours ISO, 1 lundi à 7 dimanche. Un tableau plutôt qu'une table de
+             plus : on ne les interroge jamais autrement qu'avec leur ligne. -->
+        <field name="days" type="json" column="days"/>
+        <field name="rank" type="integer" column="rank" nullable="true"/>
+        <field name="addedAt" type="datetime_immutable" column="added_at"/>
+
+        <many-to-one field="routine" target-entity="App\Routine\Domain\Model\Routine" inversed-by="items">
+            <join-column name="routine_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

@@ -51,6 +51,11 @@
             </div>
         </section>
 
+        {# Les routines du jour avant les tâches : elles se referment chaque
+           soir, alors qu'une tâche attendra demain. La section disparaît quand
+           tout est fait — une liste vide de choses faites n'apprend rien. #}
+        <twig:RoutineSection only="due" class="fx-home__routines" />
+
         <section class="fx-home__section">
             <p class="fx-eyebrow fx-section-title">{{ 'home.next_tasks'|trans }}</p>
             {% if home.hasNothingPending %}

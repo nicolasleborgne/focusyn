@@ -13,6 +13,11 @@ use App\Notebook\Domain\Model\ObsessionName;
 use App\Notebook\Domain\Repository\NoteRepository;
 use App\Reminder\Domain\Model\ReminderSubject;
 use App\Reminder\Domain\Repository\ReminderRepository;
+use App\Routine\Domain\Model\Cadence;
+use App\Routine\Domain\Model\Routine;
+use App\Routine\Domain\Model\RoutineId;
+use App\Routine\Domain\Model\RoutineName;
+use App\Routine\Domain\Repository\RoutineRepository;
 use App\Shared\Domain\TenantId;
 use App\Shared\Infrastructure\Persistence\Doctrine\Filter\TenantFilter;
 use App\Tests\Factory\Notebook\NoteFactory;
@@ -193,6 +198,23 @@ final class TenantIsolationTest extends KernelTestCase
         self::assertNotNull($this->captures()->ofId($mine->id()));
     }
 
+    public function testARoutineNeverCrossesTheBoundary(): void
+    {
+        $mine = $this->routine($this->alice, 'Matin');
+        $theirs = $this->routine($this->bob, 'Rituel de Bob');
+
+        $this->workingIn($this->alice);
+
+        $names = array_map(
+            static fn ($routine): string => $routine->name()->toString(),
+            $this->routineRepository()->all(),
+        );
+
+        self::assertSame(['Matin'], $names);
+        self::assertNull($this->routineRepository()->ofId($theirs->id()));
+        self::assertNotNull($this->routineRepository()->ofId($mine->id()));
+    }
+
     public function testTheWorkerQueryIsTheOneExceptionAndItIsDeliberate(): void
     {
         ReminderFactory::new()->ownedBy($this->alice)->dueAt('2026-09-01 09:00')->create();
@@ -224,6 +246,30 @@ final class TenantIsolationTest extends KernelTestCase
         $this->captures()->save($capture);
 
         return $capture;
+    }
+
+    private function routine(TenantId $tenant, string $name): Routine
+    {
+        $this->workingIn($tenant);
+
+        $routine = Routine::open(
+            RoutineId::generate(),
+            $tenant,
+            RoutineName::fromString($name),
+            Cadence::Daily,
+            new DateTimeImmutable('2026-09-06 10:00'),
+        );
+        $this->routineRepository()->save($routine);
+
+        return $routine;
+    }
+
+    private function routineRepository(): RoutineRepository
+    {
+        $repository = self::getContainer()->get(RoutineRepository::class);
+        self::assertInstanceOf(RoutineRepository::class, $repository);
+
+        return $repository;
     }
 
     private function captures(): CaptureRepository

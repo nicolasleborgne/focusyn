@@ -15,6 +15,10 @@
                 <input type="hidden" name="_token" value="{{ csrf_token('task-list-open') }}">
                 <button type="submit" class="fx-button fx-button--small">{{ 'task.new_list'|trans }}</button>
             </form>
+            <form method="post" action="{{ path('routine_open') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('routine-open') }}">
+                <button type="submit" class="fx-button fx-button--small">{{ 'routine.new'|trans }}</button>
+            </form>
         </div>
 
         {% for message in app.flashes('success') %}
@@ -24,6 +28,20 @@
             <p class="fx-auth__error" role="alert">{{ message|trans }}</p>
         {% endfor %}
 
+        {# Listes et routines partagent l'écran : deux façons de suivre ce qu'on
+           a à faire, l'une qui s'épuise, l'autre qui se repose. La bascule est
+           locale à l'onglet — les deux sections sont déjà rendues. #}
+        <div data-controller="tabs">
+            <div class="fx-field__row fx-board__tabs" role="tablist">
+                <button type="button" class="fx-pill fx-pill--selected" role="tab"
+                        data-tabs-target="tab" data-tabs-default="true"
+                        data-action="tabs#select" aria-selected="true">{{ 'task.tab_lists'|trans }}</button>
+                <button type="button" class="fx-pill" role="tab"
+                        data-tabs-target="tab"
+                        data-action="tabs#select" aria-selected="false">{{ 'routine.heading'|trans }}</button>
+            </div>
+
+            <div data-tabs-target="panel">
         {% if lists is empty %}
             <div class="fx-library__empty">
                 <p class="fx-card__help">{{ 'task.empty'|trans }}</p>
@@ -53,5 +71,11 @@
                 {% endfor %}
             </div>
         {% endif %}
+            </div>
+
+            <div data-tabs-target="panel" hidden>
+                <twig:RoutineSection />
+            </div>
+        </div>
     </div>
 {% endblock %}

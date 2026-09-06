@@ -31,6 +31,7 @@ shell:
         settings: Réglages
     section:
         obsessions: Obsessions
+        routines: Routines
         lists: Tâches
     action:
         logout: Sortir
@@ -201,6 +202,7 @@ notebook:
         failed: Enregistrement impossible — la connexion semble coupée
 
 task:
+    tab_lists: Listes
     completed_heading: Faites
     board_summary: '{open, plural, =0 {rien d''ouvert} one {# ouverte} other {# ouvertes}} · {lists, plural, one {# liste} other {# listes}}'
     count: '{count, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}'
@@ -563,3 +565,47 @@ inbox:
     source:
         typed_in: Saisi dans Focusyn
         shared: Partagé depuis une autre application
+
+routine:
+    heading: Routines
+    due_today: Routines du jour
+    new: Nouvelle routine
+    empty: 'Aucune routine. Une routine, c''est ce qu''on refait — et que l''on veut voir revenir.'
+    gone: Cette routine n'existe plus.
+    name_label: Nom de la routine
+    name_required: Une routine porte un nom.
+    add_step: 'Ajouter une étape — Entrée'
+    check: Cocher cette étape
+    remove: Retirer cette étape
+    delete: Supprimer la routine
+    delete_confirm: Confirmer la suppression
+    obsession_label: Obsession servie
+    obsession_placeholder: 'Rattacher à une obsession (facultatif)'
+    streak: '{count, plural, =0 {aucune série} one {# période d''affilée} other {# périodes d''affilée}}'
+    left: '{count, plural, =0 {rien à faire} one {# à faire} other {# à faire}}'
+    nothing_today: 'rien aujourd''hui'
+    all_done: terminée
+    note: 'Les cases se vident au début de chaque période. La série compte les périodes closes sans oubli.'
+    cadence:
+        daily: Quotidienne
+        weekly: Hebdomadaire
+        monthly: Mensuelle
+    schedule:
+        daily: chaque jour
+        weekly: chaque semaine
+        monthly: début de mois
+        every_day: tous les jours
+    day:
+        1: lun
+        2: mar
+        3: mer
+        4: jeu
+        5: ven
+        6: sam
+        7: dim
+    rank:
+        1: 1er
+        2: 2e
+        3: 3e
+        4: 4e
+        last: dernier

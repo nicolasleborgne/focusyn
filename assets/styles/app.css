@@ -45,6 +45,7 @@
 @import url("./components/reminder.css");
 @import url("./components/switch.css");
 @import url("./components/capture.css");
+@import url("./components/routine.css");
 
 /* En dernier : les bascules d'affichage doivent pouvoir écraser tout le reste,
    une requête média n'apportant aucune spécificité supplémentaire. */

@@ -16,12 +16,14 @@ final readonly class ShellView
     /**
      * @param list<ObsessionSummary> $obsessions
      * @param list<TaskListSummary>  $taskLists
+     * @param list<RoutineSummary>   $routines
      */
     public function __construct(
         public string $accountEmail,
         public int $noteCount,
         public array $obsessions,
         public array $taskLists,
+        public array $routines,
         public int $inboxCount,
     ) {
     }
