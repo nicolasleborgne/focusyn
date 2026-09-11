@@ -35,6 +35,11 @@ jobs:
           extensions: intl, pdo_pgsql, zip, sodium, apcu
           coverage: none
           tools: composer:v2
+          # Le runner tourne en UTC ; devenv et l'image de production posent
+          # tous deux Europe/Paris. Sans cette ligne, la CI éprouve une
+          # configuration que personne n'exécute — et le rendu iCal, qui lit le
+          # fuseau par défaut de PHP, décale d'une heure en hiver.
+          ini-values: date.timezone=Europe/Paris
 
       - uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f # 3.2.1
 
@@ -102,6 +107,11 @@ jobs:
           extensions: intl, pdo_pgsql, zip, sodium, apcu
           coverage: none
           tools: composer:v2
+          # Le runner tourne en UTC ; devenv et l'image de production posent
+          # tous deux Europe/Paris. Sans cette ligne, la CI éprouve une
+          # configuration que personne n'exécute — et le rendu iCal, qui lit le
+          # fuseau par défaut de PHP, décale d'une heure en hiver.
+          ini-values: date.timezone=Europe/Paris
 
       - uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f # 3.2.1
 
