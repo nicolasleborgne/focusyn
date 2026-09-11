@@ -11,10 +11,12 @@ variable "repository" {
 
 variable "visibility" {
   description = <<-TXT
-    « private » ou « public ». Le choix commande plus que l'affichage :
-    l'analyse de secrets, l'analyse de code et la revue de dépendances sont
-    gratuites sur un dépôt public, et demandent GitHub Advanced Security sur un
-    dépôt privé (voir `github_advanced_security`).
+    « private » ou « public ». Le choix commande plus que l'affichage : **les
+    règles de branche et de tag sont gratuites sur un dépôt public** et
+    demandent GitHub Pro sur un dépôt privé. C'est la seule chose que l'on
+    perde à rester privé — la recherche de secrets et de vulnérabilités, elle,
+    tourne dans la CI avec gitleaks, syft et grype, qui ne doivent rien à
+    GitHub.
   TXT
   type        = string
   default     = "private"
@@ -25,13 +27,23 @@ variable "visibility" {
   }
 }
 
-variable "github_advanced_security" {
+variable "manage_rulesets" {
   description = <<-TXT
-    Le dépôt privé dispose-t-il de GitHub Advanced Security (offres « Code
-    Security » / « Secret Protection ») ? Sans lui, l'analyse de secrets et
-    l'analyse de code ne s'activent pas sur un dépôt privé, et Terraform
-    échouerait à les demander. Sans effet sur un dépôt public, où tout est déjà
-    ouvert.
+    Poser les règles de branche et de tag.
+
+    **`false` par défaut, et ce n'est pas un renoncement** : GitHub refuse les
+    rulesets — et la protection de branche classique — sur un dépôt privé
+    d'un compte gratuit. Les deux points d'API répondent le même 403 :
+    « Upgrade to GitHub Pro **or make this repository public** ». Les laisser
+    armés ferait échouer chaque `tofu plan`, ce qui apprend à ne plus le lire.
+
+    La configuration reste écrite, relue, prête. Il suffira de basculer ce
+    drapeau le jour où le dépôt devient public, ou le compte payant.
+
+    Ce qu'on perd en attendant : rien n'empêche une réécriture de `main`, rien
+    n'oblige la CI à être verte avant une fusion, et surtout **les tags `v*` ne
+    sont pas immuables** — une attestation de provenance continue alors de dire
+    vrai tout en désignant autre chose.
   TXT
   type        = bool
   default     = false
@@ -117,7 +129,6 @@ variable "allowed_action_patterns" {
     "docker/login-action@*",
     "docker/metadata-action@*",
     "docker/setup-buildx-action@*",
-    "ossf/scorecard-action@*",
     "ramsey/composer-install@*",
     "shivammathur/setup-php@*",
   ]

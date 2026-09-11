@@ -6,6 +6,8 @@
 # savent exiger une signature — ce que la protection de branche ne fait pas.
 
 resource "github_repository_ruleset" "main" {
+  count = var.manage_rulesets ? 1 : 0
+
   name        = "main"
   repository  = github_repository.focusyn.name
   target      = "branch"
@@ -85,6 +87,8 @@ resource "github_repository_ruleset" "main" {
 # variable. D'où l'immuabilité, qui est une condition de la chaîne entière et
 # non un raffinement.
 resource "github_repository_ruleset" "tags" {
+  count = var.manage_rulesets ? 1 : 0
+
   name        = "versions"
   repository  = github_repository.focusyn.name
   target      = "tag"

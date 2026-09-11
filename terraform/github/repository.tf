@@ -31,38 +31,6 @@ resource "github_repository" "focusyn" {
   # auteur : le `Signed-off-by` est la seule trace qu'il reste de qui l'a voulu.
   web_commit_signoff_required = true
 
-  dynamic "security_and_analysis" {
-    # Sur un dépôt privé sans Advanced Security, demander ces réglages fait
-    # échouer l'API. On ne les déclare donc que là où ils peuvent s'appliquer,
-    # plutôt que de laisser un `apply` casser chez qui n'a pas l'offre.
-    for_each = var.visibility == "public" || var.github_advanced_security ? [1] : []
-
-    content {
-      dynamic "advanced_security" {
-        for_each = var.visibility == "private" && var.github_advanced_security ? [1] : []
-        content {
-          status = "enabled"
-        }
-      }
-
-      secret_scanning {
-        status = "enabled"
-      }
-
-      # La poussée est **refusée**, pas seulement signalée. Un secret repoussé
-      # reste lisible dans le commit qui l'a introduit : le rattraper après coup
-      # oblige à réécrire l'historique et à révoquer la clé. L'arrêter avant
-      # coûte une seconde.
-      secret_scanning_push_protection {
-        status = "enabled"
-      }
-    }
-  }
-
-  # Un dépôt ne se supprime pas par inadvertance, et surtout pas parce qu'une
-  # ressource a été renommée dans un fichier. Les deux gardes sont utiles :
-  # `prevent_destroy` arrête le plan, `archive_on_destroy` fait que même un
-  # contournement archive au lieu d'effacer.
   archive_on_destroy = true
 
   lifecycle {

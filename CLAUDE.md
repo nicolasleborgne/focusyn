@@ -66,6 +66,19 @@ l'inventaire (SBOM CycloneDX) joint à chaque exécution — c'est le seul endro
 où l'on voit ce que contient réellement l'image : paquets Alpine, extensions
 PHP, modules Go compilés dans FrankenPHP.
 
+**Un secret ne doit pas devenir un commit.** Le hook de pré-commit, posé par
+GrumPHP (`vendor/bin/grumphp git:init`, fait à l'installation), lance gitleaks
+sur l'index puis php-cs-fixer sur ce qui change. C'est ce que la CI ne peut pas
+faire : elle trouve un secret *après*, quand il faut déjà le révoquer et
+réécrire l'historique.
+
+gitleaks n'est **pas** une tâche GrumPHP mais une ligne du gabarit
+`.githooks/pre-commit`, et c'est délibéré : le `triggered_by` d'une tâche est
+une expression `/\.(ext)$/` sur le nom du fichier, qu'un `Dockerfile` ou un
+`Caddyfile` ne peut jamais déclencher — précisément là où un secret passe
+inaperçu. Le hook n'embarque que deux vérifications rapides : au-delà, on le
+contourne au `--no-verify`, et un garde-fou contourné ne garde rien.
+
 La politique du dépôt se vérifie de même, sans aucune identité — `validate`
 regarde le schéma du fournisseur, pas l'état distant :
 
@@ -822,10 +835,20 @@ version.
 garde, on obtiendrait une provenance parfaitement valide attestant qu'on a
 publié du code qui n'est passé ni par la revue ni par les contrôles.
 
-**CodeQL ne lit pas PHP**, et il ne faut pas croire le contraire : le cœur du
-produit n'est pas couvert par l'analyse de code. Ce sont PHPStan, deptrac et les
-tests qui tiennent ce rôle. CodeQL couvre les workflows (`actions`) et le
-JavaScript — deux surfaces que rien d'autre ne regarde.
+**Rien de ce qui cherche les failles ne dépend d'une fonctionnalité payante de
+GitHub.** gitleaks, syft et grype tournent depuis des images Docker épinglées :
+elles donneraient le même verdict sur GitLab ou sur un portable. L'analyse de
+secrets native, CodeQL et Scorecard ont été **retirés** — ils demandent GitHub
+Advanced Security sur un dépôt privé, et ils feraient double emploi avec ce qui
+tourne déjà. Seul Dependabot est gardé : il est gratuit, y compris en privé.
+
+**Les règles de branche et de tag, elles, sont payantes sur un dépôt privé.**
+Rulesets *et* protection classique répondent le même 403 : « Upgrade to GitHub
+Pro **or make this repository public** ». D'où `manage_rulesets`, à `false` tant
+que la condition n'est pas remplie — les laisser armés ferait échouer chaque
+`tofu plan`, ce qui apprend à ne plus le lire. Ce qu'on perd en attendant :
+les tags `v*` ne sont pas immuables, donc une attestation de provenance peut
+se mettre à désigner autre chose.
 
 **Les workflows sont analysés comme le reste** : actionlint dans `qa`, et son
 passage par shellcheck sur les blocs `run:`. Une variable non protégée dans un

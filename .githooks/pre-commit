@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Gabarit de hook installé par GrumPHP (`grumphp git:init`), et non le hook
+# lui-même : le vrai vit dans .git/hooks/, régénéré à chaque installation.
+#
+# Pourquoi un gabarit maison plutôt qu'une tâche GrumPHP pour gitleaks : le
+# filtre `triggered_by` de GrumPHP est une expression `/\.(ext)$/` sur le nom
+# du fichier. Un fichier sans point — `Dockerfile`, `Caddyfile` — ne peut donc
+# jamais le déclencher, quelle que soit la liste d'extensions. Or c'est
+# précisément là qu'un secret passe inaperçu. Ici, gitleaks tourne d'abord, sur
+# tout l'index, sans condition.
+#
+
+# gitleaks sur ce qui est indexé, avant GrumPHP et sans filtre.
+"$(git rev-parse --show-toplevel)/tools/pre-commit-gitleaks.sh" || exit 1
+
+# Fetch the GIT diff and format it as command input:
+DIFF=$(git -c diff.mnemonicprefix=false -c diff.noprefix=false --no-pager diff --raw -r -p -m -M --full-index --no-color --staged | cat)
+
+# Grumphp env vars
+$(ENV)
+export GRUMPHP_GIT_WORKING_DIR="$(git rev-parse --show-toplevel)"
+
+# Run GrumPHP
+(cd "${HOOK_EXEC_PATH}" && printf "%s\n" "${DIFF}" | $(EXEC_GRUMPHP_COMMAND) $(HOOK_COMMAND) '--skip-success-output')

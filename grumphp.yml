@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# Ce qui est vérifié avant qu'un commit existe
+# ---------------------------------------------------------------------------
+# Deux choses, et deux seulement : gitleaks sur l'index, puis le style. Un hook
+# de pré-commit n'a pas le même rôle que `qa` — il doit coûter quelques
+# secondes, sinon il devient la chose qu'on contourne avec `--no-verify`, et un
+# garde-fou contourné ne garde rien.
+#
+# gitleaks n'est pas une tâche GrumPHP mais une ligne du gabarit de hook, pour
+# la raison expliquée sous `hooks_dir`.
+#
+# Les analyses lourdes — statique, architecture, tests, image — restent dans
+# `qa` et dans la CI, où l'on peut attendre deux minutes.
+#
+# Ce que ce fichier rattrape que la CI ne rattrape pas : **le moment**. La CI
+# trouve un secret *après* qu'il soit devenu un commit, donc après qu'il faille
+# le révoquer et réécrire l'historique. Ici, il suffit de retirer la ligne.
+
+grumphp:
+    # Gabarits maison : gitleaks y tourne **avant** GrumPHP et sans filtre.
+    # Le `triggered_by` d'une tâche GrumPHP est une expression `/\.(ext)$/` sur
+    # le nom du fichier — un `Dockerfile` ou un `Caddyfile` ne peut jamais la
+    # déclencher, et c'est justement là qu'un secret passe inaperçu.
+    hooks_dir: .githooks
+
+    # Le temps de tirer l'image docker de gitleaks au premier appel.
+    process_timeout: 120
+
+    # Les deux tâches sont rapides : autant les voir échouer toutes les deux
+    # d'un coup plutôt que de corriger, relancer, découvrir la suivante.
+    stop_on_failure: false
+
+    tasks:
+        # Le style, sur les fichiers qui changent. C'est exactement ce que
+        # vérifie l'étape « Style de code » de la CI, avec la même
+        # configuration : deux verdicts différents sur la même règle
+        # apprendraient à ne croire ni l'un ni l'autre.
+        phpcsfixer:
+            config: .php-cs-fixer.dist.php
+            using_cache: true
+            diff: true
+            verbose: true

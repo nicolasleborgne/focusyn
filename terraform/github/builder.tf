@@ -32,24 +32,6 @@ resource "github_repository" "builder" {
 
   web_commit_signoff_required = true
 
-  dynamic "security_and_analysis" {
-    for_each = var.visibility == "public" || var.github_advanced_security ? [1] : []
-    content {
-      dynamic "advanced_security" {
-        for_each = var.visibility == "private" && var.github_advanced_security ? [1] : []
-        content {
-          status = "enabled"
-        }
-      }
-      secret_scanning {
-        status = "enabled"
-      }
-      secret_scanning_push_protection {
-        status = "enabled"
-      }
-    }
-  }
-
   archive_on_destroy = true
 
   lifecycle {
@@ -101,7 +83,7 @@ resource "github_actions_repository_permissions" "builder" {
 # sans laisser de trace ne vaut pas mieux que pas de constructeur : ce qu'il
 # signe n'engagerait plus rien.
 resource "github_repository_ruleset" "builder_main" {
-  count = var.manage_builder ? 1 : 0
+  count = var.manage_builder && var.manage_rulesets ? 1 : 0
 
   name        = "main"
   repository  = github_repository.builder[0].name
@@ -143,7 +125,7 @@ resource "github_repository_ruleset" "builder_main" {
 # Les étiquettes du constructeur. L'empreinte dit *quoi*, l'étiquette dit
 # *quand* — et une étiquette qui se déplace ferait mentir la seconde moitié.
 resource "github_repository_ruleset" "builder_tags" {
-  count = var.manage_builder ? 1 : 0
+  count = var.manage_builder && var.manage_rulesets ? 1 : 0
 
   name        = "versions du constructeur"
   repository  = github_repository.builder[0].name

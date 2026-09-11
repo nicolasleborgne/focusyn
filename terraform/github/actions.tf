@@ -60,16 +60,3 @@ resource "github_actions_repository_oidc_subject_claim_customization_template" "
 # passera par l'état Terraform. Un magasin de secrets qui s'interroge à
 # l'exécution évite cela ; `github_actions_secret` est le dernier recours,
 # pas le premier réflexe.
-
-# ---------------------------------------------------------------------------
-# Ce que les workflows doivent savoir de l'offre souscrite
-# ---------------------------------------------------------------------------
-# L'analyse de code et la revue de dépendances sont gratuites en public et
-# payantes en privé. Un workflow ne peut pas deviner l'offre : il lirait un
-# échec rouge permanent, qu'on finirait par ignorer — ou pire, par désactiver
-# avec le reste. Terraform, lui, le sait, et le dit.
-resource "github_actions_variable" "code_scanning" {
-  repository    = github_repository.focusyn.name
-  variable_name = "CODE_SCANNING"
-  value         = var.visibility == "public" || var.github_advanced_security ? "enabled" : "disabled"
-}
