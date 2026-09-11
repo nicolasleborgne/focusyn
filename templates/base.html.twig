@@ -37,9 +37,25 @@
     <link rel="preload" as="font" type="font/woff2" crossorigin
           href="{{ asset('fonts/newsreader-normal-latin.woff2') }}">
 
-    {% block stylesheets %}{% endblock %}
+    {# Le design system est chargé par une balise, et non plus par un `import`
+       depuis `app.js` : celui-ci faisait passer la feuille de style par une
+       entrée `data:application/javascript` de l'importmap, qu'il aurait fallu
+       autoriser dans `script-src` — or `data:` y annule la protection du
+       nonce. Au passage, les styles n'attendent plus le JavaScript. #}
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {# Une règle, pour `data-loading` : les Live Components l'importaient
+           depuis leur JavaScript (`autoimport` de `controllers.json`), ce qui
+           la faisait passer par une entrée `data:application/javascript` de
+           l'importmap — et bloquait *tous* les contrôleurs Stimulus dès que
+           `script-src` cessait d'accepter `data:`. #}
+        <link rel="stylesheet" href="{{ asset('@symfony/ux-live-component/live.min.css') }}">
+    {% endblock %}
     {% block javascripts %}
-        {{ importmap('app') }}
+        {# Les deux balises que rend `importmap()` sont en ligne : elles
+           portent le nonce de la requête, seul moyen de les distinguer d'un
+           script injecté. #}
+        {{ importmap('app', { nonce: csp_nonce('script') }) }}
     {% endblock %}
 </head>
 <body>

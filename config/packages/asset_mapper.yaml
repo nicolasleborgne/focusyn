@@ -5,6 +5,14 @@ framework:
             - assets/
         missing_import_mode: strict
 
+        # Sans ce réglage, Symfony ajoute à chaque page un script qui charge
+        # `es-module-shims` depuis ga.jspm.io — c'est-à-dire l'adresse IP de
+        # chaque visiteur envoyée à un tiers, exactement ce qui a fait
+        # auto-héberger les polices. Le repli ne servait qu'aux navigateurs
+        # sans `importmap`, qui ne savent de toute façon pas faire tourner
+        # l'éditeur, et il faudrait de surcroît lui ouvrir le CSP.
+        importmap_polyfill: false
+
 when@prod:
     framework:
         asset_mapper:

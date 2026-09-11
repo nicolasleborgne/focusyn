@@ -34,10 +34,22 @@
 	@immutable path_regexp ^/assets/.+-[A-Za-z0-9_-]{7,}\.(css|js|svg|png|woff2?)$
 	header @immutable Cache-Control "public, max-age=31536000, immutable"
 
+	# Ces en-têtes valent surtout pour ce que PHP ne voit jamais : les actifs,
+	# le service worker, le manifeste, les icônes. L'application les pose
+	# elle-même par NelmioSecurityBundle, avec les mêmes valeurs — Caddy les
+	# remplace alors par les siennes, ce qui ne change rien tant que les deux
+	# fichiers sont d'accord. Les garder ici est ce qui protège les fichiers
+	# statiques ; les garder là-bas est ce qui protège un déploiement qui
+	# n'aurait pas ce Caddyfile.
+	#
+	# Rien sur HSTS ni sur le CSP : le premier ne doit partir que sur une
+	# requête déjà chiffrée, le second a besoin d'un nonce par requête. Les
+	# deux appartiennent donc à l'application.
 	header {
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		Cross-Origin-Resource-Policy "same-origin"
 		-Server
 	}
 

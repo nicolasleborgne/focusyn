@@ -49,6 +49,10 @@ security:
         # La sonde de disponibilité et la page hors ligne restent joignables :
         # Docker interroge la première, le service worker met la seconde en cache.
         - { path: '^/(healthz|offline)$', roles: PUBLIC_ACCESS }
+        # Les violations de CSP sont postées par le navigateur, sans session :
+        # exiger une connexion ne ferait que remplacer les rapports par des
+        # redirections, et on ne saurait jamais ce qui casse.
+        - { path: '^/csp/rapport$', roles: PUBLIC_ACCESS }
         - { path: '^/(connexion|login|inscription|register)$', roles: PUBLIC_ACCESS }
         - { path: '^/(connexion|login)/(google|github)', roles: PUBLIC_ACCESS }
         - { path: '^/(mot-de-passe-oublie|forgotten-password)$', roles: PUBLIC_ACCESS }

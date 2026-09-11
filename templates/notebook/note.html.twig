@@ -19,8 +19,7 @@
             <textarea class="fx-note__title" name="title" rows="1"
                       data-controller="autogrow"
                       data-action="keydown->autogrow#submit change->autogrow#save"
-                      aria-label="{{ 'notebook.title_label'|trans }}"
-                      onchange="this.form.requestSubmit()">{{ note.title }}</textarea>
+                      aria-label="{{ 'notebook.title_label'|trans }}">{{ note.title }}</textarea>
         </form>
 
         {# Une seule rangée sous le titre, comme dans la maquette : les
@@ -39,7 +38,8 @@
                        value="{{ note.obsessions|join(', ') }}"
                        placeholder="{{ 'notebook.obsessions_placeholder'|trans }}"
                        aria-label="{{ 'notebook.obsessions_label'|trans }}"
-                       onchange="this.form.requestSubmit()">
+                       data-controller="submit-on-change"
+                       data-action="change->submit-on-change#submit">
             </form>
 
             {# Puce portée par Reminder : Notebook l'affiche sans connaître le

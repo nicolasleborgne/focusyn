@@ -21,6 +21,10 @@ services:
       LOCK_DSN: postgresql+advisory://${POSTGRES_USER:-focusyn}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB:-focusyn}
       DEFAULT_URI: ${DEFAULT_URI:-https://focusyn.fr}
       SERVER_NAME: ${SERVER_NAME:-focusyn.fr}
+      # Doit suivre SERVER_NAME : un `Host` non listé fait répondre 400 plutôt
+      # que de se retrouver recopié dans un lien envoyé par courriel.
+      # (`$$` est un `$` littéral pour docker compose.)
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:-^focusyn\.fr$$}
       # Applique les migrations au démarrage du conteneur web (et de lui seul).
       RUN_MIGRATIONS: 1
     ports:

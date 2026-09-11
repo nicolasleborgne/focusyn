@@ -11,8 +11,34 @@ framework:
     session:
         handler_id: session.handler.pdo
 
+        # Déclarés plutôt que laissés aux valeurs par défaut : ce sont les
+        # réglages qu'une relecture de sécurité vient chercher, et le fichier
+        # ini de production ne parle que de la production.
+        #
+        # `auto` pose `Secure` dès que la requête est en HTTPS ; `lax` laisse
+        # le cookie voyager sur une navigation entrante — sans quoi un lien de
+        # courriel arriverait déconnecté — mais jamais sur une requête
+        # provoquée par un autre site.
+        cookie_secure: auto
+        cookie_httponly: true
+        cookie_samesite: lax
+
     #esi: true
     #fragments: true
+
+when@prod:
+    framework:
+        # L'en-tête `Host` est recopié dans les adresses absolues, dont celles
+        # des liens de réinitialisation et de confirmation envoyés par
+        # courriel : un `Host` falsifié ferait partir vers la boîte de la
+        # victime un lien pointant chez l'attaquant. Caddy n'accepte déjà que
+        # le domaine du site, mais cette liste vaut quel que soit le serveur.
+        # La boucle locale est ajoutée ici plutôt que laissée à la charge de
+        # l'exploitant : c'est par elle que la sonde de disponibilité interroge
+        # le conteneur, et l'oublier ferait répondre 400 à chaque battement.
+        # Elle ne s'atteint que depuis l'intérieur du conteneur — le point
+        # d'écoute public, lui, ne répond qu'au nom d'hôte du site.
+        trusted_hosts: ['%env(TRUSTED_HOSTS)%', '^127\.0\.0\.1$']
 
 when@test:
     framework:

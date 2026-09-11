@@ -18,9 +18,8 @@
             <span class="fx-list__mark" aria-hidden="true"></span>
             <textarea class="fx-note__title fx-list__title" name="name" rows="1"
                       data-controller="autogrow"
-                      data-action="keydown->autogrow#submit"
-                      aria-label="{{ 'task.name_label'|trans }}"
-                      onchange="this.form.requestSubmit()">{{ list.name }}</textarea>
+                      data-action="keydown->autogrow#submit change->autogrow#save"
+                      aria-label="{{ 'task.name_label'|trans }}">{{ list.name }}</textarea>
         </form>
 
         <twig:TaskChecklist :listId="list.id" />

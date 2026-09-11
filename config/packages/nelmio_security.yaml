@@ -1,0 +1,160 @@
+# ---------------------------------------------------------------------------
+# En-têtes de sécurité
+# ---------------------------------------------------------------------------
+# Le CSP ne peut pas vivre ailleurs qu'ici : son nonce change à chaque requête,
+# et aucune configuration de serveur web ne sait en produire un. Les autres
+# en-têtes y sont pour la même raison qu'une route y est — la protection suit
+# l'application, quel que soit le serveur qui la sert, et un déploiement qui
+# oublierait le Caddyfile ne se retrouverait pas nu.
+#
+# Le Caddyfile répète les valeurs constantes pour les fichiers que PHP ne voit
+# jamais (les actifs, le service worker, le manifeste, les icônes). Les deux
+# doivent rester d'accord ; `tests/Functional/Shared/SecurityHeadersTest.php`
+# tient la version applicative.
+
+nelmio_security:
+    # Focusyn ne s'embarque nulle part : `frame-ancestors` le dit aux
+    # navigateurs récents, cet en-tête aux plus anciens.
+    clickjacking:
+        paths:
+            '^/.*': DENY
+
+    content_type:
+        nosniff: true
+
+    # Une seule politique : la liste sert à proposer un repli aux navigateurs
+    # qui ne comprennent pas la première, et tous comprennent celle-ci.
+    referrer_policy:
+        enabled: true
+        policies:
+            - 'strict-origin-when-cross-origin'
+
+    # Un carnet de notes n'a besoin d'aucune de ces interfaces. Les refuser
+    # explicitement vaut mieux que de compter sur le fait qu'on ne les appelle
+    # pas : une dépendance front, un jour, pourrait les appeler pour nous.
+    permissions_policy:
+        enabled: true
+        policies:
+            accelerometer: []
+            ambient_light_sensor: []
+            attribution_reporting: []
+            autoplay: []
+            bluetooth: []
+            browsing_topics: []
+            camera: []
+            display_capture: []
+            gamepad: []
+            geolocation: []
+            gyroscope: []
+            hid: []
+            idle_detection: []
+            local_fonts: []
+            magnetometer: []
+            microphone: []
+            midi: []
+            payment: []
+            picture_in_picture: []
+            publickey_credentials_get: []
+            screen_wake_lock: []
+            serial: []
+            usb: []
+            window_management: []
+            xr_spatial_tracking: []
+
+    # `same-origin` sur l'ouvrant : une page tierce qui ouvrirait Focusyn perd
+    # la référence vers notre fenêtre, et ne peut donc plus la manipuler. Nos
+    # connexions par fournisseur externe passent par des redirections, jamais
+    # par une fenêtre surgissante — rien ne dépend de cette référence.
+    cross_origin_isolation:
+        enabled: true
+        paths:
+            '^/.*':
+                coop: same-origin
+                corp: same-origin
+
+    # La redirection vers HTTPS est faite par Caddy, mais HSTS est déclaré ici :
+    # c'est une promesse de l'application à ses visiteurs, pas un détail du
+    # serveur de la semaine. L'en-tête ne part que sur une requête déjà
+    # sécurisée, comme l'exige la RFC.
+    forced_ssl:
+        enabled: false
+
+    csp:
+        enabled: true
+        # Les deux en-têtes préfixés ne servaient qu'à iOS 5.
+        compat_headers: false
+
+        # Une violation doit se voir, sinon on désarme le CSP le jour où
+        # quelque chose casse au lieu de comprendre quoi. Le point de collecte
+        # est le nôtre : il journalise, il n'écrit rien.
+        report_endpoint:
+            log_level: notice
+            filters:
+                domains: true
+                schemes: true
+                browser_bugs: true
+                injected_scripts: true
+
+        enforce:
+            # Sans ce réglage, le bundle ajoute `'unsafe-inline'` à côté du
+            # nonce « au cas où » le navigateur ne comprendrait pas CSP 2.
+            # Aucun navigateur capable d'exécuter cette application n'en est
+            # là, et l'en-tête ne doit pas annoncer ce qu'on refuse.
+            level1_fallback: false
+
+            # Tout est interdit, puis chaque chose est nommée : une ressource
+            # d'un genre auquel on n'a pas pensé est refusée plutôt que servie
+            # par un repli.
+            default-src: ['none']
+
+            # Aucun `'unsafe-inline'`, aucun `'unsafe-eval'` : c'est toute la
+            # valeur de ce fichier. Les deux balises que rend `importmap()`
+            # portent le nonce du gabarit de base, le reste vient de
+            # `/assets/`. Un script injecté dans une page n'a pas le nonce, et
+            # ne s'exécute pas.
+            script-src: ['self']
+
+            # Les styles, eux, gardent `'unsafe-inline'`, et c'est assumé : la
+            # maquette calcule des valeurs par élément (largeur d'une jauge,
+            # opacité des marques), un nonce ne s'applique pas à un attribut
+            # `style`, et le bundle ne sait pas écrire `style-src-attr`. Ce
+            # qu'on perd est la défense contre l'exfiltration par CSS, qui
+            # suppose déjà une injection de balise ; ce qu'on garde est la
+            # défense contre l'exécution de script, qui n'en suppose aucune.
+            style-src: ['self', 'unsafe-inline']
+
+            # `data:` pour le QR code de la double authentification, qui est
+            # une image calculée et non un fichier.
+            img-src: ['self', 'data:']
+
+            font-src: ['self']
+
+            # L'éditeur, les Live Components et l'abonnement d'un appareil ne
+            # parlent qu'à nous.
+            connect-src: ['self']
+            manifest-src: ['self']
+            worker-src: ['self']
+
+            # Un formulaire de Focusyn ne poste jamais ailleurs. Le départ vers
+            # le paiement est une redirection, pas un envoi de formulaire.
+            form-action: ['self']
+
+            frame-ancestors: ['none']
+            base-uri: ['none']
+            object-src: ['none']
+
+            report-uri: ['/csp/rapport']
+
+when@prod:
+    nelmio_security:
+        forced_ssl:
+            enabled: true
+            hsts_max_age: 31536000
+            hsts_subdomains: true
+            hsts_preload: false
+            redirect_status_code: 301
+            # La sonde de disponibilité interroge le conteneur en clair, sur
+            # localhost : la rediriger la ferait échouer, et Docker déclarerait
+            # l'application morte alors qu'elle répond.
+            allow_list:
+                - '^/healthz$'

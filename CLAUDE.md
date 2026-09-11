@@ -37,8 +37,47 @@ vendor/bin/deptrac analyse --config-file=deptrac.yaml           # couches
 vendor/bin/deptrac analyse --config-file=deptrac.contexts.yaml  # contextes
 ```
 
-`qa` est exactement ce que vérifie la CI GitHub Actions. Le lancer avant de
-proposer un commit.
+`qa` couvre ce que la CI vérifie **du code**. Elle vérifie en plus trois choses
+qu'aucune suite de tests ne voit, par des outils conteneurisés — aucune
+installation locale n'est nécessaire :
+
+```bash
+# Secrets, dans tout l'historique (la configuration est dans .gitleaks.toml)
+docker run --rm -v "$PWD:/repo:ro" zricethezav/gitleaks:v8.30.1 \
+    git /repo --config /repo/.gitleaks.toml --redact --no-banner --verbose
+
+# Vulnérabilités des dépendances (composer.lock, package-lock.json, actions)
+docker run --rm -v "$PWD:/src:ro" anchore/grype:v0.118.0 dir:/src \
+    --exclude './vendor/**/.github/**' --exclude './node_modules/**' --fail-on medium
+
+# Vulnérabilités de l'image, une fois construite
+docker build --target prod -t focusyn:local .
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+    anchore/grype:v0.118.0 focusyn:local --only-fixed --fail-on critical
+```
+
+Les versions sont figées dans le workflow, et **les actions GitHub sont
+épinglées par empreinte de commit**, étiquette en commentaire : une étiquette se
+déplace, `@v4` désigne ce que son auteur y a poussé ce matin, et un dépôt
+compromis livrerait son code dans nos exécutions avec le jeton qui va avec. Un
+outil de sécurité qui change de verdict tout seul rend par ailleurs la CI
+ininterprétable. `syft` produit en plus
+l'inventaire (SBOM CycloneDX) joint à chaque exécution — c'est le seul endroit
+où l'on voit ce que contient réellement l'image : paquets Alpine, extensions
+PHP, modules Go compilés dans FrankenPHP.
+
+La politique du dépôt se vérifie de même, sans aucune identité — `validate`
+regarde le schéma du fournisseur, pas l'état distant :
+
+```bash
+docker run --rm -v "$PWD/terraform/github:/tf" -w /tf \
+    ghcr.io/opentofu/opentofu:1.12.6 validate
+```
+
+Le seuil de l'image est « critique » et non « élevé » : FrankenPHP 1.12 embarque
+`google.golang.org/grpc` 1.81, sur lequel pèsent trois avis élevés qu'aucune
+reconstruction ne corrige. Bloquer dessus rendrait la CI rouge en permanence,
+c'est-à-dire illisible. Le resserrer suppose que l'amont bouge.
 
 ## Architecture
 
@@ -215,6 +254,23 @@ rien chez OpenAI et « claude-haiku » n'y existe pas : les garder ne ferait
 qu'échouer plus tard, à un endroit où l'on ne comprendrait plus pourquoi. De
 même, seul un fournisseur local prend une adresse — la laisser changer pour un
 fournisseur hébergé permettrait de détourner la clé vers un serveur tiers.
+
+**L'adresse d'un fournisseur local n'appartient pas au compte.** Un fournisseur
+« local » tourne sur la machine de la personne, que le serveur ne peut pas
+joindre : une adresse saisie là ne peut désigner que l'intérieur de *notre*
+réseau — la base de données, un service voisin, le point de métadonnées de
+l'hébergeur. Le champ libre faisait donc du serveur un relais, c'est-à-dire une
+requête forgée côté serveur écrite dans un écran de réglages.
+
+La liste est celle de l'exploitant (`ASSISTANT_LOCAL_URLS`, **vide par
+défaut**), et la règle est une **égalité** de chaîne : ni appartenance à un
+réseau, ni préfixe d'hôte, ni chemin — aucune résolution de nom, aucun `..` et
+aucune redirection ne contourne une égalité. Elle est vérifiée **deux fois**,
+comme le plafond de places : à l'enregistrement, et à l'appel — retirer une
+adresse de la liste doit la faire cesser d'être appelée sans qu'il faille aller
+nettoyer les réglages de chaque compte. Sans aucune adresse autorisée, le
+fournisseur local **n'est pas proposé du tout**, comme la ligne « notifications
+système » sans clés VAPID.
 
 **Un abonnement poussé suit la personne, pas l'organisation** : `PushSubscription`
 n'a pas d'`organization_id`, comme `PrivacyChoices`. Un navigateur ne se
@@ -419,6 +475,83 @@ le fournisseur atteste avoir vérifié l'adresse. Sans ce contrôle, un
 fournisseur permissif permettrait de prendre la main sur un compte en déclarant
 son adresse. Chaque fournisseur a son lecteur de profil : Google donne la
 vérification dans le jeton, GitHub exige un appel à `/user/emails`.
+
+**En-têtes de sécurité.** `config/packages/nelmio_security.yaml` les porte tous,
+et le Caddyfile répète les valeurs constantes pour les fichiers que PHP ne voit
+jamais. **Le CSP ne peut pas vivre ailleurs que dans l'application** : son nonce
+change à chaque requête. `script-src` n'accepte donc que `'self'` et le nonce de
+la requête — ni `'unsafe-inline'`, ni `'unsafe-eval'`, ni `data:`, et c'est
+`tests/Functional/Shared/SecurityHeadersTest.php` qui le tient, y compris en
+sabotant le réglage pour vérifier que le test tombe.
+
+`style-src` garde `'unsafe-inline'`, et c'est assumé : la maquette calcule des
+valeurs par élément — largeur d'une jauge, opacité des marques —, un nonce ne
+s'applique pas à un attribut `style`, et NelmioSecurityBundle ne sait pas écrire
+`style-src-attr`. Ce qu'on perd suppose déjà une injection de balise ; ce qu'on
+garde, la défense contre l'exécution de script, n'en suppose aucune.
+
+**Rien ne doit passer par une adresse `data:`.** AssetMapper traduit un
+`import './x.css'` depuis du JavaScript en une entrée
+`data:application/javascript` de l'importmap — qu'il faudrait autoriser dans
+`script-src`, où `data:` annule la protection du nonce (un `<script
+src="data:…">` injecté serait alors accepté sans en porter aucun). Les deux
+feuilles de style sont donc chargées par des balises `<link>` dans
+`base.html.twig`, et `assets/controllers.json` refuse l'`autoimport` de
+`live.min.css`. Un test le vérifie ; sans lui, un `import` de CSS ajouté un jour
+ferait échouer *tous* les contrôleurs Stimulus, et seulement en production.
+
+**Le polyfill d'importmap est désactivé** (`importmap_polyfill: false`) : Symfony
+le charge sinon depuis ga.jspm.io, c'est-à-dire l'adresse IP de chaque visiteur
+envoyée à un tiers — exactement ce qui a fait auto-héberger les polices.
+
+**Un gestionnaire d'événement en attribut est du JavaScript en ligne.** Il n'y a
+plus de `onchange="…"` dans les gabarits : `autogrow#save` et le contrôleur
+`submit-on-change` font le travail. Un attribut ne peut pas porter de nonce, donc
+le CSP le bloque, sans autre symptôme qu'un champ qui n'enregistre plus.
+
+**`trusted_hosts` est armé en production.** L'en-tête `Host` est recopié dans les
+adresses absolues, dont les liens de réinitialisation envoyés par courriel : un
+`Host` falsifié ferait partir vers la boîte de la victime un lien pointant chez
+l'attaquant. `TRUSTED_HOSTS` doit suivre `SERVER_NAME` ; la boucle locale est
+ajoutée par la configuration elle-même, faute de quoi la sonde de disponibilité
+recevrait 400 à chaque battement.
+
+**La demande de réinitialisation est gardée deux fois, et pas contre la même
+chose.** C'est le seul écran qui fait partir un courriel vers une adresse nommée
+dans la requête, sans session ni compte. Le **jeton CSRF** empêche un autre site
+de déclencher l'envoi depuis le navigateur d'un passant ; la **limitation**
+empêche d'en faire une boucle — par adresse IP on arrête l'auteur et on le lui
+dit (429), par adresse de courriel on protège une boîte et l'on ne dit rien.
+L'écran répond la même chose dans tous les cas, sinon il redeviendrait
+l'annuaire que le message unique évite justement d'être.
+
+**Le conteneur de production ne tourne pas sous root.** `www-data`, avec
+`CAP_NET_BIND_SERVICE` posée par `setcap` sur le seul binaire FrankenPHP pour
+qu'il ouvre encore les ports 80 et 443. `var/` est le seul répertoire que
+l'application peut écrire : un code qui ne peut pas se réécrire ne peut pas se
+rendre persistant. Le `USER` est posé à la **fin** de l'étape `prod` — les
+étapes précédentes installent et compilent encore. L'API d'administration de
+Caddy est coupée (`admin off`) : rien ne s'en sert, et depuis que PHP n'est
+plus root elle serait le chemin le plus court entre une exécution de code et la
+maîtrise du serveur.
+
+**La sonde de disponibilité a son propre point d'écoute**, sur la boucle locale
+(`127.0.0.1:2020`), qui ne sert que `/healthz`. Le site public ne répond qu'à
+son propre nom d'hôte : en production `SERVER_NAME` vaut `focusyn.fr`, et la
+sonde — qui interroge forcément « localhost » depuis l'intérieur du conteneur —
+n'y trouvait aucun site. Le conteneur était déclaré mort en permanence, et rien
+ne le signalait : la CI ne lance pas la sonde.
+
+**`preload` est déclaré dans HSTS, mais ne fait rien par lui-même** : il annonce
+seulement que le domaine remplit les conditions de la liste embarquée dans les
+navigateurs. C'est la soumission sur hstspreload.org qui engage, elle se fait à
+la main, et en sortir prend des mois. Ce qui engage déjà, en revanche, c'est
+`includeSubDomains` : tout sous-domaine devra parler HTTPS.
+
+**Permissions-Policy ne liste que ce que les navigateurs reconnaissent.** Une
+fonction non implémentée n'est pas refusée « en avance » : la directive est
+ignorée, et chaque page écrit un avertissement dans la console. Trois
+avertissements permanents apprennent à ne plus lire la console.
 
 **Interface.** Rendu serveur en Twig. Partage du travail entre les deux outils
 front, à respecter strictement :
@@ -636,6 +769,35 @@ c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
 
 ## Pièges connus
 
+- **`#[IsCsrfTokenValid]` vérifie aussi les requêtes GET.** Sur un contrôleur
+  qui répond à `GET` et `POST`, l'écran cesse purement et simplement de
+  s'afficher. Nommer les méthodes : `#[IsCsrfTokenValid('x', methods: ['POST'])]`.
+- **Un jeton CSRF sans session a besoin de JavaScript.** La valeur rendue par
+  `csrf_token()` pour un identifiant listé dans `stateless_token_ids` est le
+  *nom* du jeton, que le contrôleur Stimulus `csrf-protection` remplace par un
+  aléa qu'il pose aussi en cookie. Le champ doit donc porter
+  `data-controller="csrf-protection"` — les formulaires Symfony l'ajoutent
+  seuls, un `<input>` écrit à la main, non, et chaque envoi est alors refusé.
+- **Le client de test réinitialise les services entre deux requêtes même avec
+  `disableReboot()`.** Un adaptateur de cache étiqueté `kernel.reset` est donc
+  vidé à chaque requête : un test qui croit vérifier une limitation de débit
+  passe à vide. D'où un `ArrayAdapter` déclaré à la main, sans l'étiquette, pour
+  `cache.rate_limiter` en test.
+- **Symfony analyse *tous* les fichiers de `config/packages/` avant de décider
+  lesquels s'appliquent.** Un `when@dev:` ne protège donc pas son contenu de
+  l'analyse : un `!php/enum` désignant une classe absente en production — parce
+  que la dépendance est de développement — fait échouer la construction de
+  l'image, et seulement là. Écrire la valeur en chaîne quand le bundle sait la
+  normaliser (`mode: migrate` pour Foundry).
+- **Un bloc `when@prod:` n'est jamais exécuté en développement ni en test** :
+  une option qui n'existe plus s'y conserve indéfiniment sans que rien ne le
+  signale. C'était le cas d'`auto_generate_proxy_classes` et `proxy_dir`,
+  retirés par DoctrineBundle 3, qui faisaient échouer l'étape « Image Docker »
+  de la CI seule. Toucher à `when@prod:` demande de construire l'image.
+- **L'image de base est figée par son étiquette, pas son contenu.** Sans
+  `apk upgrade` avant `apk add`, `curl` et ses bibliothèques restent à la
+  version livrée par l'amont — grype y trouvait des failles critiques toutes
+  corrigées en amont.
 - **`new X()->m()` (PHP 8.4) est interdit dans `src/`** : le parseur embarqué
   dans deptrac ne le comprend pas et *écarte le fichier* au lieu d'échouer — la
   règle d'architecture cesse silencieusement de s'y appliquer. `qa` refuse la

@@ -1,5 +1,12 @@
 import './stimulus_bootstrap.js';
-import './styles/app.css';
+
+/*
+ * Le design system n'est pas importé ici : il est chargé par une balise
+ * `<link>` dans `base.html.twig`. Importé depuis le JavaScript, il entrait
+ * dans l'importmap sous la forme d'une adresse `data:application/javascript`,
+ * qu'il aurait fallu autoriser dans `script-src` — et `data:` y ouvre
+ * exactement la porte que le nonce ferme.
+ */
 
 /*
  * Le service worker vit dans public/sw.js, hors d'AssetMapper : il doit être

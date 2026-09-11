@@ -16,9 +16,8 @@
             <span class="fx-list__mark" aria-hidden="true"></span>
             <textarea class="fx-note__title fx-list__title" name="name" rows="1"
                       data-controller="autogrow"
-                      data-action="keydown->autogrow#submit"
-                      aria-label="{{ 'routine.name_label'|trans }}"
-                      onchange="this.form.requestSubmit()">{{ routine.name }}</textarea>
+                      data-action="keydown->autogrow#submit change->autogrow#save"
+                      aria-label="{{ 'routine.name_label'|trans }}">{{ routine.name }}</textarea>
         </form>
 
         {# La cadence, puis l'obsession servie : ce qui décide du rythme d'abord,
@@ -39,7 +38,8 @@
                    value="{{ routine.obsession }}"
                    placeholder="{{ 'routine.obsession_placeholder'|trans }}"
                    aria-label="{{ 'routine.obsession_label'|trans }}"
-                   onchange="this.form.requestSubmit()">
+                   data-controller="submit-on-change"
+                   data-action="change->submit-on-change#submit">
             {# Le lien n'apparaît que si l'obsession est réellement mentionnée
                quelque part : elle n'est pas créée, elle est mentionnée. #}
             {% if routine.obsessionSlug %}

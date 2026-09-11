@@ -1,0 +1,12 @@
+# Point de collecte des violations de CSP.
+#
+# Une seule adresse, non localisée : elle est inscrite dans l'en-tête envoyé
+# aux navigateurs, et ne veut rien dire dans une langue. Le navigateur y poste
+# sans session et sans jeton — il ne peut pas en avoir, comme le partage
+# entrant. Ce que cela ouvre est une ligne de journal, filtrée par le bundle :
+# rien n'est lu, rien n'est écrit, rien n'est révélé.
+csp_report:
+    path: /csp/rapport
+    methods: [POST]
+    defaults:
+        _controller: nelmio_security.csp_reporter_controller::indexAction
