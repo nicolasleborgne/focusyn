@@ -54,11 +54,18 @@ resource "github_repository_ruleset" "main" {
       # périme, sinon « approuvé » finit par désigner autre chose que ce qui
       # entre.
       dismiss_stale_reviews_on_push = true
+
+      # Les deux règles suivantes **dérivent** du nombre d'approbations, et il
+      # faut qu'elles en dérivent : posées à `true` avec un compteur à zéro,
+      # elles exigent une approbation que personne ne peut donner — un
+      # mainteneur seul n'approuve pas sa propre poussée. La fusion devient
+      # alors impossible, tous les contrôles verts, sans que rien ne dise
+      # laquelle des règles bloque.
       # Sans approbation exigée, une règle de propriété n'a rien à exiger : elle
       # ne s'arme donc qu'avec la revue, le jour où `.github/CODEOWNERS` nomme
       # quelqu'un.
       require_code_owner_review         = var.required_approving_review_count > 0
-      require_last_push_approval        = true
+      require_last_push_approval        = var.required_approving_review_count > 0
       required_review_thread_resolution = true
     }
 

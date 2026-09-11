@@ -116,7 +116,7 @@ resource "github_repository_ruleset" "builder_main" {
       required_approving_review_count   = var.required_approving_review_count
       dismiss_stale_reviews_on_push     = true
       require_code_owner_review         = var.required_approving_review_count > 0
-      require_last_push_approval        = true
+      require_last_push_approval        = var.required_approving_review_count > 0
       required_review_thread_resolution = true
     }
   }
