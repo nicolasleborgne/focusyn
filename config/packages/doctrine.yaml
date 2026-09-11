@@ -148,8 +148,11 @@ when@test:
 when@prod:
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
-            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            # Ni `auto_generate_proxy_classes` ni `proxy_dir` : DoctrineBundle 3
+            # ne génère plus de classes mandataires — les entités sont des
+            # « lazy ghosts » de PHP 8.4. Les deux options héritées de la
+            # recette faisaient échouer la construction de l'image, et seulement
+            # là : `prod` est le seul environnement à lire ce bloc.
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool

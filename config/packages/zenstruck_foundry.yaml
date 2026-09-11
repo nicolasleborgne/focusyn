@@ -12,6 +12,11 @@ when@dev: &dev
             #   - rejouer les migrations à chaque exécution les met réellement à
             #     l'épreuve, au lieu de ne vérifier que le mapping.
             reset:
-                mode: !php/enum Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::MIGRATE
+                # La valeur est écrite en chaîne, et non en `!php/enum` :
+                # Symfony analyse *tous* les fichiers de `config/packages/`
+                # avant de décider lesquels s'appliquent, or Foundry est une
+                # dépendance de développement — absente de l'image de
+                # production, où la construction échouait sur cette ligne.
+                mode: migrate
 
 when@test: *dev
