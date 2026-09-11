@@ -833,22 +833,50 @@ version.
 
 **Un tag posé hors de `main` est refusé** avant toute construction. Sans cette
 garde, on obtiendrait une provenance parfaitement valide attestant qu'on a
-publié du code qui n'est passé ni par la revue ni par les contrôles.
+publié du code qui n'est pas passé par les contrôles.
 
-**Rien de ce qui cherche les failles ne dépend d'une fonctionnalité payante de
+**Ce que « passé par `main` » veut dire ici, et rien de plus** : les contrôles
+de CI exigés par le ruleset. Aucune approbation n'est requise — un dépôt à un
+seul auteur ne peut pas s'en donner —, et une provenance de niveau 3 sur du code
+non relu reste une provenance de niveau 3. C'est la phrase qui doit être exacte,
+pas la garantie qui doit être gonflée.
+
+**L'image est éprouvée avant d'être poussée, pas après.** L'ordre inverse
+publiait l'artefact *et son attestation* avant que grype ne parle : une version
+vulnérable existait alors sur le registre, signée et vérifiable, et seule la
+release GitHub manquait. Le constructeur construit donc localement, scanne, puis
+pousse — deux passes qui partagent le cache du builder dans la même exécution.
+
+**Le constructeur ne lit aucun cache partagé.** `cache-from: type=gha` lui
+donnerait des couches écrites par la CI de la branche par défaut, pour un autre
+commit — exactement ce que la provenance prétend écarter en disant « cet
+artefact vient de ce commit ».
+
+**Rien de ce qui cherche les failles ne dépend d'une fonctionnalité propre à
 GitHub.** gitleaks, syft et grype tournent depuis des images Docker épinglées :
-elles donneraient le même verdict sur GitLab ou sur un portable. L'analyse de
-secrets native, CodeQL et Scorecard ont été **retirés** — ils demandent GitHub
-Advanced Security sur un dépôt privé, et ils feraient double emploi avec ce qui
-tourne déjà. Seul Dependabot est gardé : il est gratuit, y compris en privé.
+elles donneraient le même verdict sur GitLab ou sur un portable. C'est la raison
+pour laquelle CodeQL, Scorecard et la revue de dépendances restent absents —
+**et non parce qu'ils seraient payants** : les dépôts sont publics, ils y sont
+gratuits. Ce qui reste réellement découvert est le JavaScript des contrôleurs
+Stimulus ; les workflows, eux, sont tenus par actionlint et par l'étape
+« Droits déclarés et jeton non persisté ».
 
-**Les règles de branche et de tag, elles, sont payantes sur un dépôt privé.**
-Rulesets *et* protection classique répondent le même 403 : « Upgrade to GitHub
-Pro **or make this repository public** ». D'où `manage_rulesets`, à `false` tant
-que la condition n'est pas remplie — les laisser armés ferait échouer chaque
-`tofu plan`, ce qui apprend à ne plus le lire. Ce qu'on perd en attendant :
-les tags `v*` ne sont pas immuables, donc une attestation de provenance peut
-se mettre à désigner autre chose.
+**Ce que le passage en public a apporté sans qu'on le demande** : l'analyse de
+secrets native est active, avec **blocage à la poussée**. Elle arrête un secret
+avant qu'il n'entre, là où gitleaks le trouve après coup ; le hook de
+pré-commit, lui, l'arrête encore avant, sur le poste. Les trois se recouvrent
+et c'est très bien — aucun n'est le filet de l'autre.
+
+**Les règles de branche et de tag sont gratuites sur un dépôt public, payantes
+sur un dépôt privé.** Rulesets *et* protection classique répondent le même 403 :
+« Upgrade to GitHub Pro **or make this repository public** ». C'est ce qui a
+décidé de la visibilité. `manage_rulesets` reste parce que la condition peut
+changer : repasser en privé sans le basculer ferait échouer chaque `tofu plan`.
+
+**L'épinglage par empreinte est désormais une règle du dépôt**
+(`sha_pinning_required`), et non plus seulement une convention : GitHub refuse
+lui-même un `uses:` référencé par étiquette. Une convention qu'on peut oublier
+est devenue une condition qu'on ne peut pas contourner.
 
 **Les workflows sont analysés comme le reste** : actionlint dans `qa`, et son
 passage par shellcheck sur les blocs `run:`. Une variable non protégée dans un

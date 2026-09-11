@@ -72,10 +72,16 @@ resource "github_actions_repository_permissions" "builder" {
   enabled         = true
   allowed_actions = "selected"
 
+  # GitHub refuse désormais lui-même un `uses:` référencé par étiquette. Ce
+  # que les workflows font à la main depuis l'audit devient une règle du dépôt :
+  # une convention qu'on peut oublier devient une condition qu'on ne peut pas
+  # contourner.
+  sha_pinning_required = true
+
   allowed_actions_config {
     github_owned_allowed = true
     verified_allowed     = false
-    patterns_allowed     = local.action_patterns
+    patterns_allowed     = var.builder_action_patterns
   }
 }
 
@@ -116,8 +122,22 @@ resource "github_repository_ruleset" "builder_main" {
       required_approving_review_count   = var.required_approving_review_count
       dismiss_stale_reviews_on_push     = true
       require_code_owner_review         = var.required_approving_review_count > 0
-      require_last_push_approval        = true
+      require_last_push_approval        = var.required_approving_review_count > 0
       required_review_thread_resolution = true
+    }
+
+    # Le dépôt qui détient l'identité de signature était le seul des deux où
+    # l'on pouvait fusionner avec la CI rouge. Il a pourtant son actionlint —
+    # il ne servait à rien.
+    required_status_checks {
+      strict_required_status_checks_policy = true
+
+      dynamic "required_check" {
+        for_each = var.builder_required_status_checks
+        content {
+          context = required_check.value
+        }
+      }
     }
   }
 }

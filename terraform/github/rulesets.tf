@@ -54,11 +54,18 @@ resource "github_repository_ruleset" "main" {
       # périme, sinon « approuvé » finit par désigner autre chose que ce qui
       # entre.
       dismiss_stale_reviews_on_push = true
+
+      # Les deux règles suivantes **dérivent** du nombre d'approbations, et il
+      # faut qu'elles en dérivent : posées à `true` avec un compteur à zéro,
+      # elles exigent une approbation que personne ne peut donner — un
+      # mainteneur seul n'approuve pas sa propre poussée. La fusion devient
+      # alors impossible, tous les contrôles verts, sans que rien ne dise
+      # laquelle des règles bloque.
       # Sans approbation exigée, une règle de propriété n'a rien à exiger : elle
       # ne s'arme donc qu'avec la revue, le jour où `.github/CODEOWNERS` nomme
       # quelqu'un.
       require_code_owner_review         = var.required_approving_review_count > 0
-      require_last_push_approval        = true
+      require_last_push_approval        = var.required_approving_review_count > 0
       required_review_thread_resolution = true
     }
 
@@ -116,12 +123,11 @@ resource "github_repository_ruleset" "tags" {
     non_fast_forward    = true
     required_signatures = true
 
-    # Le nom est vérifié à la création : une version se lit `v1.4.2`, et rien
-    # d'autre ne déclenchera la chaîne de publication.
-    tag_name_pattern {
-      operator = "regex"
-      pattern  = "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"
-      name     = "Versionnage sémantique, préfixé « v »"
-    }
+    # Pas de `tag_name_pattern` : l'API le refuse sur un dépôt personnel
+    # (422, « Invalid rule »), c'est une règle d'organisation. Ce n'est pas une
+    # perte : ce qui compte ici est l'immuabilité — un tag qui peut se déplacer
+    # ferait désigner autre chose à une attestation de provenance. Le *nom*,
+    # lui, est déjà borné ailleurs : `release.yaml` ne se déclenche que sur
+    # `v*`, et refuse un tag qui ne descend pas de `main`.
   }
 }
