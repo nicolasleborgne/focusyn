@@ -39,11 +39,13 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      # Une version doit désigner du code passé par `main`, donc par la revue et
-      # par les contrôles. Un tag posé sur une branche de travail produirait une
-      # provenance parfaitement valide attestant que l'on a publié n'importe
-      # quoi. La commande échoue aussi si `origin/main` est introuvable : dans
-      # le doute, on ne publie pas.
+      # Une version doit désigner du code passé par `main`, donc par les
+      # contrôles de CI que le ruleset exige — **et par eux seuls** : sur un
+      # dépôt à un auteur, aucune approbation n'est requise, et prétendre le
+      # contraire vaudrait moins que de ne rien dire. Un tag posé sur une
+      # branche de travail produirait une provenance parfaitement valide
+      # attestant qu'on a publié n'importe quoi. La commande échoue aussi si
+      # `origin/main` est introuvable : dans le doute, on ne publie pas.
       - name: Refuser un tag posé hors de main
         run: |
           if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
@@ -67,7 +69,7 @@ jobs:
     # Épinglé par empreinte, comme les actions : une référence de branche se
     # déplacerait sous les pieds de ce qu'elle construit, et une version déjà
     # publiée cesserait d'être vérifiable avec ce qui l'a produite.
-    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@a3b35b18124e02cf7a569dac419eed27133b8ec2 # builder-v2
+    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@eafbeb20497c17d7af2b9781da172297e206822f # builder-v3
     with:
       target: prod
 
@@ -77,6 +79,7 @@ jobs:
     needs: [image]
     permissions:
       contents: write # créer la release et y attacher le SBOM
+      attestations: read # relire ce que le constructeur a signé
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -85,6 +88,24 @@ jobs:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: sbom
+
+      # La commande exacte que promettent les notes, exécutée avant de les
+      # écrire. C'est le seul maillon où l'on ferait sinon confiance à un
+      # transfert d'artefact plutôt qu'à une signature — et `--signer-repo`
+      # est la moitié qui compte : elle exige que la signature vienne du
+      # constructeur, pas de ce dépôt-ci.
+      - name: Relire les attestations avant d'annoncer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ${{ needs.image.outputs.image }}
+          DIGEST: ${{ needs.image.outputs.digest }}
+        run: |
+          for type in https://slsa.dev/provenance/v1 https://spdx.dev/Document; do
+            gh attestation verify "oci://${IMAGE}@${DIGEST}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --signer-repo "${GITHUB_REPOSITORY_OWNER}/focusyn-builder" \
+              --predicate-type "$type"
+          done
 
       # Les notes disent comment se passer de notre parole. C'est le seul
       # endroit que lira quelqu'un qui récupère l'image sans nous connaître.

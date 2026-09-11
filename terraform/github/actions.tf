@@ -13,6 +13,12 @@ resource "github_actions_repository_permissions" "focusyn" {
   # exactement.
   allowed_actions = "selected"
 
+  # GitHub refuse désormais lui-même un `uses:` référencé par étiquette. Ce
+  # que les workflows font à la main depuis l'audit devient une règle du dépôt :
+  # une convention qu'on peut oublier devient une condition qu'on ne peut pas
+  # contourner.
+  sha_pinning_required = true
+
   allowed_actions_config {
     github_owned_allowed = true
     # « vérifié » veut dire que GitHub a vérifié l'identité de l'éditeur, pas

@@ -5,6 +5,14 @@ on:
     branches: [main]
   pull_request:
 
+# Aucun droit par défaut : chaque tâche redemande ce dont elle a besoin, et
+# aucune n'a besoin d'écrire. Le réglage du dépôt (`default_workflow_permissions`)
+# irait dans le même sens, mais il n'est pas exposé par le fournisseur Terraform
+# et se change d'un clic sans laisser de trace — c'est donc ici que la règle est
+# écrite, au plus près, et c'est ici qu'elle se relit. L'étape « Analyse des
+# workflows » refuse un workflow qui n'en déclarerait pas.
+permissions: {}
+
 env:
   PHP_VERSION: '8.4'
 
@@ -26,8 +34,12 @@ jobs:
   quality:
     name: Qualité (style, analyse statique, architecture)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
       - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
@@ -76,6 +88,35 @@ jobs:
           docker run --rm -v "$PWD:/repo:ro" -w /repo \
             rhysd/actionlint:1.7.12 -color
 
+      # actionlint ne juge pas les droits. Ces deux règles-là sont les nôtres,
+      # et une règle qu'on énonce sans la vérifier finit par être fausse : c'est
+      # exactement ce qui était arrivé à ce fichier, qui ne déclarait aucun
+      # `permissions` pendant que `terraform/github/actions.tf` affirmait le
+      # contraire.
+      #
+      # Les motifs sont ancrés en début de ligne : sans cela, ce script se
+      # compterait lui-même, et un commentaire citant la règle la ferait
+      # échouer. Un workflow réutilisable est exempté du premier contrôle — il
+      # ne peut pas déclarer ses droits, il les reçoit de son appelant.
+      - name: Droits déclarés et jeton non persisté
+        run: |
+          manque=0
+          for f in .github/workflows/*.yaml builder/.github/workflows/*.yaml; do
+            if grep -qE '^on:|^  workflow_call:' "$f" && ! grep -qE '^  workflow_call:' "$f"; then
+              grep -qE '^permissions:' "$f" \
+                || { echo "::error file=$f::aucun bloc permissions: au niveau du workflow"; manque=1; }
+            fi
+
+            checkouts=$(grep -cE '^ *- uses: actions/checkout@' "$f" || true)
+            sansjeton=$(grep -cE '^ *persist-credentials: false$' "$f" || true)
+            if [ "$checkouts" != "$sansjeton" ]; then
+              echo "::error file=$f::$checkouts checkout(s) pour $sansjeton persist-credentials: false"
+              manque=1
+            fi
+          done
+          [ "$manque" = 0 ] && echo "Droits déclarés partout, aucun jeton laissé dans .git/config."
+          exit "$manque"
+
   tests:
     name: Tests (${{ matrix.suite }})
     runs-on: ubuntu-latest
@@ -98,8 +139,12 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://focusyn:focusyn@127.0.0.1:5432/focusyn?serverVersion=17&charset=utf8
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
       - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
@@ -128,8 +173,12 @@ jobs:
     name: Image Docker
     runs-on: ubuntu-latest
     needs: [quality, tests]
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
@@ -182,6 +231,8 @@ jobs:
   infrastructure:
     name: Dépôt (terraform)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -193,6 +244,23 @@ jobs:
       #
       # `validate` n'a besoin d'aucune identité : il vérifie le schéma du
       # fournisseur, pas l'état du dépôt distant. Aucun jeton n'entre ici.
+      # `builder/` est une copie du dépôt constructeur, et une copie dérive.
+      # Rien ne la reliait mécaniquement à l'empreinte que `release.yaml`
+      # épingle : on pouvait donc relire ici un constructeur qui n'est pas
+      # celui qui signe. Le dépôt est public, la comparaison ne coûte rien.
+      - name: builder/ est bien le constructeur épinglé
+        run: |
+          sha=$(grep -oE 'focusyn-builder/\.github/workflows/build-image\.yaml@[0-9a-f]{40}' \
+                  .github/workflows/release.yaml | cut -d@ -f2)
+          [ -n "$sha" ] || { echo "::error::aucune empreinte de constructeur dans release.yaml"; exit 1; }
+          git clone -q --filter=blob:none https://github.com/nicolasleborgne/focusyn-builder.git "$RUNNER_TEMP/b"
+          git -C "$RUNNER_TEMP/b" checkout -q "$sha"
+          if ! diff -r --exclude=.git builder "$RUNNER_TEMP/b"; then
+            echo "::error::builder/ diffère du constructeur épinglé ($sha)"
+            exit 1
+          fi
+          echo "builder/ correspond à $sha."
+
       - name: Forme et validité
         run: |
           docker run --rm -v "$PWD/terraform/github:/tf" -w /tf \
@@ -205,12 +273,15 @@ jobs:
   secrets:
     name: Secrets (gitleaks)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           # Tout l'historique : un secret retiré depuis reste lisible dans le
           # commit qui l'a introduit, et c'est celui-là qu'il faut révoquer.
           fetch-depth: 0
+          persist-credentials: false
 
       # `--redact` : le journal d'exécution d'une CI est lisible par qui a
       # accès au dépôt, et republier le secret trouvé serait le divulguer une
@@ -223,8 +294,12 @@ jobs:
   dependances:
     name: Dépendances (syft, grype)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
 
       # Les fichiers de verrouillage suffisent : grype les lit sans qu'il soit
       # besoin d'installer quoi que ce soit. Deux angles complètent
