@@ -27,19 +27,22 @@ resource "github_repository_environment" "release" {
   }
 
   deployment_branch_policy {
-    # Ni `main`, ni une branche : **un tag**. Publier depuis une branche
-    # signifierait publier depuis un point mouvant, et la version attestée ne
-    # désignerait plus rien de stable.
+    # `main` et rien d'autre. Le raisonnement a changé avec le modèle : tant que
+    # la version naissait d'un tag, c'était le tag qu'il fallait nommer ici.
+    # Maintenant qu'une fusion publie, c'est la branche — et le tag, lui, est
+    # créé *après*, par l'usine, une fois l'image attestée.
+    #
+    # Ce que cela garde : aucune branche de travail ne peut obtenir les droits
+    # attachés à cet environnement, donc aucune ne peut faire signer le
+    # constructeur.
     protected_branches     = false
     custom_branch_policies = true
   }
 }
 
-resource "github_repository_environment_deployment_policy" "release_tags" {
+resource "github_repository_environment_deployment_policy" "release_branch" {
   repository  = github_repository.focusyn.name
   environment = github_repository_environment.release.environment
 
-  # Le même motif que la règle de tags : ce qui peut être publié est exactement
-  # ce qui peut être nommé.
-  tag_pattern = "v*"
+  branch_pattern = "main"
 }
