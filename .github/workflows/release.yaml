@@ -40,8 +40,13 @@ jobs:
   version:
     name: Y a-t-il une version à publier ?
     runs-on: ubuntu-latest
+    # `write` pour une tâche qui n'écrit rien : semantic-release vérifie qu'il
+    # *pourrait* poser le tag, même à blanc, et refuse de continuer sinon. La
+    # portée reste étroite — le ruleset interdit toute poussée directe sur
+    # `main`, y compris à ce jeton : il ne peut créer qu'un tag, et seulement
+    # dans la tâche suivante.
     permissions:
-      contents: read
+      contents: write
     outputs:
       publier: ${{ steps.calcul.outputs.publier }}
       version: ${{ steps.calcul.outputs.version }}
@@ -49,10 +54,12 @@ jobs:
       # Tout l'historique et tous les tags : semantic-release compare le dernier
       # tag à ce qui a été fusionné depuis. Sans eux, il croirait à une première
       # version à chaque fois.
+      #
+      # jeton nécessaire : c'est par git, et non par l'API, que semantic-release
+      # pousse le tag — il lui faut donc les identifiants dans `.git/config`.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
@@ -110,10 +117,11 @@ jobs:
       contents: write # poser le tag et créer la release
       attestations: read # relire ce que le constructeur a signé
     steps:
+      # jeton nécessaire : même raison que plus haut — c'est ici que le tag est
+      # réellement poussé.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:

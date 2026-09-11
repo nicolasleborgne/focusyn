@@ -107,10 +107,14 @@ jobs:
                 || { echo "::error file=$f::aucun bloc permissions: au niveau du workflow"; manque=1; }
             fi
 
+            # Une dérogation est possible — semantic-release pousse le tag par
+            # git, pas par l'API — mais elle doit être *écrite* : le marqueur
+            # « jeton nécessaire » est la trace qu'on l'a voulue.
             checkouts=$(grep -cE '^ *- uses: actions/checkout@' "$f" || true)
             sansjeton=$(grep -cE '^ *persist-credentials: false$' "$f" || true)
-            if [ "$checkouts" != "$sansjeton" ]; then
-              echo "::error file=$f::$checkouts checkout(s) pour $sansjeton persist-credentials: false"
+            derogations=$(grep -cE '^ *# jeton nécessaire' "$f" || true)
+            if [ "$checkouts" != "$((sansjeton + derogations))" ]; then
+              echo "::error file=$f::$checkouts checkout(s), $sansjeton sans jeton, $derogations dérogation(s) écrite(s)"
               manque=1
             fi
           done
