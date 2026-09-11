@@ -116,12 +116,11 @@ resource "github_repository_ruleset" "tags" {
     non_fast_forward    = true
     required_signatures = true
 
-    # Le nom est vérifié à la création : une version se lit `v1.4.2`, et rien
-    # d'autre ne déclenchera la chaîne de publication.
-    tag_name_pattern {
-      operator = "regex"
-      pattern  = "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"
-      name     = "Versionnage sémantique, préfixé « v »"
-    }
+    # Pas de `tag_name_pattern` : l'API le refuse sur un dépôt personnel
+    # (422, « Invalid rule »), c'est une règle d'organisation. Ce n'est pas une
+    # perte : ce qui compte ici est l'immuabilité — un tag qui peut se déplacer
+    # ferait désigner autre chose à une attestation de provenance. Le *nom*,
+    # lui, est déjà borné ailleurs : `release.yaml` ne se déclenche que sur
+    # `v*`, et refuse un tag qui ne descend pas de `main`.
   }
 }
