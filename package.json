@@ -7,6 +7,6 @@
         "@semantic-release/exec": "^7.1.0",
         "conventional-changelog-conventionalcommits": "^8.0.0",
         "playwright-core": "^1.49.0",
-        "semantic-release": "^24.2.9"
+        "semantic-release": "^25.0.9"
     }
 }
