@@ -17,13 +17,6 @@
 # c'est ce qui met le jeton de signature hors de portée du projet, et c'est la
 # seule différence entre le niveau 2 et le niveau 3 de SLSA.
 #
-# ┌──────────────────────────────────────────────────────────────────────────┐
-# │ À FAIRE UNE FOIS, après la première poussée du constructeur : remplacer  │
-# │ `@main` par son empreinte (`git rev-parse HEAD` dans builder/). Une      │
-# │ référence de branche se déplace sous les pieds de ce qu'elle construit ; │
-# │ une empreinte, non.                                                      │
-# └──────────────────────────────────────────────────────────────────────────┘
-
 name: Release
 
 on:
@@ -71,7 +64,10 @@ jobs:
       id-token: write # obtenir un jeton OIDC, donc signer sans clé
       attestations: write # déposer provenance et SBOM
 
-    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@main
+    # Épinglé par empreinte, comme les actions : une référence de branche se
+    # déplacerait sous les pieds de ce qu'elle construit, et une version déjà
+    # publiée cesserait d'être vérifiable avec ce qui l'a produite.
+    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@18e821c5a2f5e848385ad281938fbebe879c6969 # builder-v1
     with:
       target: prod
 
