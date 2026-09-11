@@ -32,8 +32,6 @@ final class StripeWebhookTest extends WebTestCase
     use LogsIn;
     use ResetDatabase;
 
-    private const string SECRET = 'whsec_secret_de_test';
-
     public function testAnUnsignedCallIsRefused(): void
     {
         $client = self::createClient();
@@ -129,6 +127,21 @@ final class StripeWebhookTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
+    /**
+     * Lu dans `.env.test`, et non recopié ici : deux écritures du même secret
+     * finissent par diverger, et le test se met alors à échouer pour une
+     * raison qui n'a rien à voir avec ce qu'il vérifie — c'est arrivé le jour
+     * où la valeur de test a été renouvelée.
+     */
+    private static function secret(): string
+    {
+        $secret = $_ENV['STRIPE_WEBHOOK_SECRET'] ?? '';
+        self::assertIsString($secret);
+        self::assertNotSame('', $secret, 'STRIPE_WEBHOOK_SECRET manque dans .env.test.');
+
+        return $secret;
+    }
+
     /** @param array<string, mixed> $object */
     private function send(KernelBrowser $client, string $type, array $object): void
     {
@@ -139,7 +152,7 @@ final class StripeWebhookTest extends WebTestCase
             'data' => ['object' => $object],
         ], \JSON_THROW_ON_ERROR);
 
-        $this->post($client, $payload, $this->signature($payload, self::SECRET));
+        $this->post($client, $payload, $this->signature($payload, self::secret()));
     }
 
     private function post(KernelBrowser $client, string $payload, string $signature): void
