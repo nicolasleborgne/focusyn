@@ -48,7 +48,7 @@
         "symfony/stimulus-bundle": "^3.4",
         "symfony/string": "7.4.*",
         "symfony/translation": "7.4.*",
-        "symfony/twig-bundle": "7.4.*",
+        "symfony/twig-bundle": "8.1.*",
         "symfony/uid": "7.4.*",
         "symfony/ux-icons": "^3.4",
         "symfony/ux-live-component": "^3.4",
