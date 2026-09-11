@@ -104,7 +104,7 @@ jobs:
       id-token: write # obtenir un jeton OIDC, donc signer sans clé
       attestations: write # déposer provenance et SBOM
 
-    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@6af9b676219ec379f6c48f7a5177c9e10569ae89 # builder-v4
+    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@2dbaa33dd72b137a0a359666e81eed45354a00d6 # builder-v5
     with:
       target: prod
       version: ${{ needs.version.outputs.version }}
