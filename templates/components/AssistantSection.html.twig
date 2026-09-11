@@ -18,7 +18,7 @@
 
         <form method="post" action="{{ path('assistant_adjust') }}" class="fx-field__row">
             <input type="hidden" name="_token" value="{{ csrf_token('assistant-adjust') }}">
-            {% for provider in this.providers %}
+            {% for provider in assistant.offeredProviders %}
                 <button type="submit" name="provider" value="{{ provider.value }}"
                         class="fx-chip {{ assistant.provider == provider ? 'fx-chip--selected' }}">
                     {{ ('assistant.provider.' ~ provider.value)|trans }}
@@ -41,9 +41,19 @@
             <form method="post" action="{{ path('assistant_adjust') }}" class="fx-field__row">
                 <input type="hidden" name="_token" value="{{ csrf_token('assistant-adjust') }}">
                 {% if assistant.provider.isLocal %}
+                    {# L'adresse n'est pas libre : l'exploitant nomme celles que
+                       le serveur accepte d'appeler. L'invite montre la première,
+                       de sorte qu'on ne devine pas ce qui sera refusé. #}
                     <input type="url" name="baseUrl" class="fx-field__control fx-assistant__field"
-                           value="{{ assistant.baseUrl }}" placeholder="http://localhost:11434"
+                           value="{{ assistant.baseUrl }}"
+                           placeholder="{{ assistant.localAddresses|first }}"
+                           list="fx-assistant-addresses"
                            aria-label="{{ 'assistant.address_label'|trans }}">
+                    <datalist id="fx-assistant-addresses">
+                        {% for address in assistant.localAddresses %}
+                            <option value="{{ address }}"></option>
+                        {% endfor %}
+                    </datalist>
                 {% else %}
                     {# Jamais de `value` : une clé enregistrée ne se relit pas,
                        même par son propriétaire. Le champ vide et l'état

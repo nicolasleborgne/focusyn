@@ -9,3 +9,6 @@ framework:
             - submit
             - authenticate
             - logout
+            # Sans session : l'écran est public, et un jeton en session y
+            # ouvrirait une session en base pour chaque visiteur anonyme.
+            - password-request

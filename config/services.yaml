@@ -191,6 +191,9 @@ services:
         arguments:
             $secret: '%env(ASSISTANT_SECRET)%'
 
+    App\Assistant\Application\Port\AllowedLocalAddresses:
+        alias: App\Assistant\Infrastructure\Provider\ConfiguredLocalAddresses
+
     App\Shared\Application\Privacy\ConsentGate:
         alias: App\Privacy\Infrastructure\Consent\StoredConsentGate
 

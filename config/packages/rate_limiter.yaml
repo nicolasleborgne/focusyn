@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# Limitation de débit
+# ---------------------------------------------------------------------------
+# La connexion est déjà protégée par `login_throttling` du security-bundle.
+# Ce qui manquait est l'autre porte ouverte aux inconnus : la demande de
+# réinitialisation de mot de passe. Elle fait partir un courriel vers une
+# adresse choisie dans la requête, sans session ni compte — donc en boucle,
+# elle noie la boîte de quelqu'un et brûle notre réputation d'expéditeur.
+#
+# Deux mesures, parce que les deux victimes ne sont pas les mêmes :
+#   - par adresse IP, c'est l'auteur qu'on arrête, et on le lui dit ;
+#   - par adresse de courriel, c'est la boîte qu'on protège, et on ne dit
+#     rien — l'écran répond comme d'habitude, sinon il deviendrait l'annuaire
+#     que le message unique évite justement d'être.
+#
+# Le compteur vit dans `cache.rate_limiter`, local à l'instance. Derrière
+# plusieurs instances, il faudra une réserve partagée, sans quoi la limite
+# vaudra N fois.
+framework:
+    rate_limiter:
+        password_request_ip:
+            policy: sliding_window
+            limit: 5
+            interval: '1 hour'
+
+        password_request_email:
+            policy: sliding_window
+            limit: 3
+            interval: '1 hour'
+
+when@test:
+    services:
+        # En mémoire, et **sans l'étiquette `kernel.reset`**. Les deux moitiés
+        # comptent :
+        #
+        #   - en mémoire, parce qu'un compteur qui survit d'une exécution de
+        #     tests à l'autre finit par faire échouer des tests qui n'ont pas
+        #     changé — c'est exactement ce qui est arrivé à la limitation des
+        #     tentatives de connexion, relevée à 1000 pour cette raison ;
+        #   - sans l'étiquette, parce que le client de test réinitialise les
+        #     services entre deux requêtes même quand on lui interdit de
+        #     redémarrer le noyau. Un adaptateur étiqueté serait vidé à chaque
+        #     requête, la limite ne se déclencherait jamais, et le test qui
+        #     croit la vérifier passerait à vide.
+        #
+        # Les limites elles-mêmes restent donc celles de la production, et se
+        # vérifient réellement.
+        cache.rate_limiter:
+            class: Symfony\Component\Cache\Adapter\ArrayAdapter

@@ -1,6 +1,12 @@
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
+	# L'API d'administration de Caddy écoute sinon sur localhost:2019, et
+	# permet de reconfigurer le serveur à chaud. Rien ici ne s'en sert, et
+	# depuis que PHP ne tourne plus sous root elle serait le chemin le plus
+	# court entre une exécution de code et la maîtrise du serveur.
+	admin off
+
 	frankenphp {
 		{$FRANKENPHP_CONFIG}
 	}
@@ -58,6 +64,28 @@
 	php_server {
 		#worker /app/public/index.php
 	}
+}
+
+# ---------------------------------------------------------------------------
+# Point d'écoute de la sonde de disponibilité
+# ---------------------------------------------------------------------------
+# Le site public ne répond qu'à son propre nom d'hôte : en production,
+# `SERVER_NAME` vaut `focusyn.fr`, et la sonde de Docker — qui interroge
+# forcément « localhost » depuis l'intérieur du conteneur — ne trouvait aucun
+# site correspondant. Le conteneur était donc déclaré mort en permanence, sans
+# que rien ne le signale : la CI ne lance pas la sonde.
+#
+# D'où ce second point d'écoute, **sur la boucle locale seulement** : aucun
+# autre conteneur du réseau ne l'atteint, et il ne sert qu'un seul chemin.
+# `http://` explicite pour que Caddy n'essaie pas d'y poser un certificat.
+http://127.0.0.1:2020 {
+	root {$SERVER_ROOT:public/}
+
+	route /healthz {
+		php_server
+	}
+
+	respond 404
 }
 
 import Caddyfile.d/*.caddyfile

@@ -6,7 +6,6 @@ namespace App\Assistant\UI\TwigComponent;
 
 use App\Assistant\Application\Query\AssistantQuery;
 use App\Assistant\Application\Query\AssistantView;
-use App\Assistant\Domain\Model\Provider;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 /**
@@ -23,11 +22,5 @@ final class AssistantSection
     public function view(): AssistantView
     {
         return $this->assistant->forCurrentAccount();
-    }
-
-    /** @return list<Provider> */
-    public function providers(): array
-    {
-        return Provider::cases();
     }
 }

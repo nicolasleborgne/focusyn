@@ -6,6 +6,7 @@ namespace App\Assistant\Application;
 
 use App\Assistant\Application\Exception\AssistantRefused;
 use App\Assistant\Application\Exception\KeyVaultUnavailable;
+use App\Assistant\Application\Port\AllowedLocalAddresses;
 use App\Assistant\Application\Port\KeyVault;
 use App\Assistant\Application\Provider\ProviderRegistry;
 use App\Assistant\Domain\Model\OwnerId;
@@ -41,6 +42,7 @@ final readonly class Completion
         private ConsentGate $consent,
         private CurrentAccount $account,
         private Entitlements $entitlements,
+        private AllowedLocalAddresses $localAddresses,
     ) {
     }
 
@@ -80,6 +82,16 @@ final readonly class Completion
             throw new AssistantRefused('assistant.error.empty_instruction');
         }
 
+        // Vérifiée une seconde fois, à l'usage. L'adresse a été contrôlée le
+        // jour où elle a été saisie ; retirer une adresse de la liste doit la
+        // faire cesser d'être appelée, sans qu'il faille aller nettoyer les
+        // réglages de chaque compte.
+        $baseUrl = $settings->baseUrl();
+
+        if (null !== $baseUrl && !$this->localAddresses->permits($baseUrl)) {
+            throw new AssistantRefused('assistant.error.address_refused');
+        }
+
         $key = $settings->key();
 
         try {
@@ -93,7 +105,7 @@ final readonly class Completion
             self::SYSTEM,
             $asked."\n\n---\n\n".$source(),
             $plainKey,
-            $settings->baseUrl(),
+            $baseUrl,
         );
     }
 

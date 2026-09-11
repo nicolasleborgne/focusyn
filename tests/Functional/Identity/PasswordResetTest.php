@@ -126,6 +126,80 @@ final class PasswordResetTest extends WebTestCase
         self::assertStringContainsString('n\'est plus valable', $crawler->text());
     }
 
+    /**
+     * Le formulaire est public et fait partir un courriel vers une adresse
+     * nommée dans la requête : sans jeton, n'importe quel site pouvait
+     * déclencher l'envoi depuis le navigateur d'un visiteur.
+     */
+    public function testAPostWithoutATokenSendsNothing(): void
+    {
+        $client = self::createClient();
+        $this->createAccount();
+
+        $client->request('POST', '/mot-de-passe-oublie', ['email' => self::EMAIL]);
+
+        // Le jeton manquant est une exception de sécurité : le pare-feu
+        // renvoie vers la connexion. Ce qui compte est qu'aucun courriel ne
+        // soit parti.
+        self::assertResponseRedirects();
+        self::assertEmailCount(0);
+    }
+
+    /**
+     * La boîte visée a sa propre mesure, et l'écran n'en dit rien : la réponse
+     * ne doit pas dépendre de ce que l'on sait de l'adresse. Trois liens par
+     * heure suffisent à qui a vraiment perdu son mot de passe ; au-delà, c'est
+     * la boîte de quelqu'un qu'on remplit.
+     */
+    public function testTheSameMailboxCannotBeFloodedWithLinks(): void
+    {
+        $client = self::createClient();
+        // Le compteur vit en mémoire dans le noyau : le laisser redémarrer à
+        // chaque requête reviendrait à repartir de zéro à chaque envoi.
+        $client->disableReboot();
+        $this->createAccount();
+
+        for ($attempt = 1; $attempt <= 4; ++$attempt) {
+            $crawler = $client->request('GET', '/mot-de-passe-oublie');
+            $crawler = $client->submit($crawler->selectButton('Envoyer le lien')->form(['email' => self::EMAIL]));
+
+            // Le même message à chaque fois, y compris au quatrième : l'écran
+            // ne laisse pas deviner ce qu'il sait de l'adresse.
+            self::assertStringContainsString('Si un compte existe pour cette adresse', $crawler->text());
+
+            // Le décompte porte sur la dernière requête. Trois liens partent,
+            // le quatrième non.
+            self::assertEmailCount($attempt <= 3 ? 1 : 0);
+        }
+    }
+
+    /**
+     * L'autre moitié de la mesure : celle qui arrête l'auteur, et le lui dit.
+     * Des adresses toutes différentes pour n'éprouver que la limite par
+     * appareil — autrement c'est celle de la boîte qui répondrait d'abord.
+     */
+    public function testTooManyRequestsFromOneDeviceAreRefusedOutLoud(): void
+    {
+        $client = self::createClient();
+        $client->disableReboot();
+
+        for ($attempt = 1; $attempt <= 5; ++$attempt) {
+            $crawler = $client->request('GET', '/mot-de-passe-oublie');
+            $client->submit($crawler->selectButton('Envoyer le lien')->form([
+                'email' => \sprintf('inconnu%d@focusyn.fr', $attempt),
+            ]));
+            self::assertResponseIsSuccessful();
+        }
+
+        $crawler = $client->request('GET', '/mot-de-passe-oublie');
+        $crawler = $client->submit($crawler->selectButton('Envoyer le lien')->form([
+            'email' => 'inconnu6@focusyn.fr',
+        ]));
+
+        self::assertSame(Response::HTTP_TOO_MANY_REQUESTS, $client->getResponse()->getStatusCode());
+        self::assertStringContainsString('Trop de demandes', $crawler->text());
+    }
+
     private function createAccount(): void
     {
         $bus = self::getContainer()->get(CommandBus::class);

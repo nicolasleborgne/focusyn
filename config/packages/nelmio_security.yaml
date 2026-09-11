@@ -32,14 +32,19 @@ nelmio_security:
     # Un carnet de notes n'a besoin d'aucune de ces interfaces. Les refuser
     # explicitement vaut mieux que de compter sur le fait qu'on ne les appelle
     # pas : une dépendance front, un jour, pourrait les appeler pour nous.
+    #
+    # Ne sont listées que les fonctions que les navigateurs reconnaissent
+    # aujourd'hui. `ambient-light-sensor`, `attribution-reporting` et
+    # `bluetooth` en ont été retirées : aucun navigateur ne les implémente, la
+    # directive n'a donc aucun effet, et chacune fait écrire un avertissement
+    # dans la console à chaque page — trois avertissements permanents
+    # apprennent à ne plus lire la console. À remettre le jour où elles
+    # s'appliqueront réellement.
     permissions_policy:
         enabled: true
         policies:
             accelerometer: []
-            ambient_light_sensor: []
-            attribution_reporting: []
             autoplay: []
-            bluetooth: []
             browsing_topics: []
             camera: []
             display_capture: []
@@ -151,7 +156,16 @@ when@prod:
             enabled: true
             hsts_max_age: 31536000
             hsts_subdomains: true
-            hsts_preload: false
+            # `preload` ne fait rien par lui-même : il déclare seulement que le
+            # domaine remplit les conditions de la liste embarquée dans les
+            # navigateurs. **C'est la soumission sur hstspreload.org qui
+            # engage**, et elle se fait à la main, une fois, en connaissance de
+            # cause : en sortir prend des mois. L'en-tête, lui, se retire en
+            # une ligne.
+            #
+            # Ce qui engage déjà, en revanche, c'est `includeSubDomains`
+            # au-dessus : tout sous-domaine de focusyn.fr devra parler HTTPS.
+            hsts_preload: true
             redirect_status_code: 301
             # La sonde de disponibilité interroge le conteneur en clair, sur
             # localhost : la rediriger la ferait échouer, et Docker déclarerait

@@ -246,6 +246,36 @@ final class AssistantJourneyTest extends WebTestCase
         self::assertCount(1, $crawler->filter('input[name="baseUrl"]'));
         self::assertCount(0, $crawler->filter('input[name="apiKey"]'));
         self::assertSame('http://localhost:11434', $crawler->filter('input[name="baseUrl"]')->attr('value'));
+
+        // L'écran ne fait pas deviner ce qui sera accepté.
+        self::assertSame(
+            ['http://localhost:11434'],
+            $crawler->filter('#fx-assistant-addresses option')->extract(['value']),
+        );
+    }
+
+    /**
+     * L'adresse d'un fournisseur local n'est pas libre : celle que l'on saisit
+     * est appelée **par le serveur**, et le serveur n'atteint pas la machine de
+     * la personne — seulement son propre réseau. Sans cette liste, l'écran des
+     * réglages prêtait le serveur comme relais vers la base de données, les
+     * services voisins ou le point de métadonnées de l'hébergeur.
+     */
+    public function testAnAddressOutsideTheAllowedListIsRefused(): void
+    {
+        $client = self::createClient();
+        $account = $this->logIn($client);
+
+        $this->adjust($client, ['provider' => 'ollama']);
+        $crawler = $this->adjust($client, ['baseUrl' => 'http://169.254.169.254']);
+
+        self::assertStringContainsString('pas été accepté', $crawler->filter('.fx-auth__error')->text());
+
+        $settings = self::getContainer()->get(AssistantSettingsRepository::class);
+        self::assertInstanceOf(AssistantSettingsRepository::class, $settings);
+        $stored = $settings->ofOwner(OwnerId::fromString($this->accountId($account->getUserIdentifier())));
+
+        self::assertNull($stored?->baseUrl(), 'L\'adresse refusée ne doit pas avoir été enregistrée.');
     }
 
     /** @param array<string, string> $values */

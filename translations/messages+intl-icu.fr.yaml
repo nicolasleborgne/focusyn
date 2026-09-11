@@ -243,6 +243,7 @@ password_reset:
     request_lead: Un lien valable trente minutes part sur votre courriel.
     send_link: Envoyer le lien
     sent: Si un compte existe pour cette adresse, le lien vient de partir. Vérifiez aussi les indésirables.
+    throttled: Trop de demandes depuis cet appareil. Réessayez dans une heure.
     title: Choisir un nouveau mot de passe.
     new_password: Nouveau mot de passe
     save: Enregistrer et se connecter
@@ -446,6 +447,7 @@ assistant:
         unreadable: La réponse du fournisseur n'a pas pu être lue.
         empty: Le modèle n'a rien répondu.
         unknown_provider: Ce fournisseur n'est pas connu.
+        address_refused: "Cette adresse n'est pas autorisée sur cette instance : demandez à l'exploitant de l'ajouter."
 
 team:
     heading: Équipe

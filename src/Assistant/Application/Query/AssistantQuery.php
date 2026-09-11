@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Assistant\Application\Query;
 
+use App\Assistant\Application\Port\AllowedLocalAddresses;
 use App\Assistant\Domain\Model\AssistantSettings;
 use App\Assistant\Domain\Model\OwnerId;
 use App\Assistant\Domain\Model\Provider;
@@ -17,6 +18,7 @@ final readonly class AssistantQuery
         private AssistantSettingsRepository $settings,
         private ConsentGate $consent,
         private CurrentAccount $account,
+        private AllowedLocalAddresses $localAddresses,
     ) {
     }
 
@@ -25,7 +27,7 @@ final readonly class AssistantQuery
         $accountId = $this->account->idOrNull();
 
         if (null === $accountId) {
-            return self::empty();
+            return $this->empty();
         }
 
         $settings = $this->settings->ofOwner(OwnerId::fromString($accountId));
@@ -38,10 +40,11 @@ final readonly class AssistantQuery
             baseUrl: $settings?->baseUrl(),
             wholeNote: $settings?->sendsWholeNote() ?? true,
             usable: $settings instanceof AssistantSettings && $settings->isUsable(),
+            localAddresses: $this->localAddresses->all(),
         );
     }
 
-    private static function empty(): AssistantView
+    private function empty(): AssistantView
     {
         return new AssistantView(
             consented: false,
@@ -51,6 +54,7 @@ final readonly class AssistantQuery
             baseUrl: null,
             wholeNote: true,
             usable: false,
+            localAddresses: $this->localAddresses->all(),
         );
     }
 }

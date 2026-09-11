@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Assistant\Application\Command\AdjustAssistant;
 
+use App\Assistant\Application\Port\AllowedLocalAddresses;
 use App\Assistant\Application\Port\KeyVault;
 use App\Assistant\Domain\Model\AssistantSettings;
 use App\Assistant\Domain\Model\OwnerId;
@@ -28,6 +29,7 @@ final readonly class AdjustAssistantHandler
         private AssistantSettingsRepository $settings,
         private KeyVault $vault,
         private CurrentAccount $account,
+        private AllowedLocalAddresses $localAddresses,
     ) {
     }
 
@@ -40,7 +42,16 @@ final readonly class AdjustAssistantHandler
         $settings = $this->settings->ofOwner($owner) ?? AssistantSettings::forOwner($owner);
 
         if (null !== $command->provider) {
-            $settings->switchTo(Provider::from($command->provider));
+            $provider = Provider::from($command->provider);
+
+            // Refuser le passage, et pas seulement l'adresse : sans adresse
+            // autorisée, un fournisseur local laisserait le compte dans un
+            // état qu'aucune saisie ne peut plus rendre utilisable.
+            if ($provider->isLocal() && [] === $this->localAddresses->all()) {
+                throw new InvalidArgumentException('Aucune adresse locale n\'est autorisée sur cette instance.');
+            }
+
+            $settings->switchTo($provider);
         }
 
         if (null !== $command->apiKey) {
@@ -56,6 +67,14 @@ final readonly class AdjustAssistantHandler
         }
 
         if (null !== $command->baseUrl && '' !== trim($command->baseUrl)) {
+            // La liste appartient à l'exploitant, jamais au compte : une
+            // adresse libre ferait du serveur un relais vers son propre
+            // réseau — une requête forgée côté serveur, depuis un écran de
+            // réglages.
+            if (!$this->localAddresses->permits($command->baseUrl)) {
+                throw new InvalidArgumentException('Cette adresse n\'est pas autorisée sur cette instance.');
+            }
+
             $settings->reachableAt($command->baseUrl);
         }
 

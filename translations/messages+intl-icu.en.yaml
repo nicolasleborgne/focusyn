@@ -242,6 +242,7 @@ password_reset:
     request_lead: A link valid for thirty minutes will be sent to your email.
     send_link: Send the link
     sent: If an account exists for this address, the link has been sent. Check your spam folder too.
+    throttled: Too many requests from this device. Try again in an hour.
     title: Choose a new password.
     new_password: New password
     save: Save and sign in
@@ -439,6 +440,7 @@ assistant:
         unreadable: The provider's answer could not be read.
         empty: The model answered nothing.
         unknown_provider: That provider is not known.
+        address_refused: "That address is not allowed on this instance: ask whoever runs it to add it."
 
 team:
     heading: Team

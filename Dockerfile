@@ -36,12 +36,31 @@ COPY --link docker/frankenphp/Caddyfile /etc/frankenphp/Caddyfile
 COPY --link docker/entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
+# --- Non privilégié, première moitié ---------------------------------------
+# Le serveur tournera sous `www-data`, et non sous root : une exécution de code
+# arbitraire dans PHP n'est alors pas déjà une prise de contrôle du conteneur.
+# Deux conditions, préparées ici :
+#   - `setcap` donne au seul binaire le droit d'ouvrir les ports 80 et 443,
+#     réservés à root sans cela ;
+#   - Caddy écrit ses certificats et sa configuration dans /data et /config,
+#     montés en volumes par la production : ils doivent lui appartenir.
+#
+# Le `USER` lui-même n'est posé qu'à la toute fin de l'étape `prod` : les
+# étapes intermédiaires installent encore les dépendances et compilent les
+# actifs, ce qui demande d'écrire dans /app.
+RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
+    && mkdir -p /data/caddy /config/caddy \
+    && chown -R www-data:www-data /data /config
+
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
 
-
+# La sonde interroge le point d'écoute interne, sur la boucle locale : le site
+# public ne répond qu'à son propre nom d'hôte (`SERVER_NAME`), et une requête
+# adressée à « localhost » n'y trouvait aucun site — le conteneur était
+# déclaré mort alors qu'il répondait. Voir le Caddyfile.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-    CMD curl -fsS http://localhost:80/healthz || exit 1
+    CMD curl -fsS http://127.0.0.1:2020/healthz || exit 1
 
 # --- Dépendances ------------------------------------------------------------
 # Étape isolée : le cache Docker n'est invalidé que si composer.lock change.
@@ -74,3 +93,12 @@ RUN set -eux; \
     php bin/console asset-map:compile; \
     chmod +x bin/console; \
     sync
+
+# --- Non privilégié, seconde moitié ----------------------------------------
+# `var/` est le seul endroit où l'application écrit : le cache réchauffé au
+# démarrage, les journaux, les exports. Le reste de /app lui reste en lecture
+# seule, ce qui est exactement ce qu'on veut — un code qui ne peut pas se
+# réécrire ne peut pas se rendre persistant.
+RUN chown -R www-data:www-data var
+
+USER www-data
