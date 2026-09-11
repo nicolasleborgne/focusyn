@@ -21,6 +21,14 @@ updates:
       time: "06:00"
       timezone: Europe/Paris
     open-pull-requests-limit: 5
+    # Le projet est tenu sur Symfony 7.4 (`extra.symfony.require`). Proposer la
+    # 8.x ouvre des demandes que rien ne peut fusionner : cinq PR mortes dès le
+    # premier jour, et l'habitude de ne plus regarder ce que Dependabot dit.
+    ignore:
+      - dependency-name: "symfony/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "doctrine/*"
+        update-types: ["version-update:semver-major"]
     groups:
       symfony:
         patterns: ["symfony/*"]

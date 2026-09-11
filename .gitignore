@@ -1,4 +1,3 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -22,11 +21,6 @@
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
-
-###> qossmic/deptrac ###
-/.deptrac.cache
-###< qossmic/deptrac ###
-
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
@@ -58,3 +52,7 @@ phpstan.neon
 # `.terraform.lock.hcl`, lui, **se versionne** : il épingle l'empreinte du
 # fournisseur, et c'est le seul endroit qui dise quel binaire a posé ces règles.
 ###< terraform ###
+
+###> deptrac/deptrac ###
+/.deptrac.cache
+###< deptrac/deptrac ###
