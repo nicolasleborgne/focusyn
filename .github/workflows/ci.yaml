@@ -8,21 +8,29 @@ on:
 env:
   PHP_VERSION: '8.4'
 
+# Les actions sont épinglées par **empreinte de commit**, avec l'étiquette en
+# commentaire. Une étiquette se déplace : `@v4` désigne ce que son auteur y a
+# poussé ce matin, et un dépôt compromis livrerait son code dans nos exécutions,
+# avec accès au jeton de l'exécution. Une empreinte ne se déplace pas.
+#
+# Pour en relever une :
+#   curl -s https://api.github.com/repos/<dépôt>/git/ref/tags/<étiquette> | jq -r .object.sha
+
 jobs:
   quality:
     name: Qualité (style, analyse statique, architecture)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: intl, pdo_pgsql, zip, sodium, apcu
           coverage: none
           tools: composer:v2
 
-      - uses: ramsey/composer-install@v3
+      - uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f # v3
 
       - name: Valider composer.json
         run: composer validate --strict --no-check-publish
@@ -71,16 +79,16 @@ jobs:
     env:
       DATABASE_URL: postgresql://focusyn:focusyn@127.0.0.1:5432/focusyn?serverVersion=17&charset=utf8
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: intl, pdo_pgsql, zip, sodium, apcu
           coverage: none
           tools: composer:v2
 
-      - uses: ramsey/composer-install@v3
+      - uses: ramsey/composer-install@a8d0d959dab41457692a5e2041bd9b757a119e3f # v3
 
       - name: Préparer le schéma de test
         if: matrix.suite != 'unit'
@@ -96,12 +104,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [quality, tests]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Construire l'image de production
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: .
           target: prod
@@ -115,3 +123,79 @@ jobs:
         run: |
           docker run --rm -e APP_ENV=prod -e APP_SECRET=ci -e DATABASE_URL='postgresql://x:x@127.0.0.1:5432/x?serverVersion=17' \
             focusyn:${{ github.sha }} php bin/console --version
+
+      # L'inventaire de ce qui est réellement dans l'image : paquets Alpine,
+      # extensions PHP, modules Go compilés dans FrankenPHP, dépendances
+      # Composer. `composer.lock` ne dit rien des trois premiers.
+      - name: Inventaire de l'image (syft)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            anchore/syft:v1.51.1 focusyn:${{ github.sha }} \
+            -o cyclonedx-json > sbom-image.cyclonedx.json
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            anchore/syft:v1.51.1 focusyn:${{ github.sha }} -o table
+
+      # Le seuil est « critique », et non « élevé », pour une raison précise :
+      # FrankenPHP 1.12 embarque `google.golang.org/grpc` 1.81, sur lequel
+      # pèsent trois avis de niveau élevé qu'aucune reconstruction ne corrige —
+      # il faut que l'amont bouge. Bloquer dessus rendrait la CI rouge en
+      # permanence, c'est-à-dire illisible. `--only-fixed` écarte de même ce
+      # qu'aucune version ne répare encore : on ne s'arrête que sur ce qui
+      # peut être réparé, l'inventaire complet restant joint à l'exécution.
+      - name: Vulnérabilités de l'image (grype)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            anchore/grype:v0.118.0 focusyn:${{ github.sha }} \
+            --only-fixed --fail-on critical -o table
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: sbom-image
+          path: sbom-image.cyclonedx.json
+
+  secrets:
+    name: Secrets (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
+        with:
+          # Tout l'historique : un secret retiré depuis reste lisible dans le
+          # commit qui l'a introduit, et c'est celui-là qu'il faut révoquer.
+          fetch-depth: 0
+
+      # `--redact` : le journal d'exécution d'une CI est lisible par qui a
+      # accès au dépôt, et republier le secret trouvé serait le divulguer une
+      # seconde fois. L'emplacement suffit à le retrouver.
+      - name: Recherche de secrets
+        run: |
+          docker run --rm -v "$PWD:/repo:ro" zricethezav/gitleaks:v8.30.1 \
+            git /repo --config /repo/.gitleaks.toml --redact --no-banner --verbose
+
+  dependances:
+    name: Dépendances (syft, grype)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
+
+      # Les fichiers de verrouillage suffisent : grype les lit sans qu'il soit
+      # besoin d'installer quoi que ce soit. Deux angles complètent
+      # `composer audit`, qui ne regarde que PHP — les dépendances npm de
+      # l'outillage, et les actions GitHub employées par cette CI elle-même.
+      - name: Inventaire du dépôt (syft)
+        run: |
+          docker run --rm -v "$PWD:/src:ro" anchore/syft:v1.51.1 dir:/src \
+            --exclude './vendor/**/.github/**' --exclude './node_modules/**' \
+            -o cyclonedx-json > sbom-depot.cyclonedx.json
+
+      - name: Vulnérabilités des dépendances (grype)
+        run: |
+          docker run --rm -v "$PWD:/src:ro" anchore/grype:v0.118.0 dir:/src \
+            --exclude './vendor/**/.github/**' --exclude './node_modules/**' \
+            --fail-on medium -o table
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: sbom-depot
+          path: sbom-depot.cyclonedx.json

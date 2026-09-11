@@ -14,7 +14,12 @@ FROM dunglas/frankenphp:${FRANKENPHP_VERSION}-php${PHP_VERSION}-alpine AS base
 
 WORKDIR /app
 
-RUN apk add --no-cache acl curl file gettext git tzdata \
+# `apk upgrade` avant `apk add` : l'image de base est figée par son étiquette,
+# et son index de paquets vieillit entre deux publications amont. Sans cette
+# ligne, `curl` et ses bibliothèques restaient à la version livrée — c'est-à-dire
+# avec les failles que grype signale dans la CI, toutes corrigées en amont.
+RUN apk upgrade --no-cache \
+    && apk add --no-cache acl curl file gettext git libcap tzdata \
     && install-php-extensions \
         apcu \
         intl \
@@ -33,6 +38,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint"]
 CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
+
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD curl -fsS http://localhost:80/healthz || exit 1

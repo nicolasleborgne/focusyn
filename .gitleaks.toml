@@ -1,0 +1,34 @@
+# Configuration de gitleaks — recherche de secrets dans l'historique.
+#
+# Le jeu de règles par défaut est conservé en entier : ce sont elles qui
+# reconnaissent une clé Stripe, un jeton GitHub, une clé privée SSH. On n'y
+# retire rien.
+#
+# Seule la règle fourre-tout `generic-api-key` est mise en sourdine, et
+# seulement là où le dépôt garde délibérément des valeurs qui ressemblent à des
+# secrets sans en être : la paire VAPID de développement, le secret de
+# scellement des tests, les clés fabriquées par les tests eux-mêmes. Les
+# laisser signalées ferait quinze alertes permanentes, c'est-à-dire une étape
+# de CI qu'on cesse de lire — et le jour où une vraie clé passe, personne ne le
+# verrait.
+#
+# Le choix est délibérément étroit : dans ces mêmes fichiers, une clé Stripe ou
+# un jeton d'API réel fait toujours échouer la vérification.
+
+title = "Focusyn"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Secrets de développement et de test, assumés comme tels"
+targetRules = ["generic-api-key"]
+paths = [
+    # Paire VAPID et secret de scellement du développement local. Ils ne
+    # valent que sur une machine de développement ; la production tire les
+    # siens par `console app:vapid` et `console app:assistant-secret`.
+    '''^\.env\.dev$''',
+    '''^\.env\.test$''',
+    # Les tests fabriquent des clés pour vérifier qu'un chiffrement chiffre.
+    '''^tests/''',
+]

@@ -4,6 +4,11 @@
 **/.direnv
 **/.env.local
 **/.env.*.local
+# Les secrets de développement et de test n'ont rien à faire dans une
+# image de production : `composer dump-env prod` ne les lit pas, mais
+# l'image les transporterait quand même.
+**/.env.dev
+**/.env.test
 **/.phpunit.cache
 **/node_modules
 **/var
