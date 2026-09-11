@@ -805,6 +805,41 @@ journal de transparence public. Il n'y a rien à faire fuiter et rien à faire
 tourner. Chaque workflow part de `permissions: {}` et redemande nommément ce
 dont il a besoin, tâche par tâche.
 
+**Une fusion sur `main` peut publier une version**, et c'est ce qui décide de
+tout le reste. Pas toutes : la nature des commits tranche — `feat` monte le
+mineur, `fix` le correctif, `chore` et `docs` ne publient rien. Personne ne pose
+de tag à la main ; l'usine les pose. Les messages de commit sont donc devenus
+une **entrée de la chaîne de publication** et non une affaire de style : c'est
+pourquoi GrumPHP les valide au moment où on les écrit, plutôt que trois jours
+plus tard en se demandant pourquoi rien n'est sorti.
+
+**Tout tient dans une seule exécution, et il le faut.** Un tag créé avec le
+`GITHUB_TOKEN` ne déclenche aucun workflow — GitHub s'en protège pour éviter les
+boucles. Enchaîner « semantic-release pose le tag → un second workflow
+construit » s'arrêterait en silence, à moins d'un jeton d'application à demeure,
+c'est-à-dire le secret de longue durée que cette chaîne évite depuis le début.
+
+**On reste en 0.x tant qu'on ne décide pas d'en sortir.** Une rupture monte le
+mineur au lieu du majeur (`releaseRules` dans `.releaserc.json`) : le produit
+annonce « v0.1 » dans sa coquille, et publier un 1.0.0 promettrait une stabilité
+d'interface et de schéma qu'il n'a pas. En sortir sera une décision, pas un
+effet de bord — il suffira de retirer cette règle.
+
+**Le constructeur reçoit la version en entrée**, il ne la déduit plus de
+`github.ref` : on construit sur `main`, où le tag n'existe pas encore. Il ne
+naîtra qu'après que l'image aura été poussée, éprouvée et attestée — une version
+annoncée sans artefact vérifiable serait pire qu'une version en retard.
+
+**Un tag ne se supprime pas, même par son propriétaire.** La règle
+d'immuabilité refuse le `DELETE` de l'API en 422, et aucun contournement n'est
+déclaré. Corollaire à connaître avant de s'amuser : un tag d'essai reste pour
+toujours, et le retirer demande de désarmer la règle le temps d'un `apply`.
+
+**Un tag créé par l'API passe `required_signatures`**, parce qu'il est *léger* :
+il n'y a pas d'objet à signer, seulement une référence vers un commit qui, lui,
+est signé. C'est ce qui permet à l'usine de poser les tags, et c'est aussi la
+limite de cette règle — elle contraint les poussées humaines, pas l'API.
+
 **Une version publie trois choses, et la troisième vérifie les deux autres** :
 l'image, sa provenance SLSA, son inventaire — puis la chaîne relit sa propre
 attestation avec `gh attestation verify`, l'outil qu'emploierait n'importe qui.
@@ -831,15 +866,12 @@ la signature vienne du constructeur. Sans elle, on vérifie qu'une signature
 existe, pas qu'elle vient d'où l'on croit. Elle est dans les notes de chaque
 version.
 
-**Un tag posé hors de `main` est refusé** avant toute construction. Sans cette
-garde, on obtiendrait une provenance parfaitement valide attestant qu'on a
-publié du code qui n'est pas passé par les contrôles.
-
-**Ce que « passé par `main` » veut dire ici, et rien de plus** : les contrôles
-de CI exigés par le ruleset. Aucune approbation n'est requise — un dépôt à un
-seul auteur ne peut pas s'en donner —, et une provenance de niveau 3 sur du code
-non relu reste une provenance de niveau 3. C'est la phrase qui doit être exacte,
-pas la garantie qui doit être gonflée.
+**Ce que publie une fusion est, par construction, du code passé par `main`** —
+donc par les contrôles de CI qu'exige le ruleset, **et par eux seuls**. Aucune
+approbation n'est requise : un dépôt à un seul auteur ne peut pas s'en donner.
+Une provenance de niveau 3 sur du code non relu reste une provenance de niveau
+3 ; c'est la phrase qui doit être exacte, pas la garantie qui doit être
+gonflée.
 
 **L'image est éprouvée avant d'être poussée, pas après.** L'ordre inverse
 publiait l'artefact *et son attestation* avant que grype ne parle : une version

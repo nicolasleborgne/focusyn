@@ -1,89 +1,126 @@
 # ---------------------------------------------------------------------------
 # Publication d'une version
 # ---------------------------------------------------------------------------
-# Ce que cette chaîne produit n'est pas seulement une image : c'est une image
-# **dont on peut dire d'où elle vient**. Quelqu'un qui la récupère sans nous
-# connaître doit pouvoir vérifier, seul, qu'elle a été construite par le
-# constructeur attendu, depuis ce commit — et savoir ce qu'elle contient.
+# **Une fusion sur `main` peut publier une version.** Pas toutes : c'est la
+# nature des commits qui décide — `feat` monte le mineur, `fix` le correctif,
+# `chore` et `docs` ne publient rien. Personne ne pose de tag à la main ; c'est
+# l'usine qui les pose, ce que la convention du poste demandait déjà.
 #
-#   gh attestation verify oci://ghcr.io/nicolasleborgne/focusyn:v1.0.0 \
+# **Tout tient dans une seule exécution, et il le faut** : un tag créé avec le
+# `GITHUB_TOKEN` ne déclenche aucun workflow — GitHub s'en protège pour éviter
+# les boucles. Enchaîner « semantic-release pose le tag → un second workflow
+# construit » s'arrêterait donc en silence, à moins d'un jeton d'application à
+# demeure, c'est-à-dire le secret de longue durée que cette chaîne évite.
+#
+# L'ordre, lui, ne change pas : on calcule, on construit, on éprouve, **puis**
+# on annonce. Le tag et la release n'existent qu'une fois l'image poussée et
+# attestée — une version annoncée sans artefact vérifiable serait pire qu'une
+# version en retard.
+#
+# **Ce fichier ne construit rien.** La construction et la signature ont lieu
+# dans un dépôt séparé, dont aucune étape n'est définie ici : c'est ce qui met
+# le jeton de signature hors de portée du projet, et c'est la seule différence
+# entre le niveau 2 et le niveau 3 de SLSA.
+#
+#   gh attestation verify oci://ghcr.io/nicolasleborgne/focusyn:0.2.0 \
 #     --repo nicolasleborgne/focusyn \
 #     --signer-repo nicolasleborgne/focusyn-builder \
 #     --predicate-type https://slsa.dev/provenance/v1
-#
-# **Ce fichier ne construit rien.** Il vérifie que le tag mérite d'être publié,
-# il appelle le constructeur, il annonce le résultat. La construction et la
-# signature ont lieu dans un dépôt séparé, dont aucune étape n'est définie ici :
-# c'est ce qui met le jeton de signature hors de portée du projet, et c'est la
-# seule différence entre le niveau 2 et le niveau 3 de SLSA.
-#
+
 name: Release
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
 
 # Rien par défaut. Chaque tâche redemande, nommément, ce dont elle a besoin.
 permissions: {}
 
 jobs:
-  garde:
-    name: Le tag est-il sur main ?
+  version:
+    name: Y a-t-il une version à publier ?
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      publier: ${{ steps.calcul.outputs.publier }}
+      version: ${{ steps.calcul.outputs.version }}
     steps:
-      # L'historique entier : sans lui, on ne peut pas répondre à la question.
+      # Tout l'historique et tous les tags : semantic-release compare le dernier
+      # tag à ce qui a été fusionné depuis. Sans eux, il croirait à une première
+      # version à chaque fois.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      # Une version doit désigner du code passé par `main`, donc par les
-      # contrôles de CI que le ruleset exige — **et par eux seuls** : sur un
-      # dépôt à un auteur, aucune approbation n'est requise, et prétendre le
-      # contraire vaudrait moins que de ne rien dire. Un tag posé sur une
-      # branche de travail produirait une provenance parfaitement valide
-      # attestant qu'on a publié n'importe quoi. La commande échoue aussi si
-      # `origin/main` est introuvable : dans le doute, on ne publie pas.
-      - name: Refuser un tag posé hors de main
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` et non `npx` : la version de l'outil vient du fichier de
+      # verrouillage, que Dependabot suit et que grype analyse. Un `npx`
+      # téléchargerait ce que npm voudra bien servir ce jour-là.
+      - run: npm ci
+
+      # À blanc : rien n'est créé, on veut seulement savoir s'il y a lieu, et
+      # quel numéro. Le greffon `exec` écrit la réponse dans les sorties de
+      # l'étape plutôt que de nous faire relire un journal.
+      - name: Calculer la version
+        id: calcul
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release --dry-run
+
+      - name: Dire ce qui a été décidé
+        env:
+          PUBLIER: ${{ steps.calcul.outputs.publier }}
+          VERSION: ${{ steps.calcul.outputs.version }}
         run: |
-          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
-            echo "::error::Ce tag ne descend pas de main : il n'est passé ni par la revue ni par les contrôles."
-            exit 1
+          if [ "$PUBLIER" = "oui" ]; then
+            echo "Version à publier : $VERSION"
+          else
+            echo "Rien à publier : aucun commit ne le justifie depuis le dernier tag."
           fi
-          echo "Commit ${GITHUB_SHA} présent sur main."
 
   image:
     name: Image, SBOM et provenance
-    needs: [garde]
+    needs: [version]
+    if: needs.version.outputs.publier == 'oui'
 
-    # Les droits se déclarent au point d'appel ; les étapes, elles, viennent
-    # toutes du constructeur. C'est précisément ce partage qui fait le niveau 3.
+    # Les droits se déclarent au point d'appel ; les étapes viennent toutes du
+    # constructeur, dont ce dépôt ne définit rien.
     permissions:
       contents: read
       packages: write # pousser sur GHCR
       id-token: write # obtenir un jeton OIDC, donc signer sans clé
       attestations: write # déposer provenance et SBOM
 
-    # Épinglé par empreinte, comme les actions : une référence de branche se
-    # déplacerait sous les pieds de ce qu'elle construit, et une version déjà
-    # publiée cesserait d'être vérifiable avec ce qui l'a produite.
-    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@eafbeb20497c17d7af2b9781da172297e206822f # builder-v3
+    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@6af9b676219ec379f6c48f7a5177c9e10569ae89 # builder-v4
     with:
       target: prod
+      version: ${{ needs.version.outputs.version }}
 
   publication:
-    name: Release GitHub
+    name: Tag et release
     runs-on: ubuntu-latest
-    needs: [image]
+    needs: [version, image]
     permissions:
-      contents: write # créer la release et y attacher le SBOM
+      contents: write # poser le tag et créer la release
       attestations: read # relire ce que le constructeur a signé
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          fetch-depth: 0
           persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
 
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -91,8 +128,8 @@ jobs:
 
       # La commande exacte que promettent les notes, exécutée avant de les
       # écrire. C'est le seul maillon où l'on ferait sinon confiance à un
-      # transfert d'artefact plutôt qu'à une signature — et `--signer-repo`
-      # est la moitié qui compte : elle exige que la signature vienne du
+      # transfert d'artefact plutôt qu'à une signature — et `--signer-repo` est
+      # la moitié qui compte : elle exige que la signature vienne du
       # constructeur, pas de ce dépôt-ci.
       - name: Relire les attestations avant d'annoncer
         env:
@@ -107,18 +144,29 @@ jobs:
               --predicate-type "$type"
           done
 
-      # Les notes disent comment se passer de notre parole. C'est le seul
-      # endroit que lira quelqu'un qui récupère l'image sans nous connaître.
-      - name: Publier
+      # C'est ici, et seulement ici, que le tag naît — après que l'image existe,
+      # a été éprouvée et attestée.
+      - name: Poser le tag et publier
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      # Les notes de semantic-release disent ce qui a changé ; celles-ci disent
+      # comment se passer de notre parole. C'est le seul endroit que lira
+      # quelqu'un qui récupère l'image sans nous connaître.
+      - name: Joindre l'image et sa vérification
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMAGE: ${{ needs.image.outputs.image }}
           DIGEST: ${{ needs.image.outputs.digest }}
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
-          cat > notes.md <<TXT
+          gh release view "v${VERSION}" --json body --jq .body > notes.md
+          cat >> notes.md <<TXT
+
           ## Image
 
-          \`${IMAGE}:${GITHUB_REF_NAME}\`
+          \`${IMAGE}:${VERSION}\`
           \`${DIGEST}\`
 
           ## Vérifier sans nous croire
@@ -132,14 +180,8 @@ jobs:
 
           \`--signer-repo\` est l'assertion qui compte : elle exige que la
           signature vienne du constructeur, un dépôt séparé dont ce dépôt-ci ne
-          définit aucune étape. La provenance nomme le commit et le workflow qui
-          ont produit cette image ; le SBOM joint dit ce qu'elle contient. Les
-          deux sont signés par une clé éphémère et inscrits dans un journal de
-          transparence public.
+          définit aucune étape.
           TXT
 
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "${GITHUB_REF_NAME}" \
-            --notes-file notes.md \
-            --verify-tag \
-            sbom.spdx.json
+          gh release edit "v${VERSION}" --notes-file notes.md
+          gh release upload "v${VERSION}" sbom.spdx.json --clobber
