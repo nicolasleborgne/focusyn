@@ -1,0 +1,128 @@
+# ---------------------------------------------------------------------------
+# Publication d'une version
+# ---------------------------------------------------------------------------
+# Ce que cette chaîne produit n'est pas seulement une image : c'est une image
+# **dont on peut dire d'où elle vient**. Quelqu'un qui la récupère sans nous
+# connaître doit pouvoir vérifier, seul, qu'elle a été construite par le
+# constructeur attendu, depuis ce commit — et savoir ce qu'elle contient.
+#
+#   gh attestation verify oci://ghcr.io/nicolasleborgne/focusyn:v1.0.0 \
+#     --repo nicolasleborgne/focusyn \
+#     --signer-repo nicolasleborgne/focusyn-builder \
+#     --predicate-type https://slsa.dev/provenance/v1
+#
+# **Ce fichier ne construit rien.** Il vérifie que le tag mérite d'être publié,
+# il appelle le constructeur, il annonce le résultat. La construction et la
+# signature ont lieu dans un dépôt séparé, dont aucune étape n'est définie ici :
+# c'est ce qui met le jeton de signature hors de portée du projet, et c'est la
+# seule différence entre le niveau 2 et le niveau 3 de SLSA.
+#
+# ┌──────────────────────────────────────────────────────────────────────────┐
+# │ À FAIRE UNE FOIS, après la première poussée du constructeur : remplacer  │
+# │ `@main` par son empreinte (`git rev-parse HEAD` dans builder/). Une      │
+# │ référence de branche se déplace sous les pieds de ce qu'elle construit ; │
+# │ une empreinte, non.                                                      │
+# └──────────────────────────────────────────────────────────────────────────┘
+
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+# Rien par défaut. Chaque tâche redemande, nommément, ce dont elle a besoin.
+permissions: {}
+
+jobs:
+  garde:
+    name: Le tag est-il sur main ?
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # L'historique entier : sans lui, on ne peut pas répondre à la question.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Une version doit désigner du code passé par `main`, donc par la revue et
+      # par les contrôles. Un tag posé sur une branche de travail produirait une
+      # provenance parfaitement valide attestant que l'on a publié n'importe
+      # quoi. La commande échoue aussi si `origin/main` est introuvable : dans
+      # le doute, on ne publie pas.
+      - name: Refuser un tag posé hors de main
+        run: |
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+            echo "::error::Ce tag ne descend pas de main : il n'est passé ni par la revue ni par les contrôles."
+            exit 1
+          fi
+          echo "Commit ${GITHUB_SHA} présent sur main."
+
+  image:
+    name: Image, SBOM et provenance
+    needs: [garde]
+
+    # Les droits se déclarent au point d'appel ; les étapes, elles, viennent
+    # toutes du constructeur. C'est précisément ce partage qui fait le niveau 3.
+    permissions:
+      contents: read
+      packages: write # pousser sur GHCR
+      id-token: write # obtenir un jeton OIDC, donc signer sans clé
+      attestations: write # déposer provenance et SBOM
+
+    uses: nicolasleborgne/focusyn-builder/.github/workflows/build-image.yaml@main
+    with:
+      target: prod
+
+  publication:
+    name: Release GitHub
+    runs-on: ubuntu-latest
+    needs: [image]
+    permissions:
+      contents: write # créer la release et y attacher le SBOM
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: sbom
+
+      # Les notes disent comment se passer de notre parole. C'est le seul
+      # endroit que lira quelqu'un qui récupère l'image sans nous connaître.
+      - name: Publier
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ${{ needs.image.outputs.image }}
+          DIGEST: ${{ needs.image.outputs.digest }}
+        run: |
+          cat > notes.md <<TXT
+          ## Image
+
+          \`${IMAGE}:${GITHUB_REF_NAME}\`
+          \`${DIGEST}\`
+
+          ## Vérifier sans nous croire
+
+          \`\`\`bash
+          gh attestation verify oci://${IMAGE}@${DIGEST} \\
+            --repo ${GITHUB_REPOSITORY} \\
+            --signer-repo ${GITHUB_REPOSITORY_OWNER}/focusyn-builder \\
+            --predicate-type https://slsa.dev/provenance/v1
+          \`\`\`
+
+          \`--signer-repo\` est l'assertion qui compte : elle exige que la
+          signature vienne du constructeur, un dépôt séparé dont ce dépôt-ci ne
+          définit aucune étape. La provenance nomme le commit et le workflow qui
+          ont produit cette image ; le SBOM joint dit ce qu'elle contient. Les
+          deux sont signés par une clé éphémère et inscrits dans un journal de
+          transparence public.
+          TXT
+
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file notes.md \
+            --verify-tag \
+            sbom.spdx.json

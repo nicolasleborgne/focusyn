@@ -56,6 +56,15 @@ jobs:
       - name: Étanchéité des contextes bornés
         run: vendor/bin/deptrac analyse --config-file=deptrac.contexts.yaml --no-progress
 
+      # Les workflows s'exécutent avec les droits du dépôt : ils méritent la
+      # même analyse statique que le reste. actionlint relit aussi les blocs
+      # `run:` avec shellcheck — une variable non protégée dans un script de CI
+      # est une injection comme une autre.
+      - name: Analyse des workflows
+        run: |
+          docker run --rm -v "$PWD:/repo:ro" -w /repo \
+            rhysd/actionlint:1.7.12 -color
+
   tests:
     name: Tests (${{ matrix.suite }})
     runs-on: ubuntu-latest
@@ -153,6 +162,29 @@ jobs:
         with:
           name: sbom-image
           path: sbom-image.cyclonedx.json
+
+  infrastructure:
+    name: Dépôt (terraform)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.3.1
+        with:
+          persist-credentials: false
+
+      # La politique du dépôt est du code, et se relit comme tel. Sans ce
+      # contrôle, une règle mal écrite ne se découvre qu'au prochain `apply` —
+      # c'est-à-dire le jour où l'on croit l'avoir appliquée.
+      #
+      # `validate` n'a besoin d'aucune identité : il vérifie le schéma du
+      # fournisseur, pas l'état du dépôt distant. Aucun jeton n'entre ici.
+      - name: Forme et validité
+        run: |
+          docker run --rm -v "$PWD/terraform/github:/tf" -w /tf \
+            ghcr.io/opentofu/opentofu:1.12.6 fmt -check -recursive -diff
+          docker run --rm -v "$PWD/terraform/github:/tf" -w /tf \
+            ghcr.io/opentofu/opentofu:1.12.6 init -backend=false -input=false
+          docker run --rm -v "$PWD/terraform/github:/tf" -w /tf \
+            ghcr.io/opentofu/opentofu:1.12.6 validate
 
   secrets:
     name: Secrets (gitleaks)

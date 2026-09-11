@@ -47,3 +47,14 @@ phpstan.neon
 /node_modules/
 /var/screenshots/
 ###< outillage de vérification visuelle ###
+
+###> terraform ###
+# L'état décrit qui peut contourner quoi : il ne se versionne pas.
+/terraform/**/.terraform/
+/terraform/**/*.tfstate
+/terraform/**/*.tfstate.*
+/terraform/**/terraform.tfvars
+/terraform/**/*.auto.tfvars
+# `.terraform.lock.hcl`, lui, **se versionne** : il épingle l'empreinte du
+# fournisseur, et c'est le seul endroit qui dise quel binaire a posé ces règles.
+###< terraform ###

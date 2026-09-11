@@ -1,0 +1,40 @@
+# Qui doit relire quoi.
+#
+# Le fichier est **entièrement commenté**, et c'est volontaire : sur un dépôt à
+# un seul auteur, une règle de propriété ne peut rien exiger — on n'approuve pas
+# sa propre demande — et un CODEOWNERS nommant un compte inexistant affiche une
+# erreur permanente sur le dépôt.
+#
+# Le jour où quelqu'un d'autre peut approuver, il y a deux gestes, dans cet
+# ordre :
+#   1. décommenter les lignes ci-dessous en remplaçant @compte par les vrais
+#      identifiants ;
+#   2. passer `required_approving_review_count` à 1 dans
+#      `terraform/github/terraform.tfvars`, puis `tofu apply` — la règle de
+#      propriété ne s'applique qu'à partir d'une approbation exigée.
+#
+# Les chemins retenus ne sont pas tout le code : ce sont ceux où une erreur ne
+# se voit pas à la relecture ordinaire et ne casse aucun test.
+
+# Tout, par défaut.
+# *                               @compte
+
+# La chaîne de construction s'exécute avec les droits du dépôt : une ligne
+# ajoutée ici en vaut mille ailleurs.
+# /.github/workflows/             @compte
+# /.github/dependabot.yml         @compte
+
+# La politique du dépôt elle-même — qui peut contourner quoi.
+# /terraform/                     @compte
+
+# L'image de production et ce qui la sert.
+# /Dockerfile                     @compte
+# /docker/                        @compte
+# /compose.prod.yaml              @compte
+
+# Les en-têtes, le pare-feu, le cloisonnement, la facturation : quatre endroits
+# où une inversion de deux lignes ne fait échouer aucun test.
+# /config/packages/nelmio_security.yaml    @compte
+# /config/packages/security.yaml           @compte
+# /config/packages/framework.yaml          @compte
+# /src/Shared/Infrastructure/Persistence/Doctrine/Filter/  @compte

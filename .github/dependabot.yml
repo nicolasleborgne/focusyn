@@ -1,0 +1,70 @@
+# Ce que Dependabot surveille.
+#
+# Quatre écosystèmes, parce qu'une chaîne ne vaut que par son maillon le plus
+# faible et qu'ils ne sont pas tous dans `composer.lock` : les actions de la CI
+# s'exécutent avec les droits du dépôt, l'image de base porte la moitié des
+# CVE que grype signale, et `package-lock.json` tient l'outillage de capture.
+#
+# Les mises à jour sont **groupées** : dix demandes par semaine ne se relisent
+# pas, elles se fusionnent en bloc sans être lues — c'est-à-dire le contraire de
+# ce qu'on cherche. Les correctifs de sécurité, eux, arrivent séparément et
+# immédiatement : ils viennent des alertes, pas de ce fichier.
+
+version: 2
+
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 5
+    groups:
+      symfony:
+        patterns: ["symfony/*"]
+        update-types: [minor, patch]
+      doctrine:
+        patterns: ["doctrine/*"]
+        update-types: [minor, patch]
+      outillage:
+        dependency-type: development
+        update-types: [minor, patch]
+    labels: [dépendances]
+
+  # Les actions sont épinglées par empreinte : Dependabot sait les relever et
+  # met à jour le commentaire d'étiquette avec. Sans cette entrée, l'épinglage
+  # se transforme en gel — et une empreinte gelée finit par porter une faille
+  # qu'on ne voit plus passer.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Paris
+    groups:
+      actions:
+        patterns: ["*"]
+    labels: [dépendances, ci]
+
+  # L'image de base de production. C'est `apk upgrade` qui rattrape les
+  # paquets, mais pas la version de FrankenPHP ni celle de PHP.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Paris
+    labels: [dépendances, docker]
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      outillage:
+        patterns: ["*"]
+    labels: [dépendances]

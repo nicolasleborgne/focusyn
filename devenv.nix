@@ -31,6 +31,7 @@
 
   packages = with pkgs; [
     git
+    gh                # CLI GitHub : `gh auth login` fournit le jeton du Terraform
     symfony-cli
     postgresql_17     # pour psql / pg_dump en ligne de commande
     gnumake

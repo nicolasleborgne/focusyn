@@ -767,6 +767,70 @@ interrupteur qui ne peut rien faire serait pire que de ne rien proposer.
 En touchant aux icônes, penser à `tests/Unit/Shared/Pwa/ManifestTest.php` :
 c'est le seul lien entre le manifeste et les fichiers qu'il déclare.
 
+## Le dépôt et la chaîne de publication
+
+`terraform/github/` décrit le dépôt GitHub et sa sécurité. Ce qui se règle dans
+une interface se dérègle sans laisser de trace : personne ne sait quand la
+protection de `main` a été désactivée « cinq minutes ». Ici, `tofu plan` le dit.
+
+Partage du travail, à ne pas confondre : **Terraform tient la politique** — ce
+que le dépôt autorise —, **`.github/workflows/` tient la chaîne de
+construction**, et **le contenu des fichiers reste dans le dépôt**. Faire poser
+`dependabot.yml` ou `CODEOWNERS` par Terraform les ferait entrer par l'API,
+c'est-à-dire en contournant la protection que ce même Terraform installe.
+
+**Un tag de version est immuable, et c'est une condition, pas un raffinement.**
+Une attestation de provenance dit « cet artefact vient de ce commit, à ce tag ».
+Si le tag peut être déplacé, l'attestation continue de dire vrai tout en
+désignant autre chose : `v1.2.0` cesse d'être une version pour devenir un nom de
+variable.
+
+**La chaîne de publication ne porte aucun secret de longue durée.** Elle
+s'authentifie auprès de GHCR avec le jeton de l'exécution, qui expire avec elle,
+et signe par OIDC auprès de Sigstore — une clé éphémère dont la trace est un
+journal de transparence public. Il n'y a rien à faire fuiter et rien à faire
+tourner. Chaque workflow part de `permissions: {}` et redemande nommément ce
+dont il a besoin, tâche par tâche.
+
+**Une version publie trois choses, et la troisième vérifie les deux autres** :
+l'image, sa provenance SLSA, son inventaire — puis la chaîne relit sa propre
+attestation avec `gh attestation verify`, l'outil qu'emploierait n'importe qui.
+Une signature qu'on ne sait pas relire ne protège personne.
+
+**La construction n'a pas lieu dans ce dépôt, et c'est toute la différence entre
+le niveau 2 et le niveau 3 de SLSA.** Le niveau 3 demande que le matériel qui
+signe la provenance soit hors de portée des étapes définies par le projet. Un
+workflow réutilisable *local* (`uses: ./…`) ne l'obtient pas : il vient du même
+commit que ce qu'il construit, celui qui écrit la release écrit le constructeur,
+il n'y a pas deux parties mais une seule. `release.yaml` appelle donc un
+workflow réutilisable d'un **dépôt séparé** (`builder/`, poussé vers
+`<compte>/focusyn-builder`), épinglé par empreinte, qui définit toutes les
+étapes. Ce dépôt-ci ne fournit que des paramètres : il ne peut pas insérer
+d'étape dans la tâche qui signe, donc il ne peut pas atteindre le jeton OIDC.
+
+Ce que cela ne donne pas, et qu'il faut savoir : tant que la même personne
+possède les deux dépôts, **l'isolation est technique, pas organisationnelle**.
+Elle protège d'une dépendance compromise, d'une action tierce compromise, d'un
+Dockerfile hostile, d'une étape ajoutée par erreur — pas de son propriétaire.
+
+**`--signer-repo` est l'assertion qui compte** à la vérification : elle exige que
+la signature vienne du constructeur. Sans elle, on vérifie qu'une signature
+existe, pas qu'elle vient d'où l'on croit. Elle est dans les notes de chaque
+version.
+
+**Un tag posé hors de `main` est refusé** avant toute construction. Sans cette
+garde, on obtiendrait une provenance parfaitement valide attestant qu'on a
+publié du code qui n'est passé ni par la revue ni par les contrôles.
+
+**CodeQL ne lit pas PHP**, et il ne faut pas croire le contraire : le cœur du
+produit n'est pas couvert par l'analyse de code. Ce sont PHPStan, deptrac et les
+tests qui tiennent ce rôle. CodeQL couvre les workflows (`actions`) et le
+JavaScript — deux surfaces que rien d'autre ne regarde.
+
+**Les workflows sont analysés comme le reste** : actionlint dans `qa`, et son
+passage par shellcheck sur les blocs `run:`. Une variable non protégée dans un
+script de CI est une injection comme une autre, avec les droits du dépôt.
+
 ## Pièges connus
 
 - **`#[IsCsrfTokenValid]` vérifie aussi les requêtes GET.** Sur un contrôleur

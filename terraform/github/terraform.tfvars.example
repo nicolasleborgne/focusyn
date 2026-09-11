@@ -1,0 +1,21 @@
+# Copier en `terraform.tfvars` — non versionné — et renseigner.
+
+owner      = "votre-compte-ou-organisation"
+repository = "focusyn"
+
+# « private » tant que le produit n'est pas public. À savoir avant de choisir :
+# l'analyse de secrets, l'analyse de code et la revue de dépendances sont
+# gratuites en public et payantes en privé (GitHub Advanced Security).
+visibility = "private"
+
+# À mettre à `true` seulement si l'offre est souscrite : sans elle, l'API
+# refuse les réglages et l'`apply` échoue.
+github_advanced_security = false
+
+# Tant que le dépôt est vide, la branche `main` n'existe pas et ne peut pas
+# être désignée. Remettre `true` après la première poussée.
+manage_default_branch = false
+
+# Le jour où quelqu'un d'autre peut approuver :
+# required_approving_review_count = 1
+# release_reviewers               = [1234567]
